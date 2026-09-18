@@ -1,4 +1,4 @@
 Fuentes de marca:
-- BodoniSvtyTwoITCTT-BookIta.woff  (instalada)
+- BodoniSvtyTwoITCTT-BookIta.woff  (incluida)
 - FranklinGothicURW-Lig.woff2 / .woff  (FALTA: el archivo recibido estaba incompleto, sin acentos ni todos los números).
   Mientras tanto se usa Libre Franklin (Google Fonts).

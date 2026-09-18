@@ -21,7 +21,7 @@ python3 src/build.py
 Editá `src/content.html` (home y partes compartidas) o `src/props-main.html` (listado) y volvé a correr el script.
 
 ## Fuentes tipográficas
-El sitio usa "Bodonisvtytwoitctt Bookita" y "Franklingothicurw Lig". Los archivos no están en el repo (licencia comercial): copiar `BodoniSvtyTwoITCTT-BookIta.woff` y `FranklinGothicURW-Lig.woff2` en `fonts/`. Sin ellos se usan Libre Bodoni y Libre Franklin.
+El sitio usa "Bodonisvtytwoitctt Bookita" (incluida en `fonts/`) y "Franklingothicurw Lig". Para la Franklin falta un archivo completo (con acentos y todos los números): copiarlo como `fonts/FranklinGothicURW-Lig.woff2`. Mientras tanto se usa Libre Franklin.
 
 ## Librerías (CDN)
 GSAP 3.13 (ScrollTrigger, SplitText, Draggable, Inertia), Lenis, flatpickr.
