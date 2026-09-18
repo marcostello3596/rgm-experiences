@@ -3,6 +3,17 @@
  * Para sumar un departamento o una experiencia: editá js/data.js. */
 window.RGM_I18N = {
   es: {
+    'xs.metaTitle': 'Experiencias en Mendoza | RGM Experiences',
+    'xs.eyebrow': 'Todas las experiencias',
+    'xs.title': 'Mendoza, <em>a tu manera.</em>',
+    'xs.lead': 'Bodegas, montaña, caballos y paquetes completos. Elegí las que quieras y armamos tu viaje con alojamiento y traslados.',
+    'xs.all': 'Todas',
+    'xs.day': 'Día completo',
+    'xs.half': 'Medio día',
+    'xs.pack': 'Paquetes',
+    'xs.count1': '1 experiencia',
+    'xs.countN': '{n} experiencias',
+    'xs.filter': 'Filtrar experiencias',
     'x.metaTitle': '{name} · Experiencias en Mendoza | RGM Experiences',
     'x.crumb': 'Experiencias',
     'x.duration': 'Duración',
@@ -217,6 +228,17 @@ window.RGM_I18N = {
   },
 
   en: {
+    'xs.metaTitle': 'Experiences in Mendoza | RGM Experiences',
+    'xs.eyebrow': 'All experiences',
+    'xs.title': 'Mendoza, <em>your way.</em>',
+    'xs.lead': 'Wineries, mountains, horses and full packages. Pick the ones you like and we build your trip with lodging and transfers.',
+    'xs.all': 'All',
+    'xs.day': 'Full day',
+    'xs.half': 'Half day',
+    'xs.pack': 'Packages',
+    'xs.count1': '1 experience',
+    'xs.countN': '{n} experiences',
+    'xs.filter': 'Filter experiences',
     'x.metaTitle': '{name} · Experiences in Mendoza | RGM Experiences',
     'x.crumb': 'Experiences',
     'x.duration': 'Duration',
@@ -431,6 +453,17 @@ window.RGM_I18N = {
   },
 
   pt: {
+    'xs.metaTitle': 'Experiências em Mendoza | RGM Experiences',
+    'xs.eyebrow': 'Todas as experiências',
+    'xs.title': 'Mendoza, <em>do seu jeito.</em>',
+    'xs.lead': 'Vinícolas, montanha, cavalos e pacotes completos. Escolha as que quiser e montamos sua viagem com hospedagem e traslados.',
+    'xs.all': 'Todas',
+    'xs.day': 'Dia inteiro',
+    'xs.half': 'Meio dia',
+    'xs.pack': 'Pacotes',
+    'xs.count1': '1 experiência',
+    'xs.countN': '{n} experiências',
+    'xs.filter': 'Filtrar experiências',
     'x.metaTitle': '{name} · Experiências em Mendoza | RGM Experiences',
     'x.crumb': 'Experiências',
     'x.duration': 'Duração',

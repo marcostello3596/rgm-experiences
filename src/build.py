@@ -50,8 +50,13 @@ for slug, name, zone in apts:
     page = h + '<div class="rgm-page" data-page="apt" data-slug="%s">\n\n' % slug + subnav + rd('apt-main.html') + '\n' + faq_only + subtail
     write('propiedades/%s/index.html' % slug, full(page, '../../'))
 
+# Listado de experiencias
+xhead = head.replace('<title>RGM Experiences</title>', '<title>Experiencias en Mendoza · RGM Experiences</title>')
+xlist = xhead + '<div class="rgm-page" data-page="exps">\n\n' + subnav + rd('exps-main.html') + '\n' + contact_faq + subtail
+write('experiencias/index.html', full(xlist, '../'))
+
 # Fichas de experiencias
-exps = re.findall(r"slug: '([^']+)', img: '[^']+',\n\s+name: \{ es: '([^']+)'", data)
+exps = re.findall(r"slug: '([^']+)',[^\n]*img: '[^']+',\n\s+name: \{ es: '([^']+)'", data)
 for slug, name in exps:
     h = head.replace('<title>RGM Experiences</title>', '<title>%s · Experiencias en Mendoza · RGM Experiences</title>' % name)
     page = h + '<div class="rgm-page" data-page="exp" data-slug="%s">\n\n' % slug + subnav + rd('exp-main.html') + '\n' + faq_only + subtail

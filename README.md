@@ -5,6 +5,7 @@ Sitio web de RGM: departamentos de alquiler temporario en Mendoza y experiencias
 ## Páginas
 - `index.html`: home (hero con buscador, slider de departamentos, experiencias, testimonios, galería, contacto, FAQ).
 - `propiedades/`: listado de departamentos (`?in=AAAA-MM-DD&out=AAAA-MM-DD&guests=N`).
+- `experiencias/`: listado de todas las experiencias con filtros (día completo, medio día, paquetes; `?tipo=day|half|pack`).
 - `experiencias/<slug>/`: ficha de cada experiencia (itinerario, qué incluye, info útil y consulta). El contenido está en `js/exp-detail.js`.
 - `propiedades/<slug>/`: ficha de cada departamento (galería, descripción, comodidades, ubicación, reseñas y consulta). El contenido está en `js/detail.js`; para sumar un departamento agregalo en `js/data.js` y `js/detail.js` y corré `python3 src/build.py`.
 

@@ -38,7 +38,7 @@
         var p = pair.split(':'); el.setAttribute(p[0].trim(), t(p[1].trim()));
       });
     });
-    document.title = PAGE === 'exp' && CUR_EXP ? t('x.metaTitle', { name: L(CUR_EXP.name) }) : PAGE === 'apt' && CUR_APT ? t('apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : 'meta.title');
+    document.title = PAGE === 'exp' && CUR_EXP ? t('x.metaTitle', { name: L(CUR_EXP.name) }) : PAGE === 'apt' && CUR_APT ? t('apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : PAGE === 'exps' ? 'xs.metaTitle' : 'meta.title');
     var md = $('meta[name="description"]'); if (md) md.setAttribute('content', t('meta.desc'));
     $$('.lang__btn').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
     $$('[data-wa="hello"]').forEach(function (a) { a.href = waLink(t('wa.hello')); });
@@ -175,6 +175,7 @@
     if (typeof booking !== 'undefined' && booking) booking.render();
     if (typeof aptPage !== 'undefined' && aptPage) aptPage.render();
     if (typeof expPage !== 'undefined' && expPage) expPage.render();
+    if (typeof expsPage !== 'undefined' && expsPage) expsPage.render();
     if (aptSlider) aptSlider.refresh();
     if (expSlider) expSlider.refresh();
     if (marquee) marquee.refresh();
@@ -753,6 +754,42 @@
       gsap.fromTo('.apt-img img', { yPercent: -12 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.apt-img', start: 'top bottom', end: 'bottom top', scrub: true } });
       gsap.from('.timeline__item', { x: -24, opacity: 0, duration: .8, ease: 'power3.out', stagger: .08, scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true } });
     }
+    return { render: render };
+  })();
+
+
+  /* ================= Listado de experiencias (/experiencias/) ================= */
+  var expsPage = (function () {
+    if (PAGE !== 'exps') return null;
+    var grid = $('[data-xs-grid]'), type = 'all', first = true;
+    try { var q = new URLSearchParams(location.search).get('tipo'); if (q && /^(day|half|pack)$/.test(q)) type = q; } catch (e) {}
+    function render() {
+      var list = EXPS.filter(function (x) { return type === 'all' || x.type === type; });
+      grid.innerHTML = list.map(function (x) {
+        var i = EXPS.indexOf(x);
+        return '<article class="prop xs-card">' +
+          '<a class="prop__media xs-card__media" href="' + expURL(x) + '" tabindex="-1" aria-hidden="true">' +
+            '<span class="apts__badge">' + L(x.duration) + '</span><img class="prop__img" src="' + x.img + '" alt="" loading="lazy"></a>' +
+          '<div class="prop__body"><p class="eyebrow prop__zone">' + L(x.place) + '</p>' +
+            '<h2 class="prop__name"><a href="' + expURL(x) + '">' + L(x.name) + '</a></h2>' +
+            '<p class="prop__tag">' + L(x.text) + '</p>' +
+            '<div class="prop__foot"><a class="btn btn--outline btn--small-inline" href="' + expURL(x) + '">' + t('x.view') + '</a>' +
+            '<button type="button" class="btn btn--small-inline" data-book-exp-i="' + i + '">' + t('exp.book') + '</button></div>' +
+          '</div></article>';
+      }).join('');
+      $('[data-xs-count]').textContent = list.length === 1 ? t('xs.count1') : t('xs.countN', { n: list.length });
+      $$('[data-xs-type]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-xs-type') === type ? 'true' : 'false'); });
+      if (gsap && !reduced && !first) gsap.from($$('.xs-card', grid), { y: 30, opacity: 0, duration: .7, stagger: .06, ease: 'power3.out' });
+      first = false;
+      if (ST) ST.refresh();
+    }
+    $$('[data-xs-type]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        type = b.getAttribute('data-xs-type'); render();
+        try { history.replaceState(null, '', location.pathname + (type === 'all' ? '' : '?tipo=' + type)); } catch (e) {}
+      });
+    });
+    render();
     return { render: render };
   })();
 

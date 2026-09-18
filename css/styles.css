@@ -780,3 +780,13 @@ textarea.book__input { resize: vertical; }
   .apt-head__stats--text { flex-wrap: wrap; row-gap: 18px; }
 }
 [data-split] > div { padding-right: .22em; margin-right: -.22em; }
+
+/* ---------- Listado de experiencias ---------- */
+.rgm-page[data-page="exps"] .nav { color: var(--wine); }
+.rgm-page[data-page="exps"] .nav .btn--light { color: var(--wine); border-color: rgba(61, 26, 34, .4); }
+.rgm-page[data-page="exps"] .nav .btn--light:hover { background: var(--wine); color: var(--cream); }
+.rgm-page[data-page="exps"] .nav .lang__btn[aria-pressed="true"] { background: var(--wine); color: var(--cream); }
+.xs__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); gap: clamp(32px, 3.4vw, 52px) clamp(20px, 2.4vw, 32px); }
+.xs-card__media { aspect-ratio: 4 / 5; }
+.xs-card__media .apts__badge { z-index: 2; }
+.chip[aria-pressed="true"] { background: var(--wine); border-color: var(--wine); color: var(--cream); }
