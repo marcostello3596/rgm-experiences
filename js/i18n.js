@@ -3,6 +3,8 @@
  * Para sumar un departamento o una experiencia: editá js/data.js. */
 window.RGM_I18N = {
   es: {
+    'apts.lead': 'Una colección de departamentos en Ciudad, Chacras de Coria y Godoy Cruz, pensados para vivir Mendoza como en casa.',
+    'apts.prefix': 'Depto',
     'book.title': 'Armá tu <em>consulta</em>',
     'book.lead': 'Elegí lo que quieras y te lo enviamos por WhatsApp al equipo de RGM. Te respondemos con disponibilidad y tarifa.',
     'book.close': 'Cerrar',
@@ -25,7 +27,7 @@ window.RGM_I18N = {
     'book.ok': '¡Listo! Abrimos WhatsApp con tu consulta.',
     'apts.book': 'Consultar',
     'exp.book': 'Sumar a mi consulta',
-    'apts.all': 'Ver todos',
+    'apts.all': 'Ver todos los departamentos',
     'props.metaTitle': 'Departamentos en Mendoza | RGM Experiences',
     'props.eyebrow': 'Todos los departamentos',
     'props.title': 'Encontrá tu <em>lugar</em> en Mendoza.',
@@ -168,6 +170,8 @@ window.RGM_I18N = {
   },
 
   en: {
+    'apts.lead': 'A collection of apartments in the city, Chacras de Coria and Godoy Cruz, designed to live Mendoza like a local.',
+    'apts.prefix': 'Apartment',
     'book.title': 'Build your <em>enquiry</em>',
     'book.lead': 'Choose what you like and we will send it to the RGM team on WhatsApp. We reply with availability and rates.',
     'book.close': 'Close',
@@ -190,7 +194,7 @@ window.RGM_I18N = {
     'book.ok': 'Done! We opened WhatsApp with your enquiry.',
     'apts.book': 'Enquire',
     'exp.book': 'Add to my enquiry',
-    'apts.all': 'View all',
+    'apts.all': 'View all apartments',
     'props.metaTitle': 'Apartments in Mendoza | RGM Experiences',
     'props.eyebrow': 'All apartments',
     'props.title': 'Find your <em>place</em> in Mendoza.',
@@ -333,6 +337,8 @@ window.RGM_I18N = {
   },
 
   pt: {
+    'apts.lead': 'Uma coleção de apartamentos no centro, em Chacras de Coria e Godoy Cruz, pensados para viver Mendoza como em casa.',
+    'apts.prefix': 'Apê',
     'book.title': 'Monte sua <em>consulta</em>',
     'book.lead': 'Escolha o que quiser e enviamos pelo WhatsApp para a equipe RGM. Respondemos com disponibilidade e tarifa.',
     'book.close': 'Fechar',
@@ -355,7 +361,7 @@ window.RGM_I18N = {
     'book.ok': 'Pronto! Abrimos o WhatsApp com sua consulta.',
     'apts.book': 'Consultar',
     'exp.book': 'Somar à minha consulta',
-    'apts.all': 'Ver todos',
+    'apts.all': 'Ver todos os apartamentos',
     'props.metaTitle': 'Apartamentos em Mendoza | RGM Experiences',
     'props.eyebrow': 'Todos os apartamentos',
     'props.title': 'Encontre seu <em>lugar</em> em Mendoza.',

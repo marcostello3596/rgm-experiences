@@ -90,7 +90,7 @@
     cards.innerHTML = APTS.map(function (a) {
       return '<article class="apts__card">' +
         '<p class="eyebrow apts__zone">' + zoneName(a.zone) + '</p>' +
-        '<h3 class="apts__name">' + a.name + '</h3>' +
+        '<h3 class="apts__name">' + t('apts.prefix') + ' <em>' + a.name + '</em></h3>' +
         '<p class="apts__tag">' + L(a.tag) + '</p>' +
         '<dl class="facts"><div><dt>' + t('apts.bedrooms') + '</dt><dd>' + a.bedrooms + '</dd></div>' +
         '<div><dt>' + t('apts.baths') + '</dt><dd>' + fmtNum(a.baths) + '</dd></div>' +
@@ -383,7 +383,9 @@
   function applyFilters() {
     var grid = $('[data-props-grid]'); if (!grid) return;
     var d = filterDates;
-    var list = APTS.filter(function (a) { return (!guestsFiltered || a.sleeps >= guests) && isFree(a, d); });
+    // Siempre se muestran todos: primero los que coinciden con la búsqueda.
+    var fits = function (a) { return (!guestsFiltered || a.sleeps >= guests) && isFree(a, d); };
+    var list = APTS.filter(fits).concat(APTS.filter(function (a) { return !fits(a); }));
     var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
     grid.innerHTML = list.map(function (a) {
       return '<article class="prop">' +
@@ -401,7 +403,6 @@
         '</div></article>';
     }).join('');
     $('[data-props-count]').textContent = list.length === 1 ? t('props.count1') : t('props.countN', { n: list.length });
-    $('[data-props-empty]').hidden = list.length > 0;
     // chips
     var chips = [];
     if (d.length) chips.push('<button type="button" class="chip" data-chip="dates" aria-label="' + t('props.removeChip') + ': ' + fmtRange(d) + '">' + fmtRange(d) + ' <span aria-hidden="true">×</span></button>');

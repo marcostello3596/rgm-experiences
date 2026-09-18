@@ -602,3 +602,42 @@ textarea.book__input { resize: vertical; }
 }
 .apts__card .facts { margin-bottom: 1.8rem; }
 .prop__foot .btn { width: 100%; }
+
+/* =====================================================================
+   DEPARTAMENTOS (home): cabecera + 3 columnas (foto · ficha centrada · foto)
+   ===================================================================== */
+.apts__head { display: grid; grid-template-columns: 1fr minmax(0, 340px); gap: 40px; align-items: end; margin-bottom: clamp(48px, 5vw, 72px); }
+.apts__lead { margin: 0 0 .4rem; text-align: right; font-size: .95rem; line-height: 1.6; color: var(--muted); }
+.apts__stage { grid-template-columns: 1fr 1.05fr 1fr; grid-template-areas: "main info second"; gap: clamp(28px, 5vw, 96px); align-items: start; }
+.apts__main { aspect-ratio: 4 / 5; border-radius: 8px; }
+.apts__second { aspect-ratio: 4 / 5; align-self: start; margin-top: clamp(24px, 3vw, 40px); border-radius: 8px; }
+.apts__badge { top: 20px; left: 20px; background: var(--wine); color: var(--cream); border-radius: 3px; padding: 9px 16px; font-size: .6875rem; letter-spacing: .24em; }
+.apts__info { align-self: center; justify-content: center; text-align: center; }
+.apts__card { display: flex; flex-direction: column; align-items: center; }
+.apts__zone { color: var(--text); margin: 0 0 1.6rem; }
+.apts__name { font-family: var(--f-body); font-style: normal; font-weight: 300; color: var(--text); font-size: clamp(2.2rem, 3.4vw, 3.2rem); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 1.4rem; }
+.apts__name em { font-family: var(--f-display); font-style: italic; font-weight: 300; color: var(--gold); font-size: 1.1em; line-height: 1; letter-spacing: -.02em; }
+.apts__tag { max-width: 34ch; margin: 0 auto 2.6rem; font-size: .95rem; }
+.apts__card .facts { border: 0; padding: 0; margin: 0 0 2.4rem; justify-content: center; gap: clamp(28px, 4vw, 56px); text-align: center; }
+.apts__card .facts dt { font-size: .6875rem; letter-spacing: .24em; color: var(--text); }
+.apts__card .facts dd { font-family: var(--f-body); font-style: normal; font-weight: 300; font-size: 1.15rem; margin-top: 6px; }
+.apts__card .link-cta { border-bottom: 0; padding: 0; color: var(--text); font-size: .6875rem; letter-spacing: .24em; }
+.apts__controls { justify-content: center; margin-top: clamp(40px, 5vw, 64px); gap: clamp(24px, 4vw, 48px); }
+.apts__controls .arrow { width: 56px; height: 56px; border-color: var(--text); }
+.apts__controls .count { font-size: 1.6rem; align-items: baseline; }
+.apts__controls .count__total { font-family: var(--f-body); font-style: normal; font-size: .9rem; }
+.apts__progress { max-width: 220px; margin: 22px auto 0; }
+.apts__progress .progress { margin: 0; }
+.apts__all-wrap { text-align: center; margin-top: 28px; }
+.apts__all { margin: 0; color: var(--wine); }
+@media (max-width: 1100px) {
+  .apts__stage { grid-template-columns: 1fr 1fr; grid-template-areas: "main info"; }
+  .apts__second { display: none; }
+}
+@media (max-width: 900px) {
+  .apts__head { grid-template-columns: 1fr; gap: 20px; }
+  .apts__lead { text-align: left; }
+  .apts__stage { grid-template-columns: 1fr; grid-template-areas: "main" "info"; }
+  .apts__main { aspect-ratio: 4 / 3.4; }
+}
+.apts__head .h2 { max-width: 13ch; }

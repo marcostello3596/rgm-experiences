@@ -116,25 +116,28 @@
     <!-- ============ DEPARTAMENTOS ============ -->
     <section class="apts band band--sand" id="departamentos">
       <div class="gutter wrap">
-        <div class="apts__grid">
-          <div class="apts__stage" tabindex="0" aria-roledescription="carousel" data-apts>
-            <div class="apts__main" data-apts-main></div>
-            <div class="apts__info" data-apts-info>
-              <p class="eyebrow" data-i18n="apts.eyebrow">Nuestros departamentos</p>
-              <h2 class="h2" data-split="lines" data-i18n-html="apts.title">Espacios que <em>elegiríamos</em> para nosotros.</h2>
-              <div class="apts__cards" data-apts-cards></div>
-            </div>
-            <div class="apts__second" data-apts-second></div>
-            <p class="sr-only" aria-live="polite" data-apts-live></p>
+        <header class="apts__head">
+          <div>
+            <p class="eyebrow" data-i18n="apts.eyebrow">Nuestros departamentos</p>
+            <h2 class="h2" data-split="lines" data-i18n-html="apts.title">Espacios que <em>elegiríamos</em> para nosotros.</h2>
           </div>
-          <div class="apts__controls">
-            <button type="button" class="arrow" data-apts-prev data-i18n-attr="aria-label:apts.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-            <div class="count"><span data-apts-curr>01</span><span class="count__total" data-apts-total>/ 06</span></div>
-            <button type="button" class="arrow" data-apts-next data-i18n-attr="aria-label:apts.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-            <div class="progress"><span class="progress__fill" data-apts-progress></span></div>
-            <a href="propiedades.html" class="btn apts__all" data-i18n="apts.all">Ver todos</a>
+          <p class="apts__lead" data-i18n="apts.lead"></p>
+        </header>
+        <div class="apts__stage" tabindex="0" aria-roledescription="carousel" data-apts>
+          <div class="apts__main" data-apts-main></div>
+          <div class="apts__info" data-apts-info>
+            <div class="apts__cards" data-apts-cards></div>
           </div>
+          <div class="apts__second" data-apts-second></div>
+          <p class="sr-only" aria-live="polite" data-apts-live></p>
         </div>
+        <div class="apts__controls">
+          <button type="button" class="arrow" data-apts-prev data-i18n-attr="aria-label:apts.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="count"><span data-apts-curr>01</span><span class="count__total" data-apts-total>/ 06</span></div>
+          <button type="button" class="arrow" data-apts-next data-i18n-attr="aria-label:apts.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+        <div class="apts__progress"><div class="progress"><span class="progress__fill" data-apts-progress></span></div></div>
+        <div class="apts__all-wrap"><a href="propiedades.html" class="link-cta apts__all" data-i18n="apts.all">Ver todos</a></div>
       </div>
     </section>
 
