@@ -2,6 +2,8 @@
  * CONFIG: número de WhatsApp, emails, redes.
  * APARTMENTS / EXPERIENCES / TESTIMONIALS / FAQ / GALLERY: agregá o quitá
  * elementos y la página se arma sola (slider, contadores y números incluidos).
+ * `slug` define la URL de cada departamento: /propiedades/<slug>/ (en minúsculas, sin tildes).
+ * La ficha completa de cada uno (galería, descripción, comodidades, ubicación) está en js/detail.js.
  * Todos los textos llevan { es, en, pt }. Los datos son de EJEMPLO. */
 window.RGM_CONFIG = {
   // WhatsApp del ADMINISTRADOR: acá llegan todas las consultas de la web.
@@ -20,36 +22,36 @@ window.RGM_CONFIG = {
 
 window.RGM_APARTMENTS = [
   {
-    name: 'Malbec', zone: 'Ciudad de Mendoza', img: 'img/apt1.jpg', img2: 'img/apt1b.jpg',
+    slug: 'malbec', name: 'Malbec', zone: 'Ciudad de Mendoza', img: 'img/apt1.jpg', img2: 'img/apt1b.jpg',
     badge: { es: 'Nuevo 2026', en: 'New 2026', pt: 'Novo 2026' },
     tag: { es: 'Vista a la cordillera · Balcón · A pasos de Plaza Independencia', en: 'Andes view · Balcony · Steps from Plaza Independencia', pt: 'Vista para a cordilheira · Varanda · A passos da Plaza Independencia' },
     bedrooms: 2, baths: 2, sleeps: 4, parking: true
   },
   {
-    name: 'Torrontés', zone: 'Ciudad de Mendoza', img: 'img/apt2.jpg', img2: 'img/apt2b.jpg',
+    slug: 'torrontes', name: 'Torrontés', zone: 'Ciudad de Mendoza', img: 'img/apt2.jpg', img2: 'img/apt2b.jpg',
     tag: { es: 'Luminoso · Cocina abierta · Ideal parejas', en: 'Bright · Open kitchen · Perfect for couples', pt: 'Iluminado · Cozinha aberta · Ideal para casais' },
     bedrooms: 1, baths: 1, sleeps: 2, parking: false,
     // Fechas ocupadas (EJEMPLO): [llegada, salida) en formato AAAA-MM-DD.
     booked: [['2026-10-09', '2026-10-14'], ['2026-12-20', '2027-01-03']]
   },
   {
-    name: 'Aconcagua', zone: 'Chacras de Coria', img: 'img/apt3.jpg', img2: 'img/apt3b.jpg',
+    slug: 'aconcagua', name: 'Aconcagua', zone: 'Chacras de Coria', img: 'img/apt3.jpg', img2: 'img/apt3b.jpg',
     badge: { es: 'Recién renovado', en: 'Newly renovated', pt: 'Recém-reformado' },
     tag: { es: 'Entre viñedos · Parrilla propia · Pileta', en: 'Among vineyards · Private grill · Pool', pt: 'Entre vinhedos · Churrasqueira · Piscina' },
     bedrooms: 3, baths: 2, sleeps: 6, parking: true
   },
   {
-    name: 'Cabernet', zone: 'Godoy Cruz', img: 'img/apt4.jpg', img2: 'img/apt4b.jpg',
+    slug: 'cabernet', name: 'Cabernet', zone: 'Godoy Cruz', img: 'img/apt4.jpg', img2: 'img/apt4b.jpg',
     tag: { es: 'Familiar · Cochera · Cerca de Palmares', en: 'Family-friendly · Parking · Near Palmares', pt: 'Familiar · Garagem · Perto do Palmares' },
     bedrooms: 2, baths: 1.5, sleeps: 5, parking: true
   },
   {
-    name: 'Bonarda', zone: 'Ciudad de Mendoza', img: 'img/apt5.jpg', img2: 'img/apt5b.jpg',
+    slug: 'bonarda', name: 'Bonarda', zone: 'Ciudad de Mendoza', img: 'img/apt5.jpg', img2: 'img/apt5b.jpg',
     tag: { es: 'Arístides Villanueva · Diseño cálido · Terraza', en: 'Arístides Villanueva · Warm design · Terrace', pt: 'Arístides Villanueva · Design acolhedor · Terraço' },
     bedrooms: 1, baths: 1, sleeps: 3, parking: false
   },
   {
-    name: 'Uco', zone: 'Chacras de Coria', img: 'img/apt6.jpg', img2: 'img/apt6b.jpg',
+    slug: 'uco', name: 'Uco', zone: 'Chacras de Coria', img: 'img/apt6.jpg', img2: 'img/apt6b.jpg',
     tag: { es: 'Silencioso · Jardín · Estadías largas', en: 'Quiet · Garden · Long stays', pt: 'Silencioso · Jardim · Estadias longas' },
     bedrooms: 2, baths: 2, sleeps: 4, parking: true
   }

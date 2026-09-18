@@ -38,7 +38,7 @@
         var p = pair.split(':'); el.setAttribute(p[0].trim(), t(p[1].trim()));
       });
     });
-    document.title = t(PAGE === 'props' ? 'props.metaTitle' : 'meta.title');
+    document.title = PAGE === 'apt' && CUR_APT ? t('apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : 'meta.title');
     var md = $('meta[name="description"]'); if (md) md.setAttribute('content', t('meta.desc'));
     $$('.lang__btn').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
     $$('[data-wa="hello"]').forEach(function (a) { a.href = waLink(t('wa.hello')); });
@@ -99,7 +99,7 @@
         '<dl class="facts"><div><dt>' + t('apts.bedrooms') + '</dt><dd>' + a.bedrooms + '</dd></div>' +
         '<div><dt>' + t('apts.baths') + '</dt><dd>' + fmtNum(a.baths) + '</dd></div>' +
         '<div><dt>' + t('apts.sleeps') + '</dt><dd>' + a.sleeps + '</dd></div></dl>' +
-        '<button type="button" class="link-cta" data-book-apt-i="' + APTS.indexOf(a) + '">' + t('apts.cta') + ' <span>→</span></button>' +
+        '<a class="link-cta" href="' + aptURL(a) + '">' + t('apts.cta') + ' <span>→</span></a>' +
         '</article>';
     }).join('');
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
@@ -173,6 +173,7 @@
     updateGuestsLabel(); updateContactPh();
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
+    if (typeof aptPage !== 'undefined' && aptPage) aptPage.render();
     if (aptSlider) aptSlider.refresh();
     if (expSlider) expSlider.refresh();
     if (marquee) marquee.refresh();
@@ -310,20 +311,24 @@
     $('[data-guests-count]').textContent = guests;
   }
   var pop = $('[data-guests-pop]'), tog = $('[data-guests-toggle]');
-  function setPop(open) { pop.hidden = !open; tog.setAttribute('aria-expanded', open); }
-  tog.addEventListener('click', function () { setPop(pop.hidden); });
-  $('[data-guests-done]').addEventListener('click', function () { setPop(false); tog.focus(); });
-  $$('[data-step]').forEach(function (b) {
-    b.addEventListener('click', function () {
-      guests = Math.max(1, Math.min(16, guests + parseInt(b.getAttribute('data-step'), 10)));
-      updateGuestsLabel();
+  function setPop(open) { if (!pop) return; pop.hidden = !open; tog.setAttribute('aria-expanded', open); }
+  if (pop && tog) {
+    tog.addEventListener('click', function () { setPop(pop.hidden); });
+    $('[data-guests-done]').addEventListener('click', function () { setPop(false); tog.focus(); });
+    $$('[data-step]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        guests = Math.max(1, Math.min(16, guests + parseInt(b.getAttribute('data-step'), 10)));
+        updateGuestsLabel();
+      });
     });
-  });
-  document.addEventListener('click', function (e) { if (!pop.hidden && !e.target.closest('.search__field--guests')) setPop(false); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) { setPop(false); tog.focus(); } });
+    document.addEventListener('click', function (e) { if (!pop.hidden && !e.target.closest('.search__field--guests')) setPop(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !pop.hidden) { setPop(false); tog.focus(); } });
+  }
 
   var PAGE = ($('.rgm-page') && $('.rgm-page').getAttribute('data-page')) || 'home';
-  var PROPS_URL = 'propiedades.html';
+  var CUR_APT = PAGE === 'apt' ? APTS.filter(function (a) { return a.slug === $('.rgm-page').getAttribute('data-slug'); })[0] : null;
+  var PROPS_URL = 'propiedades/';
+  var aptURL = function (a) { return 'propiedades/' + a.slug + '/'; };
   var toISO = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
   var parseISO = function (s) { var p = String(s || '').split('-'); return p.length === 3 ? new Date(+p[0], +p[1] - 1, +p[2]) : null; };
 
@@ -340,7 +345,7 @@
   }
   var guestsFiltered = PAGE === 'props' && !!query.guests;
 
-  if (window.flatpickr) {
+  if (window.flatpickr && $('#s-dates')) {
     fp = flatpickr('#s-dates', {
       mode: 'range', minDate: 'today', dateFormat: 'Y-m-d', altInput: true, altFormat: 'j M', showMonths: window.innerWidth > 760 ? 2 : 1,
       locale: lang === 'en' ? 'default' : lang, disableMobile: true, position: PAGE === 'props' ? 'below' : 'above',
@@ -354,7 +359,7 @@
   }
   function currentDates() { return fp && fp.selectedDates.length === 2 ? fp.selectedDates : []; }
 
-  $('[data-search]').addEventListener('submit', function (e) {
+  if ($('[data-search]')) $('[data-search]').addEventListener('submit', function (e) {
     e.preventDefault();
     setPop(false);
     var d = currentDates();
@@ -393,17 +398,17 @@
     var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
     grid.innerHTML = list.map(function (a) {
       return '<article class="prop">' +
-        '<button type="button" class="prop__media" data-book-apt-i="' + APTS.indexOf(a) + '" tabindex="-1" aria-hidden="true">' +
+        '<a class="prop__media" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true">' +
           (a.badge ? '<span class="apts__badge">' + L(a.badge) + '</span>' : '') +
           '<img class="prop__img" src="' + a.img + '" alt="" loading="lazy">' +
           '<img class="prop__img prop__img--2" src="' + a.img2 + '" alt="" loading="lazy">' +
-        '</button>' +
+        '</a>' +
         '<div class="prop__body">' +
           '<p class="eyebrow prop__zone">' + zoneName(a.zone) + '</p>' +
-          '<h2 class="prop__name">' + a.name + '</h2>' +
+          '<h2 class="prop__name"><a href="' + aptURL(a) + '">' + a.name + '</a></h2>' +
           '<p class="prop__tag">' + L(a.tag) + '</p>' +
           '<ul class="prop__facts"><li>' + a.bedrooms + ' ' + t('apts.bedrooms').toLowerCase() + '</li><li>' + fmtNum(a.baths) + ' ' + t('apts.baths').toLowerCase() + '</li><li>' + t('props.upTo', { n: a.sleeps }) + '</li></ul>' +
-          '<div class="prop__foot"><button type="button" class="btn btn--small-inline" data-book-apt-i="' + APTS.indexOf(a) + '">' + t('props.cta') + '</button></div>' +
+          '<div class="prop__foot"><a class="btn btn--outline btn--small-inline" href="' + aptURL(a) + '">' + t('apt.view') + '</a><button type="button" class="btn btn--small-inline" data-book-apt-i="' + APTS.indexOf(a) + '">' + t('props.cta') + '</button></div>' +
         '</div></article>';
     }).join('');
     $('[data-props-count]').textContent = list.length === 1 ? t('props.count1') : t('props.countN', { n: list.length });
@@ -502,9 +507,9 @@
       if (opts.apt !== undefined) st.apt = opts.apt;
       if (opts.exp !== undefined) st.exps[opts.exp] = true;
       // hereda fechas y huéspedes de la búsqueda
-      var d = (fp && fp.selectedDates.length === 2) ? fp.selectedDates : filterDates;
-      if (bfp && d && d.length === 2 && bfp.selectedDates.length !== 2) bfp.setDate(d, false);
-      if (typeof guests === 'number' && !opts.keepGuests) st.guests = guests;
+      var d = opts.dates || ((fp && fp.selectedDates.length === 2) ? fp.selectedDates : filterDates);
+      if (bfp && d && d.length === 2 && (opts.dates || bfp.selectedDates.length !== 2)) bfp.setDate(d, false);
+      st.guests = opts.guests || guests;
       $('[data-book-msg]', dlg).textContent = '';
       render();
       dlg.showModal ? dlg.showModal() : dlg.setAttribute('open', '');
@@ -550,7 +555,130 @@
       else if (b.hasAttribute('data-book-exp-i')) open({ exp: parseInt(b.getAttribute('data-book-exp-i'), 10) });
       else open({});
     });
-    return { render: function () { if (dlg.open) render(); } };
+    return { render: function () { if (dlg.open) render(); }, open: open };
+  })();
+
+
+  /* ================= Ficha de departamento (/propiedades/<slug>/) ================= */
+  var aptPage = (function () {
+    if (PAGE !== 'apt' || !CUR_APT) return null;
+    var a = CUR_APT, D = (window.RGM_DETAILS || {})[a.slug] || {};
+    var AM = window.RGM_AMENITIES || {}, GR = window.RGM_AMENITY_GROUPS || {}, PL = window.RGM_PLACES || {};
+    var gallery = D.gallery && D.gallery.length ? D.gallery : [a.img, a.img2];
+    var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
+    var afp = null, ag = Math.min(2, a.sleeps);
+
+    function render() {
+      $('[data-apt-crumb]').textContent = a.name;
+      $('[data-apt-title]').innerHTML = t('apts.prefix') + ' <em>' + a.name + '</em>';
+      $('[data-apt-zone]').textContent = zoneName(a.zone);
+      $('[data-apt-stats]').innerHTML = [
+        ['apt.guests', a.sleeps], ['apt.bedrooms', a.bedrooms], ['apt.baths', fmtNum(a.baths)], ['apt.beds', D.beds || a.bedrooms]
+      ].map(function (x) { return '<div><dt class="eyebrow">' + t(x[0]) + '</dt><dd>' + x[1] + '</dd></div>'; }).join('');
+      $('[data-apt-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
+        return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '">' +
+          (i === 0 && a.badge ? '<span class="apts__badge">' + L(a.badge) + '</span>' : '') +
+          '<img src="' + src + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
+      }).join('');
+      $('[data-apt-h2]').innerHTML = L(D.title) || L(a.tag);
+      $('[data-apt-intro]').textContent = L(D.intro) || L(a.tag);
+      $('[data-apt-overview]').innerHTML = (D.overview || []).map(function (b) {
+        return '<div class="apt-ov"><h3 class="apt-ov__t">' + L(b.t) + '</h3><p>' + L(b.p) + '</p></div>';
+      }).join('');
+      var am = D.amenities || {};
+      $('[data-apt-amenities]').innerHTML = Object.keys(am).map(function (g) {
+        return '<div class="amen"><h3 class="amen__t">' + L(GR[g]) + '</h3><ul class="amen__list">' +
+          am[g].map(function (id) { return '<li>' + (AM[id] ? L(AM[id]) : id) + '</li>'; }).join('') + '</ul></div>';
+      }).join('');
+      var loc = D.location || {};
+      $('[data-apt-loc-text]').textContent = L(loc.text) || '';
+      $('[data-apt-times]').innerHTML = (loc.times || []).map(function (x) {
+        return '<li><span>' + (PL[x[0]] ? L(PL[x[0]]) : x[0]) + '</span><strong>' + t('apt.min', { n: x[1] }) + '</strong></li>';
+      }).join('');
+      var q = encodeURIComponent(loc.map || (a.zone + ', Mendoza'));
+      var map = $('[data-apt-map]');
+      if (!map.firstChild) map.innerHTML = '<iframe title="Mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + q + '&output=embed"></iframe>';
+      $('[data-apt-maplink]').href = 'https://www.google.com/maps/search/?api=1&query=' + q;
+      var revs = TES.filter(function (r) { return r.where && r.where.indexOf(a.name) === 0; });
+      $('[data-apt-reviews]').innerHTML = revs.length ? revs.map(function (r) {
+        return '<article class="apt-rev"><div class="tes-card__stars"><span aria-label="5/5">★★★★★</span>' + (r.sample ? '<span class="tes-card__sample">' + t('tes.sample') + '</span>' : '') + '</div>' +
+          '<p>' + L(r.text) + '</p><div class="tes-card__who"><span class="tes-card__avatar">' + r.name.charAt(0) + '</span><div><div class="tes-card__name">' + r.name + '</div></div></div></article>';
+      }).join('') : '<p class="muted">' + t('apt.noReviews') + '</p>';
+      $('[data-apt-guests]').textContent = ag;
+      $('[data-apt-max]').textContent = t('book.maxGuests', { n: a.sleeps });
+      var wide = $('[data-apt-wide]'); wide.src = gallery[gallery.length - 1];
+      // otros departamentos
+      $('[data-apt-more]').innerHTML = APTS.filter(function (x) { return x !== a; }).slice(0, 3).map(function (x) {
+        return '<article class="prop"><a class="prop__media" href="' + aptURL(x) + '" tabindex="-1" aria-hidden="true">' +
+          '<img class="prop__img" src="' + x.img + '" alt="" loading="lazy"><img class="prop__img prop__img--2" src="' + x.img2 + '" alt="" loading="lazy"></a>' +
+          '<div class="prop__body"><p class="eyebrow prop__zone">' + zoneName(x.zone) + '</p><h3 class="prop__name"><a href="' + aptURL(x) + '">' + x.name + '</a></h3>' +
+          '<p class="prop__tag">' + L(x.tag) + '</p></div></article>';
+      }).join('');
+      if (afp) { afp.set('locale', lang === 'en' ? 'default' : lang); if (afp.altInput) afp.altInput.placeholder = t('book.datesPh'); if (afp.selectedDates.length) afp.setDate(afp.selectedDates, false); }
+    }
+
+    // Tabs (con flechas del teclado)
+    var tabs = $$('[role="tab"]');
+    function select(tab) {
+      tabs.forEach(function (x) {
+        var on = x === tab;
+        x.setAttribute('aria-selected', on); x.tabIndex = on ? 0 : -1;
+        $('#' + x.getAttribute('aria-controls')).hidden = !on;
+      });
+      var pane = $('#' + tab.getAttribute('aria-controls'));
+      if (gsap && !reduced) gsap.fromTo(pane, { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: .5, ease: 'power3.out' });
+      if (ST) ST.refresh();
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab); });
+      tab.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return;
+        var n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); select(n);
+      });
+    });
+
+    // Tarjeta de consulta
+    if (window.flatpickr) {
+      afp = flatpickr('#a-dates', { mode: 'range', minDate: 'today', dateFormat: 'Y-m-d', altInput: true, altFormat: 'j M Y',
+        locale: lang === 'en' ? 'default' : lang, disableMobile: true, showMonths: window.innerWidth > 1100 ? 2 : 1, position: 'below right',
+        disable: (a.booked || []).map(function (r) { var e = parseISO(r[1]); e.setDate(e.getDate() - 1); return { from: r[0], to: toISO(e) }; }) });
+    }
+    $$('[data-apt-step]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        ag = Math.max(1, Math.min(a.sleeps, ag + parseInt(b.getAttribute('data-apt-step'), 10)));
+        $('[data-apt-guests]').textContent = ag;
+      });
+    });
+    $('[data-apt-book]').addEventListener('click', function () {
+      if (booking) booking.open({ apt: APTS.indexOf(a), dates: afp && afp.selectedDates.length === 2 ? afp.selectedDates.slice() : null, guests: ag });
+    });
+
+    // Lightbox
+    var lb = $('[data-lightbox]'), li = 0;
+    function show(i) {
+      li = (i + gallery.length) % gallery.length;
+      $('[data-lightbox-img]', lb).src = gallery[li];
+      $('[data-lightbox-count]', lb).textContent = pad(li + 1) + ' / ' + pad(gallery.length);
+      if (gsap && !reduced) gsap.fromTo($('[data-lightbox-img]', lb), { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: .5, ease: 'power2.out' });
+    }
+    document.addEventListener('click', function (e) {
+      var o = e.target.closest && e.target.closest('[data-lightbox-open]'); if (!o) return;
+      show(parseInt(o.getAttribute('data-lightbox-open'), 10) || 0);
+      lb.showModal(); if (lenis) lenis.stop();
+    });
+    $('[data-lightbox-prev]', lb).addEventListener('click', function () { show(li - 1); });
+    $('[data-lightbox-next]', lb).addEventListener('click', function () { show(li + 1); });
+    $('[data-lightbox-close]', lb).addEventListener('click', function () { lb.close(); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+    lb.addEventListener('close', function () { if (lenis) lenis.start(); });
+    lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') show(li + 1); if (e.key === 'ArrowLeft') show(li - 1); });
+
+    render();
+    if (gsap && !reduced && ST) {
+      gsap.from('.apt-gal__tile', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .07, delay: .4 });
+      gsap.fromTo('.apt-img img', { yPercent: -12 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.apt-img', start: 'top bottom', end: 'bottom top', scrub: true } });
+    }
+    return { render: render };
   })();
 
   /* ================= Navegación entre páginas con transición ================= */
@@ -565,7 +693,7 @@
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
     var href = a.getAttribute('href');
-    if (!/^(\.\/|propiedades\.html)/.test(href)) return;
+    if (!/^(\.\/|propiedades)/.test(href)) return;
     // ./#seccion estando en la home → scroll interno
     if (PAGE === 'home' && href.indexOf('./#') === 0) return;
     e.preventDefault(); closeDrawer(); goTo(href);
@@ -574,7 +702,7 @@
 
   /* ================= Contacto ================= */
   function updateContactPh() { /* placeholder se aplica vía data-i18n-attr */ }
-  $('[data-contact]').addEventListener('submit', function (e) {
+  if ($('[data-contact]')) $('[data-contact]').addEventListener('submit', function (e) {
     e.preventDefault();
     var f = e.target, out = $('[data-contact-msg]');
     var name = (f.first.value + ' ' + f.last.value).trim(), msg = f.msg.value.trim();

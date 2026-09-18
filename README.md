@@ -4,7 +4,8 @@ Sitio web de RGM: departamentos de alquiler temporario en Mendoza y experiencias
 
 ## Páginas
 - `index.html`: home (hero con buscador, slider de departamentos, experiencias, testimonios, galería, contacto, FAQ).
-- `propiedades.html`: listado de departamentos con filtro por fechas y huéspedes (`?in=AAAA-MM-DD&out=AAAA-MM-DD&guests=N`).
+- `propiedades/`: listado de departamentos (`?in=AAAA-MM-DD&out=AAAA-MM-DD&guests=N`).
+- `propiedades/<slug>/`: ficha de cada departamento (galería, descripción, comodidades, ubicación, reseñas y consulta). El contenido está en `js/detail.js`; para sumar un departamento agregalo en `js/data.js` y `js/detail.js` y corré `python3 src/build.py`.
 
 Las consultas no tienen precios: el panel "Consultar" arma un mensaje y lo envía por WhatsApp al administrador (siempre en español, con el idioma del huésped indicado).
 
@@ -14,7 +15,7 @@ Las consultas no tienen precios: el panel "Consultar" arma un mensaje y lo enví
 - `css/styles.css`: estilos.
 
 ## Estructura de fuentes (HTML)
-`index.html` y `propiedades.html` se generan desde `src/`:
+Las páginas (`index.html`, `propiedades/` y `propiedades/<slug>/` de cada departamento) se generan desde `src/`:
 ```
 python3 src/build.py
 ```

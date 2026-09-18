@@ -1,0 +1,94 @@
+  <main id="top">
+    <!-- Cabecera del departamento -->
+    <section class="apt-head band band--sand">
+      <div class="gutter wrap">
+        <nav class="crumbs eyebrow" aria-label="Breadcrumb">
+          <a href="./" data-i18n="apt.home">Inicio</a><span aria-hidden="true">/</span>
+          <a href="propiedades/" data-i18n="apt.all">Departamentos</a><span aria-hidden="true">/</span>
+          <span aria-current="page" data-apt-crumb></span>
+        </nav>
+        <div class="apt-head__row">
+          <div>
+            <h1 class="apt-head__title" data-split="lines" data-apt-title></h1>
+            <p class="apt-head__loc"><span data-apt-zone></span><span class="dot" aria-hidden="true"></span><span data-i18n="apt.country">Mendoza, Argentina</span></p>
+          </div>
+          <dl class="apt-head__stats" data-apt-stats></dl>
+        </div>
+        <div class="apt-head__rule"></div>
+        <div class="apt-gal" data-apt-gallery></div>
+        <div class="apt-gal__all"><button type="button" class="link-cta" data-lightbox-open="0"><span data-i18n="apt.viewAll">Ver todas las fotos</span> <span aria-hidden="true">→</span></button></div>
+      </div>
+    </section>
+
+    <!-- Descripción + reserva -->
+    <section class="apt-book band band--sand">
+      <div class="gutter wrap">
+        <div class="apt-book__layout">
+          <div class="apt-book__left">
+            <p class="eyebrow" data-i18n="apt.eyebrow">El departamento</p>
+            <h2 class="h2" data-split="lines" data-apt-h2></h2>
+            <p class="apt-book__intro" data-apt-intro></p>
+
+            <div class="tabs" data-tabs>
+              <div class="tabs__list" role="tablist">
+                <button type="button" role="tab" id="tab-ov" aria-controls="pane-ov" aria-selected="true" data-i18n="apt.tabOverview">Descripción</button>
+                <button type="button" role="tab" id="tab-am" aria-controls="pane-am" aria-selected="false" tabindex="-1" data-i18n="apt.tabAmen">Comodidades</button>
+                <button type="button" role="tab" id="tab-lo" aria-controls="pane-lo" aria-selected="false" tabindex="-1" data-i18n="apt.tabLoc">Ubicación</button>
+                <button type="button" role="tab" id="tab-re" aria-controls="pane-re" aria-selected="false" tabindex="-1" data-i18n="apt.tabRev">Reseñas</button>
+              </div>
+              <div class="tabs__pane" role="tabpanel" id="pane-ov" aria-labelledby="tab-ov" data-apt-overview></div>
+              <div class="tabs__pane" role="tabpanel" id="pane-am" aria-labelledby="tab-am" hidden data-apt-amenities></div>
+              <div class="tabs__pane" role="tabpanel" id="pane-lo" aria-labelledby="tab-lo" hidden>
+                <p class="eyebrow" data-i18n="apt.where">Dónde vas a estar</p>
+                <p class="apt-loc__text" data-apt-loc-text></p>
+                <ul class="apt-loc__times" data-apt-times></ul>
+                <div class="apt-loc__map" data-apt-map></div>
+                <a class="link-cta" target="_blank" rel="noopener" data-apt-maplink><span data-i18n="apt.openMap">Abrir en Google Maps</span> <span aria-hidden="true">→</span></a>
+              </div>
+              <div class="tabs__pane" role="tabpanel" id="pane-re" aria-labelledby="tab-re" hidden data-apt-reviews></div>
+            </div>
+          </div>
+
+          <aside class="apt-card" aria-labelledby="apt-card-title">
+            <h2 class="apt-card__title" id="apt-card-title" data-i18n-html="apt.bookTitle">Consultá <em>disponibilidad</em></h2>
+            <div class="apt-card__field">
+              <label class="eyebrow" for="a-dates" data-i18n="book.dates">Fechas</label>
+              <input id="a-dates" class="book__input" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+            </div>
+            <div class="apt-card__field">
+              <span class="eyebrow" id="a-guests-l" data-i18n="book.guests">Huéspedes</span>
+              <div class="stepper stepper--book" role="group" aria-labelledby="a-guests-l">
+                <button type="button" data-apt-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+                <output data-apt-guests>2</output>
+                <button type="button" data-apt-step="1" data-i18n-attr="aria-label:search.more">+</button>
+              </div>
+              <small class="book__hint" data-apt-max></small>
+            </div>
+            <button type="button" class="btn apt-card__cta" data-apt-book data-i18n="apt.bookCta">Armar mi consulta</button>
+            <p class="apt-card__note" data-i18n="apt.bookNote"></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Imagen a todo el ancho -->
+    <section class="apt-img" aria-hidden="true"><img data-apt-wide alt="" loading="lazy"></section>
+
+    <!-- Otros departamentos -->
+    <section class="apt-more band band--sand">
+      <div class="gutter wrap">
+        <header class="apts__head">
+          <h2 class="h2" data-split="lines" data-i18n-html="apt.others">Otros <em>departamentos</em></h2>
+          <a class="link-cta" href="propiedades/"><span data-i18n="apts.all">Ver todos</span> <span aria-hidden="true">→</span></a>
+        </header>
+        <div class="props__grid" data-apt-more></div>
+      </div>
+    </section>
+
+  <!-- Galería a pantalla completa -->
+  <dialog class="lightbox" data-lightbox data-lenis-prevent>
+    <button type="button" class="lightbox__close" data-lightbox-close data-i18n-attr="aria-label:lb.close"><span></span><span></span></button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev arrow arrow--light" data-lightbox-prev data-i18n-attr="aria-label:lb.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <figure class="lightbox__fig"><img data-lightbox-img alt=""><figcaption class="lightbox__count" data-lightbox-count></figcaption></figure>
+    <button type="button" class="lightbox__nav lightbox__nav--next arrow arrow--light" data-lightbox-next data-i18n-attr="aria-label:lb.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  </dialog>
