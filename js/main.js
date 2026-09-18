@@ -176,6 +176,7 @@
     if (typeof aptPage !== 'undefined' && aptPage) aptPage.render();
     if (typeof expPage !== 'undefined' && expPage) expPage.render();
     if (typeof expsPage !== 'undefined' && expsPage) expsPage.render();
+    if (typeof fixLinks === 'function') fixLinks();
     if (aptSlider) aptSlider.refresh();
     if (expSlider) expSlider.refresh();
     if (marquee) marquee.refresh();
@@ -794,7 +795,20 @@
   })();
 
   /* ================= Navegación entre páginas con transición ================= */
+  // Abriendo los archivos directo (file://) las carpetas no cargan su index.html solas:
+  // en ese caso agregamos "index.html" a los links de carpeta (propiedades/, experiencias/…).
+  var IS_FILE = location.protocol === 'file:';
+  function fixUrl(u) { return IS_FILE ? String(u).replace(/\/(?=[?#]|$)/, '/index.html') : u; }
+  function fixLinks() {
+    if (!IS_FILE) return;
+    $$('a[href]').forEach(function (a) {
+      var h = a.getAttribute('href');
+      if (/^(https?:|mailto:|tel:|#)/.test(h)) return;
+      var f = fixUrl(h); if (f !== h) a.setAttribute('href', f);
+    });
+  }
   function goTo(url) {
+    url = fixUrl(url);
     if (!gsap || !bars.length || reduced) { location.href = url; return; }
     gsap.timeline()
       .set(bars, { transformOrigin: '50% 100%' })
@@ -805,7 +819,7 @@
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
     var href = a.getAttribute('href');
-    if (!/^(\.\/|propiedades|experiencias)/.test(href)) return;
+    if (!/^(\.\/|propiedades|experiencias|index\.html)/.test(href)) return;
     // ./#seccion estando en la home → scroll interno
     if (PAGE === 'home' && href.indexOf('./#') === 0) return;
     e.preventDefault(); closeDrawer(); goTo(href);

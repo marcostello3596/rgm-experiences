@@ -23,7 +23,13 @@ def home_links(s):
 subnav = home_links(nav).replace('href="./#top" class="logo"', 'href="./" class="logo"')
 subtail = home_links(tail).replace('href="./#top" class="logo logo--footer"', 'href="./" class="logo logo--footer"')
 ICON = ('<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%233d1a22%22/%3E%3Cpath d=%22M4 22 L12 12 L16 16 L21 9 L28 22%22 fill=%22none%22 stroke=%22%23d9b98a%22 stroke-width=%222%22/%3E%3C/svg%3E">\n')
+import time, hashlib
+CACHE_V = hashlib.md5(b''.join(open(os.path.join(OUT, f), 'rb').read() for f in ['css/styles.css', 'js/main.js', 'js/i18n.js', 'js/data.js', 'js/detail.js', 'js/exp-detail.js'])).hexdigest()[:8]
+def bust(t):
+    # ?v=… en css/js propios para que el navegador no use versiones viejas en caché
+    return re.sub(r'((?:href|src)="(?:css|js)/[^"?]+\.(?:css|js))"', r'\1?v=%s"' % CACHE_V, t)
 def full(frag, base=''):
+    frag = bust(frag)
     i = frag.index('<div class="rgm-page"')
     b = '<base href="%s">\n' % base if base else ''
     return ('<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="utf-8">\n'
