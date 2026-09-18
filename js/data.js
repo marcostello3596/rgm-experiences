@@ -70,42 +70,42 @@ window.RGM_EXTRAS = [
 
 window.RGM_EXPERIENCES = [
   {
-    img: 'img/exp-tasting.jpg',
+    slug: 'ruta-del-malbec', img: 'img/exp-tasting.jpg',
     name: { es: 'Ruta del Malbec', en: 'Malbec Route', pt: 'Rota do Malbec' },
     place: { es: 'Luján de Cuyo', en: 'Luján de Cuyo', pt: 'Luján de Cuyo' },
     duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
     text: { es: 'Tres bodegas, degustaciones guiadas y almuerzo de pasos entre viñedos.', en: 'Three wineries, guided tastings and a multi-course lunch among the vines.', pt: 'Três vinícolas, degustações guiadas e almoço harmonizado entre vinhedos.' }
   },
   {
-    img: 'img/exp-andes.jpg',
+    slug: 'valle-de-uco', img: 'img/exp-andes.jpg',
     name: { es: 'Valle de Uco', en: 'Uco Valley', pt: 'Vale de Uco' },
     place: { es: 'Tupungato · Tunuyán · San Carlos', en: 'Tupungato · Tunuyán · San Carlos', pt: 'Tupungato · Tunuyán · San Carlos' },
     duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
     text: { es: 'Bodegas de altura con la cordillera de fondo y almuerzo con vista a los Andes.', en: 'High-altitude wineries against the Andes, with a lunch facing the peaks.', pt: 'Vinícolas de altitude com a cordilheira ao fundo e almoço com vista para os Andes.' }
   },
   {
-    img: 'img/exp-snow.jpg',
+    slug: 'alta-montana', img: 'img/exp-snow.jpg',
     name: { es: 'Alta Montaña', en: 'High Andes', pt: 'Alta Montanha' },
     place: { es: 'Potrerillos · Uspallata · Aconcagua', en: 'Potrerillos · Uspallata · Aconcagua', pt: 'Potrerillos · Uspallata · Aconcágua' },
     duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
     text: { es: 'El dique de Potrerillos, Puente del Inca y el mirador del Aconcagua.', en: 'Potrerillos dam, Puente del Inca and the Aconcagua lookout.', pt: 'A represa de Potrerillos, a Puente del Inca e o mirante do Aconcágua.' }
   },
   {
-    img: 'img/exp-horse.jpg',
+    slug: 'cabalgata-al-atardecer', img: 'img/exp-horse.jpg',
     name: { es: 'Cabalgata al atardecer', en: 'Sunset horseback ride', pt: 'Cavalgada ao pôr do sol' },
     place: { es: 'Pie de monte', en: 'Andean foothills', pt: 'Pé da montanha' },
     duration: { es: 'Medio día', en: 'Half day', pt: 'Meio dia' },
     text: { es: 'A caballo por la precordillera y asado criollo cuando cae el sol.', en: 'Ride through the foothills and share a traditional asado at sundown.', pt: 'A cavalo pela pré-cordilheira e churrasco crioulo quando o sol se põe.' }
   },
   {
-    img: 'img/exp-vineglass.jpg',
+    slug: 'bodegas-en-bici', img: 'img/exp-vineglass.jpg',
     name: { es: 'Bodegas en bici', en: 'Wineries by bike', pt: 'Vinícolas de bike' },
     place: { es: 'Maipú', en: 'Maipú', pt: 'Maipú' },
     duration: { es: 'Medio día', en: 'Half day', pt: 'Meio dia' },
     text: { es: 'Pedaleá entre olivares y bodegas familiares a tu ritmo.', en: 'Pedal between olive groves and family wineries at your own pace.', pt: 'Pedale entre olivais e vinícolas familiares no seu ritmo.' }
   },
   {
-    img: 'img/exp-cellar.jpg',
+    slug: 'mendoza-esencial', img: 'img/exp-cellar.jpg',
     name: { es: 'Paquete Mendoza Esencial', en: 'Essential Mendoza package', pt: 'Pacote Mendoza Essencial' },
     place: { es: '3 noches · depto + 2 tours + traslados', en: '3 nights · apartment + 2 tours + transfers', pt: '3 noites · apê + 2 passeios + traslados' },
     duration: { es: '4 días', en: '4 days', pt: '4 dias' },

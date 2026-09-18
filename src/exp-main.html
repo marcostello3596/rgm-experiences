@@ -1,0 +1,79 @@
+  <main id="top">
+    <section class="apt-head band band--sand">
+      <div class="gutter wrap">
+        <nav class="crumbs eyebrow" aria-label="Breadcrumb">
+          <a href="./" data-i18n="apt.home">Inicio</a><span aria-hidden="true">/</span>
+          <a href="./#experiencias" data-i18n="x.crumb">Experiencias</a><span aria-hidden="true">/</span>
+          <span aria-current="page" data-x-crumb></span>
+        </nav>
+        <div class="apt-head__row">
+          <div>
+            <h1 class="apt-head__title" data-split="lines" data-x-title></h1>
+            <p class="apt-head__loc"><span data-x-place></span><span class="dot" aria-hidden="true"></span><span data-i18n="apt.country">Mendoza, Argentina</span></p>
+          </div>
+          <dl class="apt-head__stats apt-head__stats--text" data-x-stats></dl>
+        </div>
+        <div class="apt-head__rule"></div>
+        <div class="apt-gal" data-x-gallery></div>
+        <div class="apt-gal__all"><button type="button" class="link-cta" data-lightbox-open="0"><span data-i18n="apt.viewAll">Ver todas las fotos</span> <span aria-hidden="true">→</span></button></div>
+      </div>
+    </section>
+
+    <section class="apt-book band band--sand">
+      <div class="gutter wrap">
+        <div class="apt-book__layout">
+          <div class="apt-book__left">
+            <p class="eyebrow" data-i18n="x.eyebrow">La experiencia</p>
+            <h2 class="h2" data-split="lines" data-x-h2></h2>
+            <p class="apt-book__intro" data-x-intro></p>
+            <div class="tabs" data-tabs>
+              <div class="tabs__list" role="tablist">
+                <button type="button" role="tab" id="tab-it" aria-controls="pane-it" aria-selected="true" data-i18n="x.tabIt">Itinerario</button>
+                <button type="button" role="tab" id="tab-in" aria-controls="pane-in" aria-selected="false" tabindex="-1" data-i18n="x.tabInc">Qué incluye</button>
+                <button type="button" role="tab" id="tab-if" aria-controls="pane-if" aria-selected="false" tabindex="-1" data-i18n="x.tabInfo">Info útil</button>
+              </div>
+              <div class="tabs__pane" role="tabpanel" id="pane-it" aria-labelledby="tab-it"><ol class="timeline" data-x-itinerary></ol></div>
+              <div class="tabs__pane" role="tabpanel" id="pane-in" aria-labelledby="tab-in" hidden data-x-includes></div>
+              <div class="tabs__pane" role="tabpanel" id="pane-if" aria-labelledby="tab-if" hidden data-x-info></div>
+            </div>
+          </div>
+
+          <aside class="apt-card" aria-labelledby="x-card-title">
+            <h2 class="apt-card__title" id="x-card-title" data-i18n-html="x.bookTitle">Sumala a <em>tu viaje</em></h2>
+            <div class="apt-card__field">
+              <label class="eyebrow" for="x-date" data-i18n="x.date">Fecha</label>
+              <input id="x-date" class="book__input" type="text" readonly data-i18n-attr="placeholder:x.datePh">
+            </div>
+            <div class="apt-card__field">
+              <span class="eyebrow" id="x-people-l" data-i18n="x.people">Personas</span>
+              <div class="stepper stepper--book" role="group" aria-labelledby="x-people-l">
+                <button type="button" data-x-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+                <output data-x-people>2</output>
+                <button type="button" data-x-step="1" data-i18n-attr="aria-label:search.more">+</button>
+              </div>
+            </div>
+            <button type="button" class="btn apt-card__cta" data-x-book data-i18n="x.bookCta">Armar mi consulta</button>
+            <p class="apt-card__note" data-i18n="apt.bookNote"></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="apt-img" aria-hidden="true"><img data-x-wide alt="" loading="lazy"></section>
+
+    <section class="apt-more band band--sand">
+      <div class="gutter wrap">
+        <header class="apts__head">
+          <h2 class="h2" data-split="lines" data-i18n-html="x.others">Otras <em>experiencias</em></h2>
+          <a class="link-cta" href="./#experiencias"><span data-i18n="x.all">Ver todas</span> <span aria-hidden="true">→</span></a>
+        </header>
+        <div class="props__grid" data-x-more></div>
+      </div>
+    </section>
+
+  <dialog class="lightbox" data-lightbox data-lenis-prevent>
+    <button type="button" class="lightbox__close" data-lightbox-close data-i18n-attr="aria-label:lb.close"><span></span><span></span></button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev arrow arrow--light" data-lightbox-prev data-i18n-attr="aria-label:lb.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <figure class="lightbox__fig"><img data-lightbox-img alt=""><figcaption class="lightbox__count" data-lightbox-count></figcaption></figure>
+    <button type="button" class="lightbox__nav lightbox__nav--next arrow arrow--light" data-lightbox-next data-i18n-attr="aria-label:lb.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  </dialog>

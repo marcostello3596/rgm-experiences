@@ -50,8 +50,15 @@ for slug, name, zone in apts:
     page = h + '<div class="rgm-page" data-page="apt" data-slug="%s">\n\n' % slug + subnav + rd('apt-main.html') + '\n' + faq_only + subtail
     write('propiedades/%s/index.html' % slug, full(page, '../../'))
 
+# Fichas de experiencias
+exps = re.findall(r"slug: '([^']+)', img: '[^']+',\n\s+name: \{ es: '([^']+)'", data)
+for slug, name in exps:
+    h = head.replace('<title>RGM Experiences</title>', '<title>%s · Experiencias en Mendoza · RGM Experiences</title>' % name)
+    page = h + '<div class="rgm-page" data-page="exp" data-slug="%s">\n\n' % slug + subnav + rd('exp-main.html') + '\n' + faq_only + subtail
+    write('experiencias/%s/index.html' % slug, full(page, '../../'))
+
 # Redirección de la URL vieja
 write('propiedades.html', '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>RGM Experiences</title>'
       '<script>location.replace("propiedades/" + location.search);</script>'
       '<meta http-equiv="refresh" content="0; url=propiedades/"></head><body></body></html>\n')
-print('ok:', 'index, propiedades/,', ', '.join(s for s, _, _ in apts))
+print('ok:', 'index, propiedades/,', ', '.join(s for s, _, _ in apts), '| experiencias:', ', '.join(s for s, _ in exps))

@@ -38,7 +38,7 @@
         var p = pair.split(':'); el.setAttribute(p[0].trim(), t(p[1].trim()));
       });
     });
-    document.title = PAGE === 'apt' && CUR_APT ? t('apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : 'meta.title');
+    document.title = PAGE === 'exp' && CUR_EXP ? t('x.metaTitle', { name: L(CUR_EXP.name) }) : PAGE === 'apt' && CUR_APT ? t('apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : 'meta.title');
     var md = $('meta[name="description"]'); if (md) md.setAttribute('content', t('meta.desc'));
     $$('.lang__btn').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
     $$('[data-wa="hello"]').forEach(function (a) { a.href = waLink(t('wa.hello')); });
@@ -110,10 +110,10 @@
     track.innerHTML = EXPS.map(function (e, i) {
       return '<article class="exp-card" data-i="' + i + '">' +
         '<img src="' + e.img + '" alt="" loading="lazy" draggable="false">' +
-        '<button type="button" class="exp-card__cta" data-book-exp-i="' + i + '" aria-label="' + t('exp.book') + ': ' + L(e.name) + '">' + arrowSvg + '</button>' +
+        '<a class="exp-card__cta" href="' + expURL(e) + '" aria-label="' + t('x.view') + ': ' + L(e.name) + '">' + arrowSvg + '</a>' +
         '<div class="exp-card__body">' +
         '<span class="exp-card__place">' + L(e.place) + '</span>' +
-        '<h3 class="exp-card__name">' + L(e.name) + '</h3>' +
+        '<h3 class="exp-card__name"><a href="' + expURL(e) + '">' + L(e.name) + '</a></h3>' +
         '<p class="exp-card__text">' + L(e.text) + '</p>' +
         '<div class="exp-card__meta"><span>' + t('exp.duration') + '<br>' + L(e.duration) + '</span>' +
         '<button type="button" class="exp-card__add" data-book-exp-i="' + i + '">' + t('exp.book') + ' +</button></div>' +
@@ -174,6 +174,7 @@
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
     if (typeof aptPage !== 'undefined' && aptPage) aptPage.render();
+    if (typeof expPage !== 'undefined' && expPage) expPage.render();
     if (aptSlider) aptSlider.refresh();
     if (expSlider) expSlider.refresh();
     if (marquee) marquee.refresh();
@@ -327,6 +328,8 @@
 
   var PAGE = ($('.rgm-page') && $('.rgm-page').getAttribute('data-page')) || 'home';
   var CUR_APT = PAGE === 'apt' ? APTS.filter(function (a) { return a.slug === $('.rgm-page').getAttribute('data-slug'); })[0] : null;
+  var CUR_EXP = PAGE === 'exp' ? EXPS.filter(function (x) { return x.slug === $('.rgm-page').getAttribute('data-slug'); })[0] : null;
+  var expURL = function (x) { return 'experiencias/' + x.slug + '/'; };
   var PROPS_URL = 'propiedades/';
   var aptURL = function (a) { return 'propiedades/' + a.slug + '/'; };
   var toISO = function (d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
@@ -531,7 +534,8 @@
       var d = bfp ? bfp.selectedDates : [];
       var lines = ['*Nueva consulta desde la web RGM*', ''];
       lines.push('• Departamento: ' + (a ? a.name + ' (' + a.zone + ')' : 'Sin alojamiento — solo experiencias'));
-      lines.push('• Fechas: ' + (d.length === 2 ? fmtDay(d[0]) + ' → ' + fmtDay(d[1]) + ' (' + nightsBetween(d[0], d[1]) + ' noches)' : 'a definir'));
+      var nn = d.length === 2 ? nightsBetween(d[0], d[1]) : 0;
+      lines.push('• Fechas: ' + (d.length === 2 ? (nn ? fmtDay(d[0]) + ' → ' + fmtDay(d[1]) + ' (' + nn + (nn === 1 ? ' noche)' : ' noches)') : fmtDay(d[0])) : 'a definir'));
       lines.push('• Huéspedes: ' + st.guests);
       if (a) {
         var ex = EXTRAS.filter(function (x) { return st.extras[x.id]; }).map(function (x) { return x.label.es; });
@@ -681,6 +685,77 @@
     return { render: render };
   })();
 
+
+  /* ================= Ficha de experiencia (/experiencias/<slug>/) ================= */
+  var expPage = (function () {
+    if (PAGE !== 'exp' || !CUR_EXP) return null;
+    var x = CUR_EXP, D = (window.RGM_EXP_DETAILS || {})[x.slug] || {};
+    var gallery = D.gallery && D.gallery.length ? D.gallery : [x.img];
+    var xfp = null, people = 2;
+    function render() {
+      $('[data-x-crumb]').textContent = L(x.name);
+      var words = L(x.name).split(' '), last = words.pop();
+      $('[data-x-title]').innerHTML = (words.length ? words.join(' ') + ' ' : '') + '<em>' + last + '</em>';
+      $('[data-x-place]').textContent = L(x.place);
+      var f = D.facts || {};
+      $('[data-x-stats]').innerHTML = [
+        ['x.duration', L(x.duration)], ['x.group', L(f.group) || '—'], ['x.transfer', f.transfer ? t('x.transferYes') : '—'], ['x.langs', f.langs || 'ES']
+      ].map(function (r) { return '<div><dt class="eyebrow">' + t(r[0]) + '</dt><dd>' + r[1] + '</dd></div>'; }).join('');
+      $('[data-x-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
+        return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '"><img src="' + src + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
+      }).join('');
+      $('[data-x-h2]').innerHTML = L(D.title) || L(x.name);
+      $('[data-x-intro]').textContent = L(D.intro) || L(x.text);
+      $('[data-x-itinerary]').innerHTML = (D.itinerary || []).map(function (st) {
+        return '<li class="timeline__item"><span class="timeline__h">' + (L(st.h) || '') + '</span><div><h3 class="apt-ov__t">' + L(st.t) + '</h3><p>' + L(st.p) + '</p></div></li>';
+      }).join('');
+      var li = function (arr, cls) { return '<ul class="amen__list ' + cls + '">' + (arr || []).map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul>'; };
+      $('[data-x-includes]').innerHTML = '<div class="amen"><h3 class="amen__t">' + t('x.inc') + '</h3>' + li(L(D.includes), 'is-inc') + '</div>' +
+        (D.excludes ? '<div class="amen"><h3 class="amen__t">' + t('x.exc') + '</h3>' + li(L(D.excludes), 'is-exc') + '</div>' : '');
+      $('[data-x-info]').innerHTML = (D.info || []).map(function (b) { return '<div class="apt-ov"><h3 class="apt-ov__t">' + L(b.t) + '</h3><p>' + L(b.p) + '</p></div>'; }).join('');
+      $('[data-x-people]').textContent = people;
+      $('[data-x-wide]').src = gallery[1] || gallery[0];
+      $('[data-x-more]').innerHTML = EXPS.filter(function (o) { return o !== x; }).slice(0, 3).map(function (o) {
+        return '<article class="prop"><a class="prop__media" href="' + expURL(o) + '" tabindex="-1" aria-hidden="true"><img class="prop__img" src="' + o.img + '" alt="" loading="lazy"></a>' +
+          '<div class="prop__body"><p class="eyebrow prop__zone">' + L(o.place) + '</p><h3 class="prop__name"><a href="' + expURL(o) + '">' + L(o.name) + '</a></h3>' +
+          '<p class="prop__tag">' + L(o.text) + '</p></div></article>';
+      }).join('');
+      if (xfp) { xfp.set('locale', lang === 'en' ? 'default' : lang); if (xfp.altInput) xfp.altInput.placeholder = t('x.datePh'); if (xfp.selectedDates.length) xfp.setDate(xfp.selectedDates, false); }
+    }
+    var tabs = $$('[role="tab"]');
+    function select(tab) {
+      tabs.forEach(function (b) { var on = b === tab; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; $('#' + b.getAttribute('aria-controls')).hidden = !on; });
+      if (gsap && !reduced) gsap.fromTo($('#' + tab.getAttribute('aria-controls')), { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: .5, ease: 'power3.out' });
+      if (ST) ST.refresh();
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab); });
+      tab.addEventListener('keydown', function (e) { var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return; var n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); select(n); });
+    });
+    if (window.flatpickr) xfp = flatpickr('#x-date', { minDate: 'today', dateFormat: 'Y-m-d', altInput: true, altFormat: 'j M Y', locale: lang === 'en' ? 'default' : lang, disableMobile: true, position: 'below right' });
+    $$('[data-x-step]').forEach(function (b) { b.addEventListener('click', function () { people = Math.max(1, Math.min(20, people + parseInt(b.getAttribute('data-x-step'), 10))); $('[data-x-people]').textContent = people; }); });
+    $('[data-x-book]').addEventListener('click', function () {
+      var d = xfp && xfp.selectedDates.length ? [xfp.selectedDates[0], xfp.selectedDates[0]] : null;
+      if (booking) booking.open({ apt: -1, exp: EXPS.indexOf(x), dates: d, guests: people });
+    });
+    var lb = $('[data-lightbox]'), cur = 0;
+    function show(i) { cur = (i + gallery.length) % gallery.length; $('[data-lightbox-img]', lb).src = gallery[cur]; $('[data-lightbox-count]', lb).textContent = pad(cur + 1) + ' / ' + pad(gallery.length); }
+    document.addEventListener('click', function (e) { var o = e.target.closest && e.target.closest('[data-lightbox-open]'); if (!o) return; show(parseInt(o.getAttribute('data-lightbox-open'), 10) || 0); lb.showModal(); if (lenis) lenis.stop(); });
+    $('[data-lightbox-prev]', lb).addEventListener('click', function () { show(cur - 1); });
+    $('[data-lightbox-next]', lb).addEventListener('click', function () { show(cur + 1); });
+    $('[data-lightbox-close]', lb).addEventListener('click', function () { lb.close(); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+    lb.addEventListener('close', function () { if (lenis) lenis.start(); });
+    lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') show(cur + 1); if (e.key === 'ArrowLeft') show(cur - 1); });
+    render();
+    if (gsap && !reduced && ST) {
+      gsap.from('.apt-gal__tile', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .07, delay: .4 });
+      gsap.fromTo('.apt-img img', { yPercent: -12 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.apt-img', start: 'top bottom', end: 'bottom top', scrub: true } });
+      gsap.from('.timeline__item', { x: -24, opacity: 0, duration: .8, ease: 'power3.out', stagger: .08, scrollTrigger: { trigger: '.timeline', start: 'top 85%', once: true } });
+    }
+    return { render: render };
+  })();
+
   /* ================= Navegación entre páginas con transición ================= */
   function goTo(url) {
     if (!gsap || !bars.length || reduced) { location.href = url; return; }
@@ -693,7 +768,7 @@
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
     var href = a.getAttribute('href');
-    if (!/^(\.\/|propiedades)/.test(href)) return;
+    if (!/^(\.\/|propiedades|experiencias)/.test(href)) return;
     // ./#seccion estando en la home → scroll interno
     if (PAGE === 'home' && href.indexOf('./#') === 0) return;
     e.preventDefault(); closeDrawer(); goTo(href);
