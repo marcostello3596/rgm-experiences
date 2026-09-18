@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%233d1a22%22/%3E%3Cpath d=%22M4 22 L12 12 L16 16 L21 9 L28 22%22 fill=%22none%22 stroke=%22%23d9b98a%22 stroke-width=%222%22/%3E%3C/svg%3E">
+<title>Departamentos · RGM Experiences</title>
+<meta name="description" content="Departamentos de alquiler temporario en Mendoza y experiencias a medida: tours de bodegas, alta montaña, cabalgatas y paquetes completos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400;1,500&family=Libre+Franklin:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="css/flatpickr.css">
+<link rel="stylesheet" href="css/styles.css">
+<script>
+  /* Pre-paint: idioma inicial + ocultar titulares hasta que SplitText los prepare */
+  (function () {
+    var d = document.documentElement, l = 'en';
+    try { l = localStorage.getItem('rgm-lang') || ''; } catch (e) { l = ''; }
+    if (!l) {
+      var langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']);
+      l = 'en';
+      for (var i = 0; i < langs.length; i++) {
+        var c = String(langs[i]).slice(0, 2).toLowerCase();
+        if (c === 'es' || c === 'pt' || c === 'en') { l = c; break; }
+      }
+    }
+    d.lang = l; d.classList.add('js');
+  })();
+</script>
+
+</head>
+<body>
+<div class="rgm-page" data-page="props">
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" data-nav>
+    <div class="nav__inner gutter">
+      <nav class="nav__links" aria-label="Principal">
+        <a href="propiedades.html" data-i18n="nav.apartments">Departamentos</a>
+        <a href="./#experiencias" data-i18n="nav.experiences">Experiencias</a>
+        <a href="./#faq" data-i18n="nav.faq">Preguntas</a>
+      </nav>
+      <button class="nav__burger" type="button" data-drawer-open aria-controls="drawer" aria-expanded="false" data-i18n-attr="aria-label:nav.menu"><span></span><span></span></button>
+
+      <a href="./" class="logo" aria-label="RGM Experiences">
+        <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span class="logo__word">RGM</span>
+        <span class="logo__sub">Experiences</span>
+      </a>
+
+      <div class="nav__right">
+        <div class="lang" role="group" data-i18n-attr="aria-label:lang.label">
+          <button type="button" class="lang__btn" data-lang="es">ES</button>
+          <button type="button" class="lang__btn" data-lang="en">EN</button>
+          <button type="button" class="lang__btn" data-lang="pt">PT</button>
+        </div>
+        <a href="#contacto" class="btn btn--light nav__book" data-i18n="nav.book">Reservar</a>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="drawer" id="drawer" data-drawer>
+    <button class="drawer__close" type="button" data-drawer-close data-i18n-attr="aria-label:nav.close"><span></span><span></span></button>
+    <div class="drawer__inner">
+      <a href="propiedades.html" class="drawer__link" data-i18n="nav.apartments">Departamentos</a>
+      <a href="./#experiencias" class="drawer__link" data-i18n="nav.experiences">Experiencias</a>
+      <a href="./#faq" class="drawer__link" data-i18n="nav.faq">Preguntas</a>
+      <a href="#contacto" class="drawer__link" data-i18n="nav.contact">Contacto</a>
+      <div class="lang lang--drawer" role="group" data-i18n-attr="aria-label:lang.label">
+        <button type="button" class="lang__btn" data-lang="es">ES</button>
+        <button type="button" class="lang__btn" data-lang="en">EN</button>
+        <button type="button" class="lang__btn" data-lang="pt">PT</button>
+      </div>
+      <a href="#contacto" class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a>
+    </div>
+  </dialog>
+
+  <main id="top">
+    <section class="props band band--sand" id="departamentos">
+      <div class="gutter wrap">
+        <header class="props__head">
+          <div>
+            <p class="eyebrow" data-i18n="props.eyebrow">Todos los departamentos</p>
+            <h1 class="props__title" data-split="lines" data-i18n-html="props.title">Encontrá tu <em>lugar</em> en Mendoza.</h1>
+          </div>
+          <p class="props__lead muted" data-i18n="props.lead"></p>
+        </header>
+
+        <form class="search search--page" data-search autocomplete="off">
+          <div class="search__field search__field--dates">
+            <label for="s-dates" class="eyebrow" data-i18n="search.when">Cuándo</label>
+            <input id="s-dates" class="search__input" type="text" readonly data-i18n-attr="placeholder:search.datesPh">
+          </div>
+          <div class="search__field search__field--guests">
+            <span class="eyebrow" id="s-who-l" data-i18n="search.who">Quiénes</span>
+            <button type="button" class="search__input search__guests" id="s-who" aria-labelledby="s-who-l s-who" aria-expanded="false" aria-controls="s-pop" data-guests-toggle><span data-guests-label>2 huéspedes</span></button>
+            <div class="search__pop search__pop--below" id="s-pop" hidden data-guests-pop>
+              <div class="search__pop-row">
+                <span data-i18n="search.guests">Huéspedes</span>
+                <div class="stepper">
+                  <button type="button" data-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+                  <output data-guests-count>2</output>
+                  <button type="button" data-step="1" data-i18n-attr="aria-label:search.more">+</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn--small" data-guests-done data-i18n="search.done">Listo</button>
+            </div>
+          </div>
+          <button type="submit" class="btn search__submit" data-i18n="search.submit">Consultar</button>
+        </form>
+
+        <div class="props__meta">
+          <p class="eyebrow props__count" role="status" data-props-count></p>
+          <div class="props__chips" data-props-chips></div>
+          <button type="button" class="props__clear" data-props-clear hidden data-i18n="props.clear">Limpiar filtros</button>
+        </div>
+
+        <div class="props__grid" data-props-grid></div>
+
+        <div class="props__empty" data-props-empty hidden>
+          <p class="h4" data-i18n="props.emptyT"></p>
+          <p class="muted" data-i18n="props.emptyP"></p>
+          <div class="props__empty-actions">
+            <button type="button" class="btn" data-props-clear data-i18n="props.clear">Limpiar filtros</button>
+            <a class="btn btn--outline" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="faq.ctaB">Escribinos</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACTO ============ -->
+    <section class="contact band band--wine" id="contacto">
+      <div class="gutter wrap">
+        <div class="contact__layout">
+          <div class="contact__img"><img src="img/contact.jpg" alt="" loading="lazy"></div>
+          <div class="contact__body">
+            <p class="eyebrow eyebrow--gold" data-i18n="ct.eyebrow">Empezá tu viaje</p>
+            <h2 class="h2" data-split="lines" data-i18n-html="ct.title">Dejanos armar <em>algo inolvidable.</em></h2>
+            <p class="contact__text" data-i18n="ct.text"></p>
+            <form class="form" data-contact novalidate>
+              <div class="form__row">
+                <div class="form__field"><label for="c-first" class="eyebrow" data-i18n="ct.first">Nombre</label><input id="c-first" name="first" autocomplete="given-name" required></div>
+                <div class="form__field"><label for="c-last" class="eyebrow" data-i18n="ct.last">Apellido</label><input id="c-last" name="last" autocomplete="family-name"></div>
+              </div>
+              <div class="form__field"><label for="c-email" class="eyebrow" data-i18n="ct.email">Email</label><input id="c-email" name="email" type="email" autocomplete="email"></div>
+              <div class="form__field"><label for="c-msg" class="eyebrow" data-i18n="ct.msg">Contanos sobre tu viaje</label><textarea id="c-msg" name="msg" rows="4" required data-i18n-attr="placeholder:ct.msgPh"></textarea></div>
+              <button type="submit" class="btn btn--gold" data-i18n="ct.send">Enviar por WhatsApp</button>
+              <p class="form__msg" role="status" data-contact-msg></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq band band--sand" id="faq">
+      <div class="gutter wrap wrap--narrow">
+        <header class="section-head section-head--center">
+          <h2 class="h2" data-split="lines" data-i18n-html="faq.title">Preguntas <em>frecuentes.</em></h2>
+          <p class="muted" data-i18n="faq.sub"></p>
+        </header>
+        <div class="faq__list" data-faq></div>
+        <div class="faq__cta">
+          <p class="h4" data-i18n="faq.ctaT">¿Te quedó alguna duda?</p>
+          <p class="muted" data-i18n="faq.ctaP"></p>
+          <a class="btn" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="faq.ctaB">Escribinos</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer band band--ink">
+    <div class="gutter wrap">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="./" class="logo logo--footer" aria-label="RGM Experiences">
+            <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span class="logo__word">RGM</span>
+            <span class="logo__sub">Experiences</span>
+          </a>
+          <p class="footer__tag" data-i18n-html="ft.tag">Descansá bien. <em>Viví Mendoza.</em></p>
+        </div>
+        <ul class="footer__list">
+          <li class="eyebrow eyebrow--gold" data-i18n="ft.explore">Explorar</li>
+          <li><a href="propiedades.html" data-i18n="nav.apartments"></a></li>
+          <li><a href="./#experiencias" data-i18n="nav.experiences"></a></li>
+          <li><a href="./#faq" data-i18n="nav.faq"></a></li>
+          <li><a href="#contacto" data-i18n="nav.bookStay"></a></li>
+        </ul>
+        <ul class="footer__list">
+          <li class="eyebrow eyebrow--gold" data-i18n="ft.contact">Contacto</li>
+          <li><a href="#" data-cfg="email"></a></li>
+          <li><a href="#" data-wa="hello" target="_blank" rel="noopener" data-cfg="phone"></a></li>
+          <li class="footer__social">
+            <a href="#" data-cfg="instagram" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".9"/></svg></a>
+            <a href="#" data-cfg="facebook" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 00-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg></a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer__legal">
+        <span>© <span data-year>2026</span> RGM Experiences · <span data-i18n="ft.rights">Todos los derechos reservados</span></span>
+        <span data-i18n="ft.photos">Fotos de muestra: Freepik</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Panel de consulta (se envía por WhatsApp al administrador) -->
+  <dialog class="book" id="book" data-book-dialog aria-labelledby="book-title">
+    <form class="book__form" data-book-form novalidate>
+      <header class="book__head">
+        <h2 class="h2 book__title" id="book-title" data-i18n-html="book.title">Armá tu <em>consulta</em></h2>
+        <button type="button" class="book__close" data-book-close data-i18n-attr="aria-label:book.close"><span></span><span></span></button>
+      </header>
+      <p class="muted book__lead" data-i18n="book.lead"></p>
+
+      <div class="book__group">
+        <label class="eyebrow" for="b-apt" data-i18n="book.apt">Departamento</label>
+        <select id="b-apt" class="book__select" data-book-apt></select>
+      </div>
+
+      <div class="book__row" data-book-stay>
+        <div class="book__group">
+          <label class="eyebrow" for="b-dates" data-i18n="book.dates">Fechas</label>
+          <input id="b-dates" class="book__input" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+        </div>
+        <div class="book__group">
+          <span class="eyebrow" id="b-guests-l" data-i18n="book.guests">Huéspedes</span>
+          <div class="stepper stepper--book" role="group" aria-labelledby="b-guests-l">
+            <button type="button" data-book-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+            <output data-book-guests>2</output>
+            <button type="button" data-book-step="1" data-i18n-attr="aria-label:search.more">+</button>
+          </div>
+          <small class="book__hint" data-book-max></small>
+        </div>
+      </div>
+      <p class="book__warn" data-book-busy hidden data-i18n="book.busy"></p>
+
+      <fieldset class="book__group" data-book-extras-wrap>
+        <legend class="eyebrow" data-i18n="book.extras">Extras para tu estadía</legend>
+        <div class="book__checks" data-book-extras></div>
+      </fieldset>
+
+      <fieldset class="book__group">
+        <legend class="eyebrow" data-i18n="book.exps">Sumá experiencias</legend>
+        <div class="book__exps" data-book-exps></div>
+      </fieldset>
+
+      <div class="book__row">
+        <div class="book__group">
+          <label class="eyebrow" for="b-name" data-i18n="book.name">Tu nombre</label>
+          <input id="b-name" class="book__input" name="name" autocomplete="name" required>
+        </div>
+        <div class="book__group">
+          <label class="eyebrow" for="b-phone" data-i18n="book.phone">Teléfono</label>
+          <input id="b-phone" class="book__input" name="phone" type="tel" autocomplete="tel">
+        </div>
+      </div>
+      <div class="book__group">
+        <label class="eyebrow" for="b-notes" data-i18n="book.notes">Comentarios</label>
+        <textarea id="b-notes" class="book__input" name="notes" rows="2" data-i18n-attr="placeholder:book.notesPh"></textarea>
+      </div>
+
+      <div class="book__foot">
+        <p class="book__msg" role="status" data-book-msg></p>
+        <button type="submit" class="btn btn--wa">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm5.8 15.7c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
+          <span data-i18n="book.send">Enviar consulta por WhatsApp</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Flotantes -->
+  <a class="wa-float" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n-attr="aria-label:wa.aria" data-wa-float>
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm0 23.6a10.6 10.6 0 01-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1116 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
+  </a>
+  <div class="mobile-cta"><a href="#contacto" class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a></div>
+
+  <!-- Transición de página -->
+  <div class="curtain" aria-hidden="true" data-curtain></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

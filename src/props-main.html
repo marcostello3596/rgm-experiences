@@ -1,0 +1,52 @@
+  <main id="top">
+    <section class="props band band--sand" id="departamentos">
+      <div class="gutter wrap">
+        <header class="props__head">
+          <div>
+            <p class="eyebrow" data-i18n="props.eyebrow">Todos los departamentos</p>
+            <h1 class="props__title" data-split="lines" data-i18n-html="props.title">Encontrá tu <em>lugar</em> en Mendoza.</h1>
+          </div>
+          <p class="props__lead muted" data-i18n="props.lead"></p>
+        </header>
+
+        <form class="search search--page" data-search autocomplete="off">
+          <div class="search__field search__field--dates">
+            <label for="s-dates" class="eyebrow" data-i18n="search.when">Cuándo</label>
+            <input id="s-dates" class="search__input" type="text" readonly data-i18n-attr="placeholder:search.datesPh">
+          </div>
+          <div class="search__field search__field--guests">
+            <span class="eyebrow" id="s-who-l" data-i18n="search.who">Quiénes</span>
+            <button type="button" class="search__input search__guests" id="s-who" aria-labelledby="s-who-l s-who" aria-expanded="false" aria-controls="s-pop" data-guests-toggle><span data-guests-label>2 huéspedes</span></button>
+            <div class="search__pop search__pop--below" id="s-pop" hidden data-guests-pop>
+              <div class="search__pop-row">
+                <span data-i18n="search.guests">Huéspedes</span>
+                <div class="stepper">
+                  <button type="button" data-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+                  <output data-guests-count>2</output>
+                  <button type="button" data-step="1" data-i18n-attr="aria-label:search.more">+</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn--small" data-guests-done data-i18n="search.done">Listo</button>
+            </div>
+          </div>
+          <button type="submit" class="btn search__submit" data-i18n="search.submit">Consultar</button>
+        </form>
+
+        <div class="props__meta">
+          <p class="eyebrow props__count" role="status" data-props-count></p>
+          <div class="props__chips" data-props-chips></div>
+          <button type="button" class="props__clear" data-props-clear hidden data-i18n="props.clear">Limpiar filtros</button>
+        </div>
+
+        <div class="props__grid" data-props-grid></div>
+
+        <div class="props__empty" data-props-empty hidden>
+          <p class="h4" data-i18n="props.emptyT"></p>
+          <p class="muted" data-i18n="props.emptyP"></p>
+          <div class="props__empty-actions">
+            <button type="button" class="btn" data-props-clear data-i18n="props.clear">Limpiar filtros</button>
+            <a class="btn btn--outline" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="faq.ctaB">Escribinos</a>
+          </div>
+        </div>
+      </div>
+    </section>

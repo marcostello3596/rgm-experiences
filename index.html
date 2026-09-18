@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%233d1a22%22/%3E%3Cpath d=%22M4 22 L12 12 L16 16 L21 9 L28 22%22 fill=%22none%22 stroke=%22%23d9b98a%22 stroke-width=%222%22/%3E%3C/svg%3E">
+<title>RGM Experiences</title>
+<meta name="description" content="Departamentos de alquiler temporario en Mendoza y experiencias a medida: tours de bodegas, alta montaña, cabalgatas y paquetes completos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400;1,500&family=Libre+Franklin:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="css/flatpickr.css">
+<link rel="stylesheet" href="css/styles.css">
+<script>
+  /* Pre-paint: idioma inicial + ocultar titulares hasta que SplitText los prepare */
+  (function () {
+    var d = document.documentElement, l = 'en';
+    try { l = localStorage.getItem('rgm-lang') || ''; } catch (e) { l = ''; }
+    if (!l) {
+      var langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']);
+      l = 'en';
+      for (var i = 0; i < langs.length; i++) {
+        var c = String(langs[i]).slice(0, 2).toLowerCase();
+        if (c === 'es' || c === 'pt' || c === 'en') { l = c; break; }
+      }
+    }
+    d.lang = l; d.classList.add('js');
+  })();
+</script>
+
+</head>
+<body>
+<div class="rgm-page" data-page="home">
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" data-nav>
+    <div class="nav__inner gutter">
+      <nav class="nav__links" aria-label="Principal">
+        <a href="propiedades.html" data-i18n="nav.apartments">Departamentos</a>
+        <a href="#experiencias" data-i18n="nav.experiences">Experiencias</a>
+        <a href="#faq" data-i18n="nav.faq">Preguntas</a>
+      </nav>
+      <button class="nav__burger" type="button" data-drawer-open aria-controls="drawer" aria-expanded="false" data-i18n-attr="aria-label:nav.menu"><span></span><span></span></button>
+
+      <a href="#top" class="logo" aria-label="RGM Experiences">
+        <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <span class="logo__word">RGM</span>
+        <span class="logo__sub">Experiences</span>
+      </a>
+
+      <div class="nav__right">
+        <div class="lang" role="group" data-i18n-attr="aria-label:lang.label">
+          <button type="button" class="lang__btn" data-lang="es">ES</button>
+          <button type="button" class="lang__btn" data-lang="en">EN</button>
+          <button type="button" class="lang__btn" data-lang="pt">PT</button>
+        </div>
+        <a href="#contacto" class="btn btn--light nav__book" data-i18n="nav.book">Reservar</a>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="drawer" id="drawer" data-drawer>
+    <button class="drawer__close" type="button" data-drawer-close data-i18n-attr="aria-label:nav.close"><span></span><span></span></button>
+    <div class="drawer__inner">
+      <a href="propiedades.html" class="drawer__link" data-i18n="nav.apartments">Departamentos</a>
+      <a href="#experiencias" class="drawer__link" data-i18n="nav.experiences">Experiencias</a>
+      <a href="#faq" class="drawer__link" data-i18n="nav.faq">Preguntas</a>
+      <a href="#contacto" class="drawer__link" data-i18n="nav.contact">Contacto</a>
+      <div class="lang lang--drawer" role="group" data-i18n-attr="aria-label:lang.label">
+        <button type="button" class="lang__btn" data-lang="es">ES</button>
+        <button type="button" class="lang__btn" data-lang="en">EN</button>
+        <button type="button" class="lang__btn" data-lang="pt">PT</button>
+      </div>
+      <a href="#contacto" class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a>
+    </div>
+  </dialog>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="hero__media" aria-hidden="true">
+        <!-- Para usar video: reemplazá la imagen por
+             <video class="hero__img" src="video/hero.mp4" autoplay muted loop playsinline poster="img/hero.jpg"></video> -->
+        <img class="hero__img" src="img/hero.jpg" alt="">
+      </div>
+      <div class="hero__shade" aria-hidden="true"></div>
+
+      <div class="hero__content gutter">
+        <h1 class="hero__title" data-split="hero" data-i18n-html="hero.title">Mendoza se vive <em>mejor</em> desde casa</h1>
+
+        <div class="hero__bottom">
+          <dl class="hero__stats">
+            <div><dt data-i18n="hero.statLabel">Colección</dt><dd data-i18n="hero.statValue" data-count-apts>6 departamentos</dd></div>
+            <div><dt data-i18n="hero.statLabel2">Experiencias</dt><dd data-i18n="hero.statValue2">Bodegas · Andes · Sabores</dd></div>
+          </dl>
+
+          <form class="search" data-search action="propiedades.html" autocomplete="off">
+            <div class="search__field search__field--dates">
+              <label for="s-dates" class="eyebrow" data-i18n="search.when">Cuándo</label>
+              <input id="s-dates" class="search__input" type="text" readonly data-i18n-attr="placeholder:search.datesPh">
+            </div>
+            <div class="search__field search__field--guests">
+              <span class="eyebrow" id="s-who-l" data-i18n="search.who">Quiénes</span>
+              <button type="button" class="search__input search__guests" id="s-who" aria-labelledby="s-who-l s-who" aria-expanded="false" aria-controls="s-pop" data-guests-toggle><span data-guests-label>2 huéspedes</span></button>
+              <div class="search__pop" id="s-pop" hidden data-guests-pop>
+                <div class="search__pop-row">
+                  <span data-i18n="search.guests">Huéspedes</span>
+                  <div class="stepper">
+                    <button type="button" data-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+                    <output data-guests-count>2</output>
+                    <button type="button" data-step="1" data-i18n-attr="aria-label:search.more">+</button>
+                  </div>
+                </div>
+                <button type="button" class="btn btn--small" data-guests-done data-i18n="search.done">Listo</button>
+              </div>
+            </div>
+            <button type="submit" class="btn search__submit" data-i18n="search.submit">Consultar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DEPARTAMENTOS ============ -->
+    <section class="apts band band--sand" id="departamentos">
+      <div class="gutter wrap">
+        <div class="apts__grid">
+          <div class="apts__stage" tabindex="0" aria-roledescription="carousel" data-apts>
+            <div class="apts__main" data-apts-main></div>
+            <div class="apts__info" data-apts-info>
+              <p class="eyebrow" data-i18n="apts.eyebrow">Nuestros departamentos</p>
+              <h2 class="h2" data-split="lines" data-i18n-html="apts.title">Espacios que <em>elegiríamos</em> para nosotros.</h2>
+              <div class="apts__cards" data-apts-cards></div>
+            </div>
+            <div class="apts__second" data-apts-second></div>
+            <p class="sr-only" aria-live="polite" data-apts-live></p>
+          </div>
+          <div class="apts__controls">
+            <button type="button" class="arrow" data-apts-prev data-i18n-attr="aria-label:apts.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <div class="count"><span data-apts-curr>01</span><span class="count__total" data-apts-total>/ 06</span></div>
+            <button type="button" class="arrow" data-apts-next data-i18n-attr="aria-label:apts.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+            <div class="progress"><span class="progress__fill" data-apts-progress></span></div>
+            <a href="propiedades.html" class="btn apts__all" data-i18n="apts.all">Ver todos</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONCIERGE ============ -->
+    <section class="concierge band band--sand" id="concierge">
+      <div class="gutter wrap">
+        <header class="section-head">
+          <p class="eyebrow" data-i18n="con.eyebrow">Todo resuelto</p>
+          <h2 class="h2" data-split="lines" data-i18n-html="con.title">Nos ocupamos <em>de todo.</em></h2>
+        </header>
+        <div class="concierge__grid">
+          <article class="concierge__col" data-reveal>
+            <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 26h28M9 26l3-9h16l3 9M12 26v4M28 26v4"/><circle cx="13" cy="22" r="1.4"/><circle cx="27" cy="22" r="1.4"/></svg>
+            <h3 class="h4" data-i18n="con.c1.t">Traslados privados</h3>
+            <p class="muted" data-i18n="con.c1.p"></p>
+            <ul class="ticks"><li data-i18n="con.c1.l1"></li><li data-i18n="con.c1.l2"></li><li data-i18n="con.c1.l3"></li></ul>
+          </article>
+          <article class="concierge__col" data-reveal>
+            <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M14 5h12l-1 11a5 5 0 01-10 0zM20 21v12M14 34h12"/></svg>
+            <h3 class="h4" data-i18n="con.c2.t">Gastronomía</h3>
+            <p class="muted" data-i18n="con.c2.p"></p>
+            <ul class="ticks"><li data-i18n="con.c2.l1"></li><li data-i18n="con.c2.l2"></li><li data-i18n="con.c2.l3"></li></ul>
+          </article>
+          <article class="concierge__col" data-reveal>
+            <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M3 33l11-17 6 8 5-6 12 15zM26 9a3 3 0 106 0 3 3 0 00-6 0"/></svg>
+            <h3 class="h4" data-i18n="con.c3.t">Experiencias a medida</h3>
+            <p class="muted" data-i18n="con.c3.p"></p>
+            <ul class="ticks"><li data-i18n="con.c3.l1"></li><li data-i18n="con.c3.l2"></li><li data-i18n="con.c3.l3"></li></ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ EXPERIENCIAS ============ -->
+    <section class="exp band band--wine" id="experiencias">
+      <div class="gutter wrap">
+        <header class="exp__head">
+          <div>
+            <p class="eyebrow eyebrow--gold" data-i18n="exp.eyebrow">Nuestras experiencias</p>
+            <h2 class="h2" data-split="lines" data-i18n-html="exp.title">Mendoza, <em>en paquetes</em> hechos a tu medida.</h2>
+          </div>
+          <p class="exp__lead" data-i18n="exp.lead"></p>
+        </header>
+        <div class="exp__viewport" data-exp-viewport>
+          <div class="exp__track" data-exp-track></div>
+        </div>
+        <div class="exp__controls">
+          <button type="button" class="arrow arrow--light" data-exp-prev data-i18n-attr="aria-label:exp.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+          <div class="count"><span data-exp-curr>01</span><span class="count__total" data-exp-total>/ 06</span></div>
+          <button type="button" class="arrow arrow--light" data-exp-next data-i18n-attr="aria-label:exp.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+          <div class="progress progress--light"><span class="progress__fill" data-exp-progress></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NÚMEROS ============ -->
+    <section class="numbers band band--wine" aria-label="RGM">
+      <div class="numbers__grid">
+        <div class="numbers__item"><span class="numbers__n" data-countup data-count-apts-num>6</span><span class="eyebrow" data-i18n="num.1"></span></div>
+        <div class="numbers__item"><span class="numbers__n" data-countup data-count-exp-num>6</span><span class="eyebrow" data-i18n="num.2"></span></div>
+        <div class="numbers__item"><span class="numbers__n">24/7</span><span class="eyebrow" data-i18n="num.3"></span></div>
+        <div class="numbers__item"><span class="numbers__n"><span data-countup>100</span>%</span><span class="eyebrow" data-i18n="num.4"></span></div>
+      </div>
+    </section>
+
+    <!-- ============ TESTIMONIOS ============ -->
+    <section class="tes band band--sand" id="testimonios">
+      <div class="gutter wrap">
+        <header class="section-head section-head--center">
+          <p class="eyebrow" data-i18n="tes.eyebrow">Lo que dicen nuestros huéspedes</p>
+          <h2 class="h2" data-split="lines" data-i18n-html="tes.title">Cómo se siente <em>un lugar bien cuidado.</em></h2>
+        </header>
+      </div>
+      <div class="tes__marquee" data-marquee>
+        <div class="tes__track" data-tes-track></div>
+      </div>
+    </section>
+
+    <!-- ============ INCLUIDO ============ -->
+    <section class="inc band band--sand">
+      <div class="gutter wrap">
+        <div class="inc__layout">
+          <h2 class="h2 inc__title" data-split="lines" data-i18n-html="inc.title">Incluido en <em>cada departamento.</em></h2>
+          <div class="inc__grid">
+            <article class="inc__card" data-reveal>
+              <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M8 34h24M12 34V14l8-8 8 8v20M17 20h6v6h-6z"/></svg>
+              <h3 class="h4" data-i18n="inc.1.t"></h3><p class="muted" data-i18n="inc.1.p"></p>
+            </article>
+            <article class="inc__card" data-reveal>
+              <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 16h28v4a14 14 0 01-28 0zM14 6c0 3 2 3 2 6M20 5c0 3 2 3 2 6M26 6c0 3 2 3 2 6"/></svg>
+              <h3 class="h4" data-i18n="inc.2.t"></h3><p class="muted" data-i18n="inc.2.p"></p>
+            </article>
+            <article class="inc__card" data-reveal>
+              <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 30h30M7 30V17a5 5 0 015-5h16a5 5 0 015 5v13M11 18h8v5h-8zM21 18h8v5h-8z"/></svg>
+              <h3 class="h4" data-i18n="inc.3.t"></h3><p class="muted" data-i18n="inc.3.p"></p>
+            </article>
+            <article class="inc__card" data-reveal>
+              <svg class="icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M5 15a21 21 0 0130 0M10 21a13 13 0 0120 0M15 27a6 6 0 0110 0"/><circle cx="20" cy="32" r="1.6"/></svg>
+              <h3 class="h4" data-i18n="inc.4.t"></h3><p class="muted" data-i18n="inc.4.p"></p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GALERÍA (horizontal fijada) ============ -->
+    <section class="gal band band--ink" aria-labelledby="gal-label" data-gallery>
+      <div class="gal__stage">
+        <p class="gal__label eyebrow eyebrow--gold gutter" id="gal-label" data-i18n="gal.label">Postales de Mendoza</p>
+        <div class="gal__track" data-gal-track></div>
+        <div class="gal__progress gutter"><div class="progress progress--light"><span class="progress__fill" data-gal-progress></span></div></div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACTO ============ -->
+    <section class="contact band band--wine" id="contacto">
+      <div class="gutter wrap">
+        <div class="contact__layout">
+          <div class="contact__img"><img src="img/contact.jpg" alt="" loading="lazy"></div>
+          <div class="contact__body">
+            <p class="eyebrow eyebrow--gold" data-i18n="ct.eyebrow">Empezá tu viaje</p>
+            <h2 class="h2" data-split="lines" data-i18n-html="ct.title">Dejanos armar <em>algo inolvidable.</em></h2>
+            <p class="contact__text" data-i18n="ct.text"></p>
+            <form class="form" data-contact novalidate>
+              <div class="form__row">
+                <div class="form__field"><label for="c-first" class="eyebrow" data-i18n="ct.first">Nombre</label><input id="c-first" name="first" autocomplete="given-name" required></div>
+                <div class="form__field"><label for="c-last" class="eyebrow" data-i18n="ct.last">Apellido</label><input id="c-last" name="last" autocomplete="family-name"></div>
+              </div>
+              <div class="form__field"><label for="c-email" class="eyebrow" data-i18n="ct.email">Email</label><input id="c-email" name="email" type="email" autocomplete="email"></div>
+              <div class="form__field"><label for="c-msg" class="eyebrow" data-i18n="ct.msg">Contanos sobre tu viaje</label><textarea id="c-msg" name="msg" rows="4" required data-i18n-attr="placeholder:ct.msgPh"></textarea></div>
+              <button type="submit" class="btn btn--gold" data-i18n="ct.send">Enviar por WhatsApp</button>
+              <p class="form__msg" role="status" data-contact-msg></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq band band--sand" id="faq">
+      <div class="gutter wrap wrap--narrow">
+        <header class="section-head section-head--center">
+          <h2 class="h2" data-split="lines" data-i18n-html="faq.title">Preguntas <em>frecuentes.</em></h2>
+          <p class="muted" data-i18n="faq.sub"></p>
+        </header>
+        <div class="faq__list" data-faq></div>
+        <div class="faq__cta">
+          <p class="h4" data-i18n="faq.ctaT">¿Te quedó alguna duda?</p>
+          <p class="muted" data-i18n="faq.ctaP"></p>
+          <a class="btn" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="faq.ctaB">Escribinos</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer band band--ink">
+    <div class="gutter wrap">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a href="#top" class="logo logo--footer" aria-label="RGM Experiences">
+            <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span class="logo__word">RGM</span>
+            <span class="logo__sub">Experiences</span>
+          </a>
+          <p class="footer__tag" data-i18n-html="ft.tag">Descansá bien. <em>Viví Mendoza.</em></p>
+        </div>
+        <ul class="footer__list">
+          <li class="eyebrow eyebrow--gold" data-i18n="ft.explore">Explorar</li>
+          <li><a href="propiedades.html" data-i18n="nav.apartments"></a></li>
+          <li><a href="#experiencias" data-i18n="nav.experiences"></a></li>
+          <li><a href="#faq" data-i18n="nav.faq"></a></li>
+          <li><a href="#contacto" data-i18n="nav.bookStay"></a></li>
+        </ul>
+        <ul class="footer__list">
+          <li class="eyebrow eyebrow--gold" data-i18n="ft.contact">Contacto</li>
+          <li><a href="#" data-cfg="email"></a></li>
+          <li><a href="#" data-wa="hello" target="_blank" rel="noopener" data-cfg="phone"></a></li>
+          <li class="footer__social">
+            <a href="#" data-cfg="instagram" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".9"/></svg></a>
+            <a href="#" data-cfg="facebook" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3a4 4 0 00-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg></a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer__legal">
+        <span>© <span data-year>2026</span> RGM Experiences · <span data-i18n="ft.rights">Todos los derechos reservados</span></span>
+        <span data-i18n="ft.photos">Fotos de muestra: Freepik</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Panel de consulta (se envía por WhatsApp al administrador) -->
+  <dialog class="book" id="book" data-book-dialog aria-labelledby="book-title">
+    <form class="book__form" data-book-form novalidate>
+      <header class="book__head">
+        <h2 class="h2 book__title" id="book-title" data-i18n-html="book.title">Armá tu <em>consulta</em></h2>
+        <button type="button" class="book__close" data-book-close data-i18n-attr="aria-label:book.close"><span></span><span></span></button>
+      </header>
+      <p class="muted book__lead" data-i18n="book.lead"></p>
+
+      <div class="book__group">
+        <label class="eyebrow" for="b-apt" data-i18n="book.apt">Departamento</label>
+        <select id="b-apt" class="book__select" data-book-apt></select>
+      </div>
+
+      <div class="book__row" data-book-stay>
+        <div class="book__group">
+          <label class="eyebrow" for="b-dates" data-i18n="book.dates">Fechas</label>
+          <input id="b-dates" class="book__input" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+        </div>
+        <div class="book__group">
+          <span class="eyebrow" id="b-guests-l" data-i18n="book.guests">Huéspedes</span>
+          <div class="stepper stepper--book" role="group" aria-labelledby="b-guests-l">
+            <button type="button" data-book-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+            <output data-book-guests>2</output>
+            <button type="button" data-book-step="1" data-i18n-attr="aria-label:search.more">+</button>
+          </div>
+          <small class="book__hint" data-book-max></small>
+        </div>
+      </div>
+      <p class="book__warn" data-book-busy hidden data-i18n="book.busy"></p>
+
+      <fieldset class="book__group" data-book-extras-wrap>
+        <legend class="eyebrow" data-i18n="book.extras">Extras para tu estadía</legend>
+        <div class="book__checks" data-book-extras></div>
+      </fieldset>
+
+      <fieldset class="book__group">
+        <legend class="eyebrow" data-i18n="book.exps">Sumá experiencias</legend>
+        <div class="book__exps" data-book-exps></div>
+      </fieldset>
+
+      <div class="book__row">
+        <div class="book__group">
+          <label class="eyebrow" for="b-name" data-i18n="book.name">Tu nombre</label>
+          <input id="b-name" class="book__input" name="name" autocomplete="name" required>
+        </div>
+        <div class="book__group">
+          <label class="eyebrow" for="b-phone" data-i18n="book.phone">Teléfono</label>
+          <input id="b-phone" class="book__input" name="phone" type="tel" autocomplete="tel">
+        </div>
+      </div>
+      <div class="book__group">
+        <label class="eyebrow" for="b-notes" data-i18n="book.notes">Comentarios</label>
+        <textarea id="b-notes" class="book__input" name="notes" rows="2" data-i18n-attr="placeholder:book.notesPh"></textarea>
+      </div>
+
+      <div class="book__foot">
+        <p class="book__msg" role="status" data-book-msg></p>
+        <button type="submit" class="btn btn--wa">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm5.8 15.7c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
+          <span data-i18n="book.send">Enviar consulta por WhatsApp</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Flotantes -->
+  <a class="wa-float" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n-attr="aria-label:wa.aria" data-wa-float>
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm0 23.6a10.6 10.6 0 01-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1116 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
+  </a>
+  <div class="mobile-cta"><a href="#contacto" class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a></div>
+
+  <!-- Transición de página -->
+  <div class="curtain" aria-hidden="true" data-curtain></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
