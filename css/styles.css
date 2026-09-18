@@ -756,3 +756,4 @@ textarea.book__input { resize: vertical; }
   .lightbox__nav--prev { left: 24px; } .lightbox__nav--next { right: 24px; }
 }
 .split-line-inner-mask { padding-right: .18em; margin-right: -.18em; }
+.hero__img { object-position: 50% 42%; } .contact__img img { object-position: 50% 50%; }
