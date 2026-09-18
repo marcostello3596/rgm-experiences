@@ -185,7 +185,7 @@ window.RGM_I18N = {
     'ft.explore': 'Explorar',
     'ft.contact': 'Contacto',
     'ft.rights': 'Todos los derechos reservados',
-    'ft.photos': 'Fotos de muestra: Freepik',
+    'ft.photos': 'Fotos de departamentos de muestra: Freepik',
 
     'wa.aria': 'Escribinos por WhatsApp',
     'wa.search': 'Hola RGM! Quiero consultar disponibilidad.\nZona: {where}\nFechas: {dates}\nHuéspedes: {guests}',
@@ -378,7 +378,7 @@ window.RGM_I18N = {
     'ft.explore': 'Explore',
     'ft.contact': 'Contact',
     'ft.rights': 'All rights reserved',
-    'ft.photos': 'Sample photos: Freepik',
+    'ft.photos': 'Sample apartment photos: Freepik',
 
     'wa.aria': 'Message us on WhatsApp',
     'wa.search': 'Hi RGM! I would like to check availability.\nArea: {where}\nDates: {dates}\nGuests: {guests}',
@@ -571,7 +571,7 @@ window.RGM_I18N = {
     'ft.explore': 'Explorar',
     'ft.contact': 'Contato',
     'ft.rights': 'Todos os direitos reservados',
-    'ft.photos': 'Fotos de exemplo: Freepik',
+    'ft.photos': 'Fotos de apartamentos de exemplo: Freepik',
 
     'wa.aria': 'Fale conosco pelo WhatsApp',
     'wa.search': 'Olá RGM! Quero consultar disponibilidade.\nRegião: {where}\nDatas: {dates}\nHóspedes: {guests}',
