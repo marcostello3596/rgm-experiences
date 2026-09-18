@@ -56,6 +56,10 @@
     if (next === lang) return;
     lang = next; html.lang = next;
     try { localStorage.setItem('rgm-lang', next); } catch (e) { /* sin storage */ }
+    // Deshacer SplitText ANTES de cambiar los textos: revert() restaura el HTML
+    // original y, si se hace después, vuelve a poner el idioma anterior.
+    splits.forEach(function (s) { s.revert(); });
+    splits = [];
     renderAll();
     splitAll(false);
     if (ST) ST.refresh();
@@ -203,7 +207,7 @@
   /* ================= Lenis ================= */
   var lenis = null;
   if (window.Lenis && !reduced) {
-    lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+    lenis = new Lenis({ lerp: 0.09, smoothWheel: true, prevent: function (node) { return !!(node.closest && node.closest('[data-lenis-prevent], dialog')); } });
     if (gsap && ST) {
       lenis.on('scroll', ST.update);
       gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
@@ -448,8 +452,8 @@
     if (window.flatpickr) {
       bfp = flatpickr('#b-dates', {
         mode: 'range', minDate: 'today', dateFormat: 'Y-m-d', altInput: true, altFormat: 'j M Y',
-        locale: lang === 'en' ? 'default' : lang, disableMobile: true, appendTo: form, position: 'below',
-        showMonths: window.innerWidth > 760 ? 2 : 1, onChange: function () { checkBusy(); }
+        locale: lang === 'en' ? 'default' : lang, disableMobile: true, inline: true, appendTo: $('[data-book-cal]', dlg),
+        showMonths: 1, onChange: function () { checkBusy(); }
       });
     }
     function apt() { return st.apt > -1 ? APTS[st.apt] : null; }

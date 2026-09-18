@@ -30,7 +30,6 @@
       <nav class="nav__links" aria-label="Principal">
         <a href="propiedades.html" data-i18n="nav.apartments">Departamentos</a>
         <a href="#experiencias" data-i18n="nav.experiences">Experiencias</a>
-        <a href="#faq" data-i18n="nav.faq">Preguntas</a>
       </nav>
       <button class="nav__burger" type="button" data-drawer-open aria-controls="drawer" aria-expanded="false" data-i18n-attr="aria-label:nav.menu"><span></span><span></span></button>
 
@@ -56,7 +55,6 @@
     <div class="drawer__inner">
       <a href="propiedades.html" class="drawer__link" data-i18n="nav.apartments">Departamentos</a>
       <a href="#experiencias" class="drawer__link" data-i18n="nav.experiences">Experiencias</a>
-      <a href="#faq" class="drawer__link" data-i18n="nav.faq">Preguntas</a>
       <a href="#contacto" class="drawer__link" data-i18n="nav.contact">Contacto</a>
       <div class="lang lang--drawer" role="group" data-i18n-attr="aria-label:lang.label">
         <button type="button" class="lang__btn" data-lang="es">ES</button>
@@ -330,8 +328,8 @@
   </footer>
 
   <!-- Panel de consulta (se envía por WhatsApp al administrador) -->
-  <dialog class="book" id="book" data-book-dialog aria-labelledby="book-title">
-    <form class="book__form" data-book-form novalidate>
+  <dialog class="book" id="book" data-book-dialog data-lenis-prevent aria-labelledby="book-title">
+    <form class="book__form" data-book-form data-lenis-prevent novalidate>
       <header class="book__head">
         <h2 class="h2 book__title" id="book-title" data-i18n-html="book.title">Armá tu <em>consulta</em></h2>
         <button type="button" class="book__close" data-book-close data-i18n-attr="aria-label:book.close"><span></span><span></span></button>
@@ -343,12 +341,13 @@
         <select id="b-apt" class="book__select" data-book-apt></select>
       </div>
 
-      <div class="book__row" data-book-stay>
+      <div class="book__stay" data-book-stay>
         <div class="book__group">
           <label class="eyebrow" for="b-dates" data-i18n="book.dates">Fechas</label>
-          <input id="b-dates" class="book__input" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+          <input id="b-dates" class="book__input book__dates" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+          <div class="book__cal" data-book-cal></div>
         </div>
-        <div class="book__group">
+        <div class="book__group book__guests">
           <span class="eyebrow" id="b-guests-l" data-i18n="book.guests">Huéspedes</span>
           <div class="stepper stepper--book" role="group" aria-labelledby="b-guests-l">
             <button type="button" data-book-step="-1" data-i18n-attr="aria-label:search.less">−</button>

@@ -641,3 +641,17 @@ textarea.book__input { resize: vertical; }
   .apts__main { aspect-ratio: 4 / 3.4; }
 }
 .apts__head .h2 { max-width: 13ch; }
+
+/* ---------- Panel de consulta: calendario integrado ---------- */
+.book__stay { display: grid; gap: 22px; }
+.book__dates { cursor: default; }
+.book__cal .flatpickr-calendar.inline { width: 100%; max-width: 100%; box-shadow: none; border: 1px solid var(--line); border-radius: 12px; background: var(--cream); padding: 8px 6px 10px; top: 0; }
+.book__cal .flatpickr-calendar.inline::before, .book__cal .flatpickr-calendar.inline::after { display: none; }
+.book__cal .flatpickr-rContainer, .book__cal .flatpickr-days, .book__cal .dayContainer, .book__cal .flatpickr-weekdays { width: 100% !important; min-width: 0 !important; max-width: none !important; }
+.book__cal .flatpickr-innerContainer { display: block; }
+.book__cal .flatpickr-day { max-width: none; flex: 0 0 14.2857%; height: 42px; line-height: 40px; }
+.book__cal .flatpickr-weekday { flex: 1; }
+.book__cal .flatpickr-months { padding: 0 4px; }
+.book__cal .flatpickr-months .flatpickr-prev-month, .book__cal .flatpickr-months .flatpickr-next-month { top: 6px; }
+.book__guests { max-width: 260px; }
+.book__form { -webkit-overflow-scrolling: touch; }
