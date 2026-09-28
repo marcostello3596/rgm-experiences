@@ -3,6 +3,8 @@
  * APARTMENTS / EXPERIENCES / TESTIMONIALS / FAQ / GALLERY: agregá o quitá
  * elementos y la página se arma sola (slider, contadores y números incluidos).
  * `slug` define la URL de cada departamento: /propiedades/<slug>/ (en minúsculas, sin tildes).
+ * `coords` [lat, lng] ubica el pin en el mapa de /propiedades/. `kind: 'house'` lo muestra como "Casa".
+ * `bedrooms: 0` se muestra como monoambiente; `null` oculta el dato.
  * La ficha completa de cada uno (galería, descripción, comodidades, ubicación) está en js/detail.js.
  * Todos los textos llevan { es, en, pt }. Los datos son de EJEMPLO. */
 window.RGM_CONFIG = {
@@ -15,45 +17,55 @@ window.RGM_CONFIG = {
   facebook: 'https://facebook.com/',
   zones: [
     { es: 'Ciudad de Mendoza', en: 'Mendoza City', pt: 'Cidade de Mendoza' },
-    { es: 'Chacras de Coria', en: 'Chacras de Coria', pt: 'Chacras de Coria' },
-    { es: 'Godoy Cruz', en: 'Godoy Cruz', pt: 'Godoy Cruz' }
+    { es: 'Potrerillos', en: 'Potrerillos', pt: 'Potrerillos' }
   ]
 };
 
 window.RGM_APARTMENTS = [
   {
-    slug: 'malbec', name: 'Malbec', zone: 'Ciudad de Mendoza', img: 'img/apt1.jpg', img2: 'img/apt1b.jpg',
-    badge: { es: 'Nuevo 2026', en: 'New 2026', pt: 'Novo 2026' },
-    tag: { es: 'Vista a la cordillera · Balcón · A pasos de Plaza Independencia', en: 'Andes view · Balcony · Steps from Plaza Independencia', pt: 'Vista para a cordilheira · Varanda · A passos da Plaza Independencia' },
-    bedrooms: 2, baths: 2, sleeps: 4, parking: true
+    slug: 'mitre-753', name: 'Mitre 753', zone: 'Ciudad de Mendoza', img: 'img/apts/mitre-753/01.jpg', img2: 'img/apts/mitre-753/08.jpg',
+    coords: [-32.89352, -68.84533],
+    tag: { es: 'Amplio · Living-comedor para seis · A pocas cuadras de Plaza Independencia', en: 'Spacious · Living and dining for six · A few blocks from Plaza Independencia', pt: 'Amplo · Sala de estar e jantar para seis · A poucas quadras da Plaza Independencia' },
+    bedrooms: 3, baths: 2, sleeps: 6, parking: false
   },
   {
-    slug: 'torrontes', name: 'Torrontés', zone: 'Ciudad de Mendoza', img: 'img/apt2.jpg', img2: 'img/apt2b.jpg',
-    tag: { es: 'Luminoso · Cocina abierta · Ideal parejas', en: 'Bright · Open kitchen · Perfect for couples', pt: 'Iluminado · Cozinha aberta · Ideal para casais' },
-    bedrooms: 1, baths: 1, sleeps: 2, parking: false,
-    // Fechas ocupadas (EJEMPLO): [llegada, salida) en formato AAAA-MM-DD.
-    booked: [['2026-10-09', '2026-10-14'], ['2026-12-20', '2027-01-03']]
+    slug: 'casa-potrerillos', name: 'Potrerillos', zone: 'Potrerillos', kind: 'house', img: 'img/apts/casa-potrerillos/01.jpg', img2: 'img/apts/casa-potrerillos/02.jpg',
+    coords: [-33.01608, -69.27439],
+    badge: { es: 'Casa de montaña', en: 'Mountain house', pt: 'Casa na montanha' },
+    tag: { es: 'Pileta · Parrilla, quincho y fogón · Rodeada de montañas', en: 'Pool · Grill, gazebo and fire pit · Surrounded by mountains', pt: 'Piscina · Churrasqueira, quiosque e fogueira · Cercada de montanhas' },
+    bedrooms: 3, baths: 2, sleeps: 9, parking: false
   },
   {
-    slug: 'aconcagua', name: 'Aconcagua', zone: 'Chacras de Coria', img: 'img/apt3.jpg', img2: 'img/apt3b.jpg',
-    badge: { es: 'Recién renovado', en: 'Newly renovated', pt: 'Recém-reformado' },
-    tag: { es: 'Entre viñedos · Parrilla propia · Pileta', en: 'Among vineyards · Private grill · Pool', pt: 'Entre vinhedos · Churrasqueira · Piscina' },
-    bedrooms: 3, baths: 2, sleeps: 6, parking: true
+    slug: 'amigorena-14', name: 'Amigorena 14', zone: 'Ciudad de Mendoza', img: 'img/apts/amigorena-14/01.jpg', img2: 'img/apts/amigorena-14/07.jpg',
+    coords: [-32.89174, -68.83929],
+    tag: { es: 'Tres dormitorios · A metros de Av. San Martín · Ideal familias', en: 'Three bedrooms · Steps from Av. San Martín · Great for families', pt: 'Três quartos · A metros da Av. San Martín · Ideal para famílias' },
+    bedrooms: 3, baths: 1, sleeps: 6, parking: false
   },
   {
-    slug: 'cabernet', name: 'Cabernet', zone: 'Godoy Cruz', img: 'img/apt4.jpg', img2: 'img/apt4b.jpg',
-    tag: { es: 'Familiar · Cochera · Cerca de Palmares', en: 'Family-friendly · Parking · Near Palmares', pt: 'Familiar · Garagem · Perto do Palmares' },
-    bedrooms: 2, baths: 1.5, sleeps: 5, parking: true
+    slug: 'espana-1091', name: 'España 1091', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-1091/01.jpg', img2: 'img/apts/espana-1091/03.jpg',
+    coords: [-32.89047, -68.84191],
+    tag: { es: 'Balcón entre árboles · Junto a la peatonal · Dos dormitorios', en: 'Leafy balcony · Next to the pedestrian street · Two bedrooms', pt: 'Varanda entre árvores · Junto ao calçadão · Dois quartos' },
+    bedrooms: 2, baths: 1, sleeps: 4, parking: false
   },
   {
-    slug: 'bonarda', name: 'Bonarda', zone: 'Ciudad de Mendoza', img: 'img/apt5.jpg', img2: 'img/apt5b.jpg',
-    tag: { es: 'Arístides Villanueva · Diseño cálido · Terraza', en: 'Arístides Villanueva · Warm design · Terrace', pt: 'Arístides Villanueva · Design acolhedor · Terraço' },
-    bedrooms: 1, baths: 1, sleeps: 3, parking: false
+    slug: 'belgrano-487', name: 'Belgrano 487', zone: 'Ciudad de Mendoza', img: 'img/apts/belgrano-487/01.jpg', img2: 'img/apts/belgrano-487/05.jpg',
+    coords: [-32.89527, -68.85119],
+    tag: { es: 'Luminoso · Cocina completa · Cerca de Arístides y del Parque', en: 'Bright · Full kitchen · Close to Arístides and the Park', pt: 'Iluminado · Cozinha completa · Perto da Arístides e do Parque' },
+    bedrooms: 1, baths: 1, sleeps: 4, parking: false
   },
   {
-    slug: 'uco', name: 'Uco', zone: 'Chacras de Coria', img: 'img/apt6.jpg', img2: 'img/apt6b.jpg',
-    tag: { es: 'Silencioso · Jardín · Estadías largas', en: 'Quiet · Garden · Long stays', pt: 'Silencioso · Jardim · Estadias longas' },
-    bedrooms: 2, baths: 2, sleeps: 4, parking: true
+    slug: 'mitre-660', name: 'Mitre 660', zone: 'Ciudad de Mendoza', img: 'img/apts/mitre-660/01.jpg', img2: 'img/apts/mitre-660/02.jpg',
+    coords: [-32.89456, -68.84597],
+    tag: { es: 'Monoambiente · Vista abierta a la ciudad · Ideal parejas', en: 'Studio · Open city view · Perfect for couples', pt: 'Estúdio · Vista aberta da cidade · Ideal para casais' },
+    bedrooms: 0, baths: 1, sleeps: 2, parking: false
+  },
+  {
+    slug: 'espana-1485', name: 'España 1485', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-1485/01.jpg', img2: 'img/apts/espana-1485/01.jpg',
+    coords: [-32.88620, -68.84082],
+    badge: { es: 'Fotos próximamente', en: 'Photos coming soon', pt: 'Fotos em breve' },
+    tag: { es: 'Sobre Av. España · En el centro de Mendoza', en: 'On Av. España · In downtown Mendoza', pt: 'Na Av. España · No centro de Mendoza' },
+    // Completar cuando estén los datos: dormitorios, baños y huéspedes (null = no se muestra).
+    bedrooms: null, baths: null, sleeps: null, parking: false
   }
 ];
 
@@ -117,11 +129,11 @@ window.RGM_EXPERIENCES = [
 /* Reseñas de EJEMPLO: reemplazar por reseñas reales (Airbnb, Booking, Google)
  * y borrar `sample: true` para que desaparezca la etiqueta "Ejemplo". */
 window.RGM_TESTIMONIALS = [
-  { sample: true, name: 'Nombre A.', where: 'Malbec · Mendoza', text: { es: 'Espacio para una reseña real de un huésped. Contá acá qué le gustó del departamento, la atención y las experiencias que hizo durante su estadía en Mendoza.', en: 'Space for a real guest review. Tell here what they liked about the apartment, the service and the experiences they booked during their stay in Mendoza.', pt: 'Espaço para uma avaliação real de hóspede. Conte aqui o que gostou do apartamento, do atendimento e das experiências que fez durante a estadia em Mendoza.' } },
-  { sample: true, name: 'Nombre B.', where: 'Aconcagua · Chacras', text: { es: 'Espacio para una reseña real. Idealmente una que mencione el tour de bodegas o la cabalgata, así la sección también vende las experiencias.', en: 'Space for a real review. Ideally one that mentions the winery tour or the horseback ride, so this section also sells the experiences.', pt: 'Espaço para uma avaliação real. De preferência uma que mencione o tour de vinícolas ou a cavalgada, assim a seção também vende as experiências.' } },
-  { sample: true, name: 'Nombre C.', where: 'Torrontés · Mendoza', text: { es: 'Espacio para una reseña real corta.', en: 'Space for a short real review.', pt: 'Espaço para uma avaliação real curta.' } },
-  { sample: true, name: 'Nombre D.', where: 'Cabernet · Godoy Cruz', text: { es: 'Espacio para una reseña real de una familia: comodidad, cochera, cercanía y lo fácil que fue coordinar todo por WhatsApp con el equipo de RGM.', en: 'Space for a real review from a family: comfort, parking, location and how easy it was to arrange everything over WhatsApp with the RGM team.', pt: 'Espaço para uma avaliação real de uma família: conforto, garagem, localização e como foi fácil combinar tudo pelo WhatsApp com a equipe RGM.' } },
-  { sample: true, name: 'Nombre E.', where: 'Bonarda · Mendoza', text: { es: 'Espacio para una reseña real de una pareja que combinó departamento y paquete de experiencias.', en: 'Space for a real review from a couple who combined an apartment with an experience package.', pt: 'Espaço para uma avaliação real de um casal que combinou apartamento e pacote de experiências.' } }
+  { sample: true, name: 'Nombre A.', where: 'Mitre 753 · Mendoza', text: { es: 'Espacio para una reseña real de un huésped. Contá acá qué le gustó del departamento, la atención y las experiencias que hizo durante su estadía en Mendoza.', en: 'Space for a real guest review. Tell here what they liked about the apartment, the service and the experiences they booked during their stay in Mendoza.', pt: 'Espaço para uma avaliação real de hóspede. Conte aqui o que gostou do apartamento, do atendimento e das experiências que fez durante a estadia em Mendoza.' } },
+  { sample: true, name: 'Nombre B.', where: 'Casa Potrerillos', text: { es: 'Espacio para una reseña real. Idealmente una que mencione el tour de bodegas o la cabalgata, así la sección también vende las experiencias.', en: 'Space for a real review. Ideally one that mentions the winery tour or the horseback ride, so this section also sells the experiences.', pt: 'Espaço para uma avaliação real. De preferência uma que mencione o tour de vinícolas ou a cavalgada, assim a seção também vende as experiências.' } },
+  { sample: true, name: 'Nombre C.', where: 'España 1091 · Mendoza', text: { es: 'Espacio para una reseña real corta.', en: 'Space for a short real review.', pt: 'Espaço para uma avaliação real curta.' } },
+  { sample: true, name: 'Nombre D.', where: 'Amigorena 14 · Mendoza', text: { es: 'Espacio para una reseña real de una familia: comodidad, cochera, cercanía y lo fácil que fue coordinar todo por WhatsApp con el equipo de RGM.', en: 'Space for a real review from a family: comfort, parking, location and how easy it was to arrange everything over WhatsApp with the RGM team.', pt: 'Espaço para uma avaliação real de uma família: conforto, garagem, localização e como foi fácil combinar tudo pelo WhatsApp com a equipe RGM.' } },
+  { sample: true, name: 'Nombre E.', where: 'Belgrano 487 · Mendoza', text: { es: 'Espacio para una reseña real de una pareja que combinó departamento y paquete de experiencias.', en: 'Space for a real review from a couple who combined an apartment with an experience package.', pt: 'Espaço para uma avaliação real de um casal que combinou apartamento e pacote de experiências.' } }
 ];
 
 window.RGM_FAQ = [

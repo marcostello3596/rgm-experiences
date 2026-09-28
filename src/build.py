@@ -50,9 +50,13 @@ write('propiedades/index.html', full(props, '../'))
 
 # Fichas de departamentos
 data = open(os.path.join(OUT, 'js', 'data.js'), encoding='utf-8').read()
-apts = re.findall(r"slug: '([^']+)', name: '([^']+)', zone: '([^']+)'", data)
-for slug, name, zone in apts:
-    h = head.replace('<title>RGM Experiences</title>', '<title>Depto %s en %s · RGM Experiences</title>' % (name, zone))
+apts = re.findall(r"slug: '([^']+)', name: '([^']+)', zone: '([^']+)'(, kind: 'house')?", data)
+import shutil
+for d in os.listdir(os.path.join(OUT, 'propiedades')):
+    if os.path.isdir(os.path.join(OUT, 'propiedades', d)) and d not in [x[0] for x in apts]:
+        shutil.rmtree(os.path.join(OUT, 'propiedades', d))   # fichas de deptos que ya no existen
+for slug, name, zone, house in apts:
+    h = head.replace('<title>RGM Experiences</title>', '<title>%s %s en %s · RGM Experiences</title>' % ('Casa' if house else 'Depto', name, zone))
     page = h + '<div class="rgm-page" data-page="apt" data-slug="%s">\n\n' % slug + subnav + rd('apt-main.html') + '\n' + faq_only + subtail
     write('propiedades/%s/index.html' % slug, full(page, '../../'))
 
@@ -72,4 +76,4 @@ for slug, name in exps:
 write('propiedades.html', '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>RGM Experiences</title>'
       '<script>location.replace("propiedades/" + location.search);</script>'
       '<meta http-equiv="refresh" content="0; url=propiedades/"></head><body></body></html>\n')
-print('ok:', 'index, propiedades/,', ', '.join(s for s, _, _ in apts), '| experiencias:', ', '.join(s for s, _ in exps))
+print('ok:', 'index, propiedades/,', ', '.join(x[0] for x in apts), '| experiencias:', ', '.join(s for s, _ in exps))

@@ -42,3 +42,23 @@
 
       </div>
     </section>
+
+    <!-- ============ MAPA ============ -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+    <section class="pmap band" id="mapa">
+      <div class="gutter wrap">
+        <header class="props__head">
+          <div>
+            <p class="eyebrow" data-i18n="props.mapEyebrow">Ubicaciones</p>
+            <h2 class="h2" data-split="lines" data-i18n-html="props.mapTitle">Dónde <em>estamos.</em></h2>
+          </div>
+          <p class="props__lead muted" data-i18n="props.mapLead"></p>
+        </header>
+        <div class="pmap__tabs" role="group">
+          <button type="button" class="pmap__tab" data-map-view="city" aria-pressed="true" data-i18n="props.mapCity">Centro</button>
+          <button type="button" class="pmap__tab" data-map-view="all" aria-pressed="false" data-i18n="props.mapAll">Todo</button>
+        </div>
+        <div class="pmap__map" data-props-map data-lenis-prevent></div>
+      </div>
+    </section>

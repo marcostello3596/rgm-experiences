@@ -27,7 +27,12 @@
     return s;
   }
   function L(obj) { return obj && typeof obj === 'object' ? (obj[lang] || obj.es) : obj; }
-  function fmtNum(n) { return String(n).replace('.', lang === 'en' ? '.' : ','); }
+  function fmtNum(n) { return n == null ? '—' : String(n).replace('.', lang === 'en' ? '.' : ','); }
+  // Departamento vs casa, monoambiente y datos sin cargar (null)
+  function aptPrefix(a) { return a.kind === 'house' ? t('apts.prefixHouse') : t('apts.prefix'); }
+  function aptLabel(a) { return a.kind === 'house' ? t('apts.prefixHouse') + ' ' + a.name : a.name; }
+  function fmtRooms(n) { return n === 0 ? t('apts.studio') : fmtNum(n); }
+  function maxGuests(a) { return a && a.sleeps ? a.sleeps : 12; }
   function waLink(text) { return 'https://wa.me/' + CFG.whatsapp + '?text=' + encodeURIComponent(text); }
 
   function applyStatic() {
@@ -38,7 +43,7 @@
         var p = pair.split(':'); el.setAttribute(p[0].trim(), t(p[1].trim()));
       });
     });
-    document.title = PAGE === 'exp' && CUR_EXP ? t('x.metaTitle', { name: L(CUR_EXP.name) }) : PAGE === 'apt' && CUR_APT ? t('apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : PAGE === 'exps' ? 'xs.metaTitle' : 'meta.title');
+    document.title = PAGE === 'exp' && CUR_EXP ? t('x.metaTitle', { name: L(CUR_EXP.name) }) : PAGE === 'apt' && CUR_APT ? t(CUR_APT.kind === 'house' ? 'apt.metaTitleHouse' : 'apt.metaTitle', { name: CUR_APT.name, zone: CUR_APT.zone }) : t(PAGE === 'props' ? 'props.metaTitle' : PAGE === 'exps' ? 'xs.metaTitle' : 'meta.title');
     var md = $('meta[name="description"]'); if (md) md.setAttribute('content', t('meta.desc'));
     $$('.lang__btn').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-lang') === lang ? 'true' : 'false'); });
     $$('[data-wa="hello"]').forEach(function (a) { a.href = waLink(t('wa.hello')); });
@@ -63,6 +68,7 @@
     renderAll();
     splitAll(false);
     if (ST) ST.refresh();
+    try { document.dispatchEvent(new CustomEvent('rgm:lang')); } catch (e) { /* navegadores viejos */ }
   }
   $$('.lang__btn').forEach(function (b) {
     b.addEventListener('click', function () { setLang(b.getAttribute('data-lang')); });
@@ -94,11 +100,11 @@
     cards.innerHTML = APTS.map(function (a) {
       return '<article class="apts__card">' +
         '<p class="eyebrow apts__zone">' + zoneName(a.zone) + '</p>' +
-        '<h3 class="apts__name">' + t('apts.prefix') + ' <em>' + a.name + '</em></h3>' +
+        '<h3 class="apts__name">' + aptPrefix(a) + ' <em>' + a.name + '</em></h3>' +
         '<p class="apts__tag">' + L(a.tag) + '</p>' +
-        '<dl class="facts"><div><dt>' + t('apts.bedrooms') + '</dt><dd>' + a.bedrooms + '</dd></div>' +
+        '<dl class="facts"><div><dt>' + t('apts.bedrooms') + '</dt><dd>' + fmtRooms(a.bedrooms) + '</dd></div>' +
         '<div><dt>' + t('apts.baths') + '</dt><dd>' + fmtNum(a.baths) + '</dd></div>' +
-        '<div><dt>' + t('apts.sleeps') + '</dt><dd>' + a.sleeps + '</dd></div></dl>' +
+        '<div><dt>' + t('apts.sleeps') + '</dt><dd>' + fmtNum(a.sleeps) + '</dd></div></dl>' +
         '<a class="link-cta" href="' + aptURL(a) + '">' + t('apts.cta') + ' <span>→</span></a>' +
         '</article>';
     }).join('');
@@ -398,7 +404,7 @@
     var grid = $('[data-props-grid]'); if (!grid) return;
     var d = filterDates;
     // Siempre se muestran todos: primero los que coinciden con la búsqueda.
-    var fits = function (a) { return (!guestsFiltered || a.sleeps >= guests) && isFree(a, d); };
+    var fits = function (a) { return (!guestsFiltered || !a.sleeps || a.sleeps >= guests) && isFree(a, d); };
     var list = APTS.filter(fits).concat(APTS.filter(function (a) { return !fits(a); }));
     var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
     grid.innerHTML = list.map(function (a) {
@@ -410,10 +416,14 @@
         '</a>' +
         '<div class="prop__body">' +
           '<p class="eyebrow prop__zone">' + zoneName(a.zone) + '</p>' +
-          '<h2 class="prop__name"><a href="' + aptURL(a) + '">' + a.name + '</a></h2>' +
+          '<h2 class="prop__name"><a href="' + aptURL(a) + '">' + aptLabel(a) + '</a></h2>' +
           '<p class="prop__tag">' + L(a.tag) + '</p>' +
-          '<ul class="prop__facts"><li>' + a.bedrooms + ' ' + t('apts.bedrooms').toLowerCase() + '</li><li>' + fmtNum(a.baths) + ' ' + t('apts.baths').toLowerCase() + '</li><li>' + t('props.upTo', { n: a.sleeps }) + '</li></ul>' +
-          '<div class="prop__foot"><a class="btn btn--outline btn--small-inline" href="' + aptURL(a) + '">' + t('apt.view') + '</a><button type="button" class="btn btn--small-inline" data-book-apt-i="' + APTS.indexOf(a) + '">' + t('props.cta') + '</button></div>' +
+          '<ul class="prop__facts">' + [
+            a.bedrooms === 0 ? t('apts.studio') : a.bedrooms != null ? a.bedrooms + ' ' + t(a.bedrooms === 1 ? 'apts.bedroom1' : 'apts.bedrooms').toLowerCase() : '',
+            a.baths != null ? fmtNum(a.baths) + ' ' + t(a.baths === 1 ? 'apts.bath1' : 'apts.baths').toLowerCase() : '',
+            a.sleeps ? t('props.upTo', { n: a.sleeps }) : ''
+          ].filter(Boolean).map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
+          '<div class="prop__foot"><a class="btn btn--outline btn--small-inline" href="' + aptURL(a) + '">' + t(a.kind === 'house' ? 'apt.viewHouse' : 'apt.view') + '</a><button type="button" class="btn btn--small-inline" data-book-apt-i="' + APTS.indexOf(a) + '">' + t('props.cta') + '</button></div>' +
         '</div></article>';
     }).join('');
     $('[data-props-count]').textContent = list.length === 1 ? t('props.count1') : t('props.countN', { n: list.length });
@@ -469,7 +479,7 @@
     function apt() { return st.apt > -1 ? APTS[st.apt] : null; }
     function render() {
       sel.innerHTML = '<option value="-1">' + t('book.noApt') + '</option>' +
-        APTS.map(function (a, i) { return '<option value="' + i + '">' + a.name + ' — ' + (function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; })(a.zone) + '</option>'; }).join('');
+        APTS.map(function (a, i) { return '<option value="' + i + '">' + aptLabel(a) + ' — ' + (function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; })(a.zone) + '</option>'; }).join('');
       sel.value = String(st.apt);
       var a = apt();
       $('[data-book-stay]', dlg).hidden = false;
@@ -484,9 +494,9 @@
         return '<label class="check check--exp"><input type="checkbox" value="' + i + '"' + (st.exps[i] ? ' checked' : '') + ' data-book-exp>' +
           '<img src="' + e.img + '" alt="" loading="lazy"><span><strong>' + L(e.name) + '</strong><small>' + L(e.duration) + ' · ' + L(e.place) + '</small></span></label>';
       }).join('');
-      if (a && st.guests > a.sleeps) st.guests = a.sleeps;
+      if (a && st.guests > maxGuests(a)) st.guests = maxGuests(a);
       $('[data-book-guests]', dlg).textContent = st.guests;
-      $('[data-book-max]', dlg).textContent = a ? t('book.maxGuests', { n: a.sleeps }) : '';
+      $('[data-book-max]', dlg).textContent = a && a.sleeps ? t('book.maxGuests', { n: a.sleeps }) : '';
       if (bfp) { bfp.set('locale', lang === 'en' ? 'default' : lang); if (bfp.altInput) bfp.altInput.placeholder = t('book.datesPh'); if (bfp.selectedDates.length) bfp.setDate(bfp.selectedDates, false); }
       checkBusy();
     }
@@ -497,7 +507,7 @@
     sel.addEventListener('change', function () { st.apt = parseInt(sel.value, 10); render(); });
     $$('[data-book-step]', dlg).forEach(function (b) {
       b.addEventListener('click', function () {
-        var a = apt(), max = a ? a.sleeps : 30;
+        var a = apt(), max = a ? maxGuests(a) : 30;
         st.guests = Math.max(1, Math.min(max, st.guests + parseInt(b.getAttribute('data-book-step'), 10)));
         $('[data-book-guests]', dlg).textContent = st.guests;
       });
@@ -535,7 +545,7 @@
       if (!name) { out.textContent = t('book.errName'); form.name.focus(); return; }
       var d = bfp ? bfp.selectedDates : [];
       var lines = ['*Nueva consulta desde la web RGM*', ''];
-      lines.push('• Departamento: ' + (a ? a.name + ' (' + a.zone + ')' : 'Sin alojamiento — solo experiencias'));
+      lines.push('• Departamento: ' + (a ? (a.kind === 'house' ? 'Casa ' : '') + a.name + ' (' + a.zone + ')' : 'Sin alojamiento — solo experiencias'));
       var nn = d.length === 2 ? nightsBetween(d[0], d[1]) : 0;
       lines.push('• Fechas: ' + (d.length === 2 ? (nn ? fmtDay(d[0]) + ' → ' + fmtDay(d[1]) + ' (' + nn + (nn === 1 ? ' noche)' : ' noches)') : fmtDay(d[0])) : 'a definir'));
       lines.push('• Huéspedes: ' + st.guests);
@@ -565,6 +575,43 @@
   })();
 
 
+  /* ================= Mapa de ubicaciones (/propiedades/) ================= */
+  (function propsMap() {
+    var el = $('[data-props-map]'); if (!el || PAGE !== 'props') return;
+    var map = null, markers = [];
+    function init() {
+      if (map || !window.L) return;
+      var pts = APTS.filter(function (a) { return a.coords; });
+      map = window.L.map(el, { scrollWheelZoom: false, zoomControl: true, attributionControl: true });
+      window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+      pts.forEach(function (a, i) {
+        var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? '⌂' : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] });
+        var m = window.L.marker(a.coords, { icon: icon, title: aptLabel(a), alt: aptLabel(a) }).addTo(map);
+        m._apt = a; markers.push(m);
+      });
+      popups(); view('city');
+    }
+    function popups() {
+      markers.forEach(function (m) {
+        var a = m._apt, z = CFG.zones.filter(function (x) { return x.es === a.zone; })[0];
+        m.bindPopup('<div class="pmap__pop"><img src="' + a.img + '" alt=""><div><p class="eyebrow">' + (z ? L(z) : a.zone) + '</p><strong>' + aptLabel(a) + '</strong><a href="' + aptURL(a) + '">' + t(a.kind === 'house' ? 'apt.viewHouse' : 'apt.view') + ' →</a></div></div>');
+      });
+    }
+    function view(v) {
+      $$('[data-map-view]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-map-view') === v); });
+      var pts = APTS.filter(function (a) { return a.coords && (v === 'all' || a.zone !== 'Potrerillos'); }).map(function (a) { return a.coords; });
+      if (!map || !pts.length) return;
+      if (map._loaded) map.flyToBounds(pts, { padding: [60, 60], maxZoom: 16, duration: .9 });
+      else map.fitBounds(pts, { padding: [60, 60], maxZoom: 16 });
+    }
+    $$('[data-map-view]').forEach(function (b) { b.addEventListener('click', function () { init(); view(b.getAttribute('data-map-view')); }); });
+    document.addEventListener('rgm:lang', function () { if (map) popups(); });
+    var tries = 0;
+    (function wait() { if (window.L) { if ('IntersectionObserver' in window) { var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); init(); } }, { rootMargin: '300px' }); io.observe(el); } else init(); } else if (tries++ < 50) setTimeout(wait, 200); })();
+  })();
+
   /* ================= Ficha de departamento (/propiedades/<slug>/) ================= */
   var aptPage = (function () {
     if (PAGE !== 'apt' || !CUR_APT) return null;
@@ -572,14 +619,15 @@
     var AM = window.RGM_AMENITIES || {}, GR = window.RGM_AMENITY_GROUPS || {}, PL = window.RGM_PLACES || {};
     var gallery = D.gallery && D.gallery.length ? D.gallery : [a.img, a.img2];
     var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
-    var afp = null, ag = Math.min(2, a.sleeps);
+    var afp = null, ag = Math.min(2, maxGuests(a));
 
     function render() {
-      $('[data-apt-crumb]').textContent = a.name;
-      $('[data-apt-title]').innerHTML = t('apts.prefix') + ' <em>' + a.name + '</em>';
+      $('[data-apt-crumb]').textContent = aptLabel(a);
+      $('[data-apt-title]').innerHTML = aptPrefix(a) + ' <em>' + a.name + '</em>';
+      if (a.kind === 'house') $$('[data-i18n="apt.eyebrow"]').forEach(function (el) { el.textContent = t('apt.eyebrowHouse'); });
       $('[data-apt-zone]').textContent = zoneName(a.zone);
       $('[data-apt-stats]').innerHTML = [
-        ['apt.guests', a.sleeps], ['apt.bedrooms', a.bedrooms], ['apt.baths', fmtNum(a.baths)], ['apt.beds', D.beds || a.bedrooms]
+        ['apt.guests', fmtNum(a.sleeps)], ['apt.bedrooms', fmtRooms(a.bedrooms)], ['apt.baths', fmtNum(a.baths)], ['apt.beds', fmtNum(D.beds != null ? D.beds : a.bedrooms)]
       ].map(function (x) { return '<div><dt class="eyebrow">' + t(x[0]) + '</dt><dd>' + x[1] + '</dd></div>'; }).join('');
       $('[data-apt-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
         return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '">' +
@@ -605,19 +653,24 @@
       var map = $('[data-apt-map]');
       if (!map.firstChild) map.innerHTML = '<iframe title="Mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + q + '&output=embed"></iframe>';
       $('[data-apt-maplink]').href = 'https://www.google.com/maps/search/?api=1&query=' + q;
-      var revs = TES.filter(function (r) { return r.where && r.where.indexOf(a.name) === 0; });
+      var revs = TES.filter(function (r) { return r.where && r.where.indexOf(aptLabel(a)) === 0; });
       $('[data-apt-reviews]').innerHTML = revs.length ? revs.map(function (r) {
         return '<article class="apt-rev"><div class="tes-card__stars"><span aria-label="5/5">★★★★★</span>' + (r.sample ? '<span class="tes-card__sample">' + t('tes.sample') + '</span>' : '') + '</div>' +
           '<p>' + L(r.text) + '</p><div class="tes-card__who"><span class="tes-card__avatar">' + r.name.charAt(0) + '</span><div><div class="tes-card__name">' + r.name + '</div></div></div></article>';
       }).join('') : '<p class="muted">' + t('apt.noReviews') + '</p>';
       $('[data-apt-guests]').textContent = ag;
-      $('[data-apt-max]').textContent = t('book.maxGuests', { n: a.sleeps });
+      $('[data-apt-max]').textContent = a.sleeps ? t('book.maxGuests', { n: a.sleeps }) : '';
       var wide = $('[data-apt-wide]'); wide.src = gallery[gallery.length - 1];
+      // Sin fotos todavía (una sola imagen): galería de una columna, sin foto ancha ni "ver todas"
+      var few = gallery.length < 2;
+      $('[data-apt-gallery]').classList.toggle('apt-gal--single', few);
+      $$('.apt-gal__all, .apt-img').forEach(function (el) { el.hidden = few; });
+      $('[data-apt-stats]').hidden = a.sleeps == null && a.bedrooms == null;
       // otros departamentos
       $('[data-apt-more]').innerHTML = APTS.filter(function (x) { return x !== a; }).slice(0, 3).map(function (x) {
         return '<article class="prop"><a class="prop__media" href="' + aptURL(x) + '" tabindex="-1" aria-hidden="true">' +
           '<img class="prop__img" src="' + x.img + '" alt="" loading="lazy"><img class="prop__img prop__img--2" src="' + x.img2 + '" alt="" loading="lazy"></a>' +
-          '<div class="prop__body"><p class="eyebrow prop__zone">' + zoneName(x.zone) + '</p><h3 class="prop__name"><a href="' + aptURL(x) + '">' + x.name + '</a></h3>' +
+          '<div class="prop__body"><p class="eyebrow prop__zone">' + zoneName(x.zone) + '</p><h3 class="prop__name"><a href="' + aptURL(x) + '">' + aptLabel(x) + '</a></h3>' +
           '<p class="prop__tag">' + L(x.tag) + '</p></div></article>';
       }).join('');
       if (afp) { afp.set('locale', lang === 'en' ? 'default' : lang); if (afp.altInput) afp.altInput.placeholder = t('book.datesPh'); if (afp.selectedDates.length) afp.setDate(afp.selectedDates, false); }
@@ -651,7 +704,7 @@
     }
     $$('[data-apt-step]').forEach(function (b) {
       b.addEventListener('click', function () {
-        ag = Math.max(1, Math.min(a.sleeps, ag + parseInt(b.getAttribute('data-apt-step'), 10)));
+        ag = Math.max(1, Math.min(maxGuests(a), ag + parseInt(b.getAttribute('data-apt-step'), 10)));
         $('[data-apt-guests]').textContent = ag;
       });
     });

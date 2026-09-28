@@ -1,6 +1,6 @@
 /* RGM Experiences — ficha de cada departamento (/propiedades/<slug>/).
  * Una entrada por `slug` de js/data.js. Textos en { es, en, pt }.
- * - gallery: fotos de la grilla (la primera es la grande). Son de MUESTRA.
+ * - gallery: fotos de la grilla (la primera es la grande; la última se usa como foto ancha).
  * - beds: camas.
  * - title/intro: titular y bajada de la sección "El departamento".
  * - overview: bloques de la pestaña Descripción.
@@ -32,7 +32,14 @@ window.RGM_AMENITIES = {
   pets:      { es: 'Se aceptan mascotas', en: 'Pets allowed', pt: 'Aceita pets' },
   concierge: { es: 'Asistencia por WhatsApp', en: 'WhatsApp assistance', pt: 'Atendimento por WhatsApp' },
   transfer:  { es: 'Traslado al aeropuerto (opcional)', en: 'Airport transfer (optional)', pt: 'Traslado ao aeroporto (opcional)' },
-  tours:     { es: 'Reserva de tours y bodegas', en: 'Tour & winery bookings', pt: 'Reserva de passeios e vinícolas' }
+  tours:     { es: 'Reserva de tours y bodegas', en: 'Tour & winery bookings', pt: 'Reserva de passeios e vinícolas' },
+  fan:       { es: 'Ventiladores de techo', en: 'Ceiling fans', pt: 'Ventiladores de teto' },
+  fireplace: { es: 'Hogar a leña', en: 'Wood fireplace', pt: 'Lareira a lenha' },
+  quincho:   { es: 'Quincho', en: 'Thatched gazebo', pt: 'Quiosque' },
+  firepit:   { es: 'Fogón', en: 'Fire pit', pt: 'Fogueira' },
+  mountain:  { es: 'Vista a la montaña', en: 'Mountain view', pt: 'Vista para a montanha' },
+  cityview:  { es: 'Vista a la ciudad', en: 'City view', pt: 'Vista da cidade' },
+  onsiteparking: { es: 'Estacionamiento en el predio', en: 'On-site parking', pt: 'Estacionamento no terreno' }
 };
 
 window.RGM_AMENITY_GROUPS = {
@@ -50,82 +57,102 @@ window.RGM_PLACES = {
   chacras:   { es: 'Plaza de Chacras de Coria', en: 'Chacras de Coria square', pt: 'Praça de Chacras de Coria' },
   palmares:  { es: 'Palmares Open Mall', en: 'Palmares Open Mall', pt: 'Palmares Open Mall' },
   uco:       { es: 'Valle de Uco', en: 'Uco Valley', pt: 'Vale de Uco' },
-  potrerillos: { es: 'Dique Potrerillos', en: 'Potrerillos dam', pt: 'Represa de Potrerillos' }
+  potrerillos: { es: 'Dique Potrerillos', en: 'Potrerillos dam', pt: 'Represa de Potrerillos' },
+  peatonal:  { es: 'Peatonal Sarmiento', en: 'Sarmiento pedestrian street', pt: 'Calçadão Sarmiento' },
+  sanmartin: { es: 'Av. San Martín', en: 'Av. San Martín', pt: 'Av. San Martín' },
+  cacheuta:  { es: 'Termas de Cacheuta', en: 'Cacheuta hot springs', pt: 'Termas de Cacheuta' },
+  uspallata: { es: 'Uspallata', en: 'Uspallata', pt: 'Uspallata' },
+  city:      { es: 'Ciudad de Mendoza', en: 'Mendoza city', pt: 'Cidade de Mendoza' }
 };
 
+// Galería de fotos numeradas: img/apts/<slug>/01.jpg, 02.jpg…
+function rgmGal(slug, n) { var a = []; for (var i = 1; i <= n; i++) a.push('img/apts/' + slug + '/' + (i < 10 ? '0' : '') + i + '.jpg'); return a; }
+
+
 window.RGM_DETAILS = {
-  malbec: {
-    beds: 3,
-    gallery: ['img/apt1.jpg', 'img/apt1b.jpg', 'img/apt2.jpg', 'img/apt3.jpg', 'img/g4.jpg'],
-    title: { es: 'Luz, cordillera y <em>el centro a pie.</em>', en: 'Light, mountains and <em>the city on foot.</em>', pt: 'Luz, cordilheira e <em>o centro a pé.</em>' },
-    intro: { es: 'Un departamento nuevo en un piso alto, con balcón corrido y la cordillera de frente. Dos dormitorios en suite, living amplio y todo a pocas cuadras de Plaza Independencia.', en: 'A brand-new apartment on a high floor, with a long balcony facing the Andes. Two en-suite bedrooms, a generous living room and everything a few blocks from Plaza Independencia.', pt: 'Um apartamento novo em andar alto, com varanda corrida e a cordilheira de frente. Dois quartos com banheiro, sala ampla e tudo a poucas quadras da Plaza Independencia.' },
+  'mitre-753': {
+    beds: 5,
+    gallery: rgmGal('mitre-753', 15),
+    title: { es: 'Espacio para todos, <em>a pasos de la plaza.</em>', en: 'Room for everyone, <em>steps from the plaza.</em>', pt: 'Espaço para todos, <em>a passos da praça.</em>' },
+    intro: { es: 'Un departamento grande en un edificio con hall de entrada cuidado, a pocas cuadras de Plaza Independencia. Living con sillones, comedor para seis, tres dormitorios y dos baños: ideal para familias o grupos que quieren recorrer el centro a pie.', en: 'A large apartment in a building with a smart entrance hall, a few blocks from Plaza Independencia. Lounge with armchairs, dining for six, three bedrooms and two bathrooms: ideal for families or groups who want to explore downtown on foot.', pt: 'Um apartamento grande num prédio com hall de entrada caprichado, a poucas quadras da Plaza Independencia. Sala com poltronas, jantar para seis, três quartos e dois banheiros: ideal para famílias ou grupos que querem conhecer o centro a pé.' },
     overview: [
-      { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Ventanales de piso a techo, sillones amplios y mesa para seis. Al atardecer la luz entra de lleno y la montaña se tiñe de rosa.', en: 'Floor-to-ceiling windows, deep sofas and a table for six. At sunset the light pours in and the mountains turn pink.', pt: 'Janelas do piso ao teto, sofás amplos e mesa para seis. No fim da tarde a luz entra forte e a montanha fica rosada.' } },
-      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Dos suites con colchones de hotel, blackout y placares grandes. Una tiene cama king y la otra, dos camas que se pueden unir.', en: 'Two suites with hotel-grade mattresses, blackout curtains and large closets. One has a king bed; the other has two beds that can be joined.', pt: 'Duas suítes com colchões de hotel, blackout e armários grandes. Uma tem cama king e a outra, duas camas que podem ser unidas.' } },
-      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Integrada al living, con horno, anafe, cafetera y todo lo necesario para cocinar o descorchar un Malbec al volver de las bodegas.', en: 'Open to the living room, with oven, cooktop, coffee maker and everything you need to cook or open a Malbec after the wineries.', pt: 'Integrada à sala, com forno, cooktop, cafeteira e tudo para cozinhar ou abrir um Malbec na volta das vinícolas.' } }
+      { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Piso de madera, sillones, TV y una mesa de vidrio para seis junto a los ventanales. Aire acondicionado y calefacción por radiadores.', en: 'Wooden floors, armchairs, a TV and a glass table for six by the windows. Air conditioning and radiator heating.', pt: 'Piso de madeira, poltronas, TV e uma mesa de vidro para seis junto às janelas. Ar-condicionado e aquecimento por radiadores.' } },
+      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Tres dormitorios con placares: uno con cama matrimonial y dos con camas individuales, con ropa de cama y toallas incluidas.', en: 'Three bedrooms with wardrobes: one with a double bed and two with single beds, bed linen and towels included.', pt: 'Três quartos com armários: um com cama de casal e dois com camas de solteiro, roupa de cama e toalhas incluídas.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina separada con horno, anafe, microondas y mesada de granito, con todo lo necesario para cocinar durante la estadía.', en: 'Separate kitchen with oven, cooktop, microwave and granite counters, with everything you need to cook during your stay.', pt: 'Cozinha separada com forno, cooktop, micro-ondas e bancada de granito, com tudo para cozinhar durante a estadia.' } }
     ],
-    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'coffee', 'washer', 'tv', 'desk', 'linens', 'hairdryer'], outdoor: ['balcony', 'view', 'parking', 'elevator'], extras: ['selfcheck', 'concierge', 'transfer', 'tours'] },
-    location: { text: { es: 'En pleno centro, a tres cuadras de Plaza Independencia: cafés, restaurantes y la peatonal a pie. Las bodegas de Luján de Cuyo quedan a media hora.', en: 'Right downtown, three blocks from Plaza Independencia: cafés, restaurants and the pedestrian street on foot. Luján de Cuyo wineries are half an hour away.', pt: 'No centro, a três quadras da Plaza Independencia: cafés, restaurantes e o calçadão a pé. As vinícolas de Luján de Cuyo ficam a meia hora.' }, map: 'Plaza Independencia, Mendoza', times: [['plaza', 5], ['aristides', 10], ['park', 12], ['airport', 20], ['lujan', 30]] }
+    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'tv', 'linens'], outdoor: ['elevator'], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'Sobre Av. Mitre, en pleno centro: Plaza Independencia, la peatonal Sarmiento y la Calle Arístides Villanueva se recorren a pie.', en: 'On Av. Mitre, right downtown: Plaza Independencia, Sarmiento pedestrian street and Arístides Villanueva are all walkable.', pt: 'Na Av. Mitre, no centro: a Plaza Independencia, o calçadão Sarmiento e a Arístides Villanueva ficam a pé.' }, map: 'Av. Bartolomé Mitre 753, Ciudad de Mendoza, Mendoza, Argentina', times: [['plaza', 5], ['peatonal', 7], ['aristides', 15], ['park', 8], ['airport', 20], ['lujan', 30]] }
   },
-  torrontes: {
-    beds: 1,
-    gallery: ['img/apt2.jpg', 'img/apt2b.jpg', 'img/apt1b.jpg', 'img/apt5.jpg', 'img/g5.jpg'],
-    title: { es: 'Pequeño, luminoso <em>y pensado para dos.</em>', en: 'Small, bright <em>and made for two.</em>', pt: 'Pequeno, iluminado <em>e pensado para dois.</em>' },
-    intro: { es: 'Un monoambiente amplio con dormitorio separado y cocina abierta. Ideal para parejas que quieren recorrer Mendoza a pie y volver a un lugar tranquilo.', en: 'A spacious studio with a separate bedroom and open kitchen. Perfect for couples who want to explore Mendoza on foot and come back to somewhere calm.', pt: 'Um estúdio amplo com quarto separado e cozinha aberta. Ideal para casais que querem conhecer Mendoza a pé e voltar para um lugar tranquilo.' },
+  'casa-potrerillos': {
+    beds: 8,
+    gallery: rgmGal('casa-potrerillos', 18),
+    title: { es: 'Una casa de piedra <em>entre montañas.</em>', en: 'A stone house <em>among the mountains.</em>', pt: 'Uma casa de pedra <em>entre montanhas.</em>' },
+    intro: { es: 'Una casa de montaña en Potrerillos, con un parque grande, pileta, parrilla, quincho y fogón. Adentro, living con hogar a leña, comedor vidriado con vista a los cerros y lugar para grupos grandes.', en: 'A mountain house in Potrerillos with a large garden, pool, grill, thatched gazebo and fire pit. Inside, a living room with a wood fireplace, a glassed-in dining room facing the hills and room for big groups.', pt: 'Uma casa na montanha em Potrerillos, com um grande jardim, piscina, churrasqueira, quiosque e fogueira. Dentro, sala com lareira a lenha, sala de jantar envidraçada com vista para os morros e espaço para grupos grandes.' },
     overview: [
-      { t: { es: 'El espacio', en: 'The space', pt: 'O espaço' }, p: { es: 'Paredes claras, madera y mucha luz natural. Sillón cómodo, mesa para dos y un rincón de lectura junto a la ventana.', en: 'Light walls, wood and plenty of natural light. A comfortable sofa, a table for two and a reading nook by the window.', pt: 'Paredes claras, madeira e muita luz natural. Sofá confortável, mesa para dois e um canto de leitura junto à janela.' } },
-      { t: { es: 'El descanso', en: 'Rest', pt: 'O descanso' }, p: { es: 'Cama queen con sábanas de algodón y cortinas blackout para dormir la siesta mendocina como corresponde.', en: 'Queen bed with cotton sheets and blackout curtains for a proper Mendoza siesta.', pt: 'Cama queen com lençóis de algodão e cortinas blackout para a sesta mendocina.' } }
+      { t: { es: 'Afuera', en: 'Outdoors', pt: 'Lá fora' }, p: { es: 'Parque con árboles, pileta con vista a la montaña, parrilla de ladrillo, quincho de paja con mesa y un fogón para las noches frescas.', en: 'A tree-filled garden, a pool with mountain views, a brick grill, a thatched gazebo with a table and a fire pit for cool nights.', pt: 'Jardim com árvores, piscina com vista para a montanha, churrasqueira de tijolo, quiosque de palha com mesa e uma fogueira para as noites frescas.' } },
+      { t: { es: 'Adentro', en: 'Indoors', pt: 'Lá dentro' }, p: { es: 'Muros de piedra, techos de madera y un living con hogar a leña. El comedor vidriado tiene mesa para seis y vista a los cerros; la cocina está equipada.', en: 'Stone walls, timber ceilings and a living room with a wood fireplace. The glassed-in dining room seats six and looks out to the hills; the kitchen is fully equipped.', pt: 'Paredes de pedra, tetos de madeira e uma sala com lareira a lenha. A sala de jantar envidraçada tem mesa para seis e vista para os morros; a cozinha é equipada.' } },
+      { t: { es: 'Para dormir', en: 'Sleeping', pt: 'Para dormir' }, p: { es: 'Tres dormitorios: uno con cama matrimonial y dos con cuchetas, pensados para familias y grupos de amigos. Dos baños.', en: 'Three bedrooms: one with a double bed and two with bunk beds, made for families and groups of friends. Two bathrooms.', pt: 'Três quartos: um com cama de casal e dois com beliches, pensados para famílias e grupos de amigos. Dois banheiros.' } }
     ],
-    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'coffee', 'tv', 'linens', 'hairdryer'], outdoor: ['elevator'], extras: ['selfcheck', 'concierge', 'transfer', 'tours'] },
-    location: { text: { es: 'A metros de la Alameda y a pocas cuadras de la peatonal Sarmiento, en una calle tranquila del centro.', en: 'Steps from the Alameda and a few blocks from Sarmiento pedestrian street, on a quiet downtown street.', pt: 'A poucos metros da Alameda e perto do calçadão Sarmiento, numa rua tranquila do centro.' }, map: 'Alameda, Mendoza', times: [['plaza', 8], ['aristides', 12], ['park', 15], ['airport', 20], ['lujan', 35]] }
+    amenities: { indoor: ['fireplace', 'kitchen', 'tv', 'linens'], outdoor: ['pool', 'grill', 'quincho', 'firepit', 'garden', 'mountain', 'onsiteparking'], extras: ['concierge', 'tours'] },
+    location: { text: { es: 'En Las Carditas, Potrerillos, al pie de la cordillera: a minutos del dique Potrerillos y de las Termas de Cacheuta, y a poco más de una hora de la ciudad de Mendoza.', en: 'In Las Carditas, Potrerillos, at the foot of the Andes: minutes from the Potrerillos dam and Cacheuta hot springs, and just over an hour from Mendoza city.', pt: 'Em Las Carditas, Potrerillos, ao pé da cordilheira: a minutos da represa de Potrerillos e das Termas de Cacheuta, e a pouco mais de uma hora da cidade de Mendoza.' }, map: '-33.01608,-69.27439', times: [['potrerillos', 15], ['cacheuta', 25], ['uspallata', 55], ['city', 70], ['airport', 80]] }
   },
-  aconcagua: {
+  'amigorena-14': {
     beds: 4,
-    gallery: ['img/apt3.jpg', 'img/apt3b.jpg', 'img/g6.jpg', 'img/apt4.jpg', 'img/exp-andes.jpg'],
-    title: { es: 'Entre viñedos, <em>con pileta y parrilla.</em>', en: 'Among the vines, <em>with pool and grill.</em>', pt: 'Entre vinhedos, <em>com piscina e churrasqueira.</em>' },
-    intro: { es: 'Una casa-departamento en Chacras de Coria, rodeada de verde. Tres dormitorios, galería con parrilla y pileta para las tardes de verano.', en: 'A house-style apartment in Chacras de Coria, surrounded by green. Three bedrooms, a porch with grill and a pool for summer afternoons.', pt: 'Um apartamento estilo casa em Chacras de Coria, cercado de verde. Três quartos, varanda com churrasqueira e piscina para as tardes de verão.' },
+    gallery: rgmGal('amigorena-14', 16),
+    title: { es: 'Tres dormitorios <em>en pleno centro.</em>', en: 'Three bedrooms <em>right downtown.</em>', pt: 'Três quartos <em>no centro.</em>' },
+    intro: { es: 'Un departamento amplio a metros de Av. San Martín, con living-comedor luminoso, tres dormitorios y cocina completa. Cafés, comercios y la peatonal Sarmiento a pocas cuadras.', en: 'A spacious apartment steps from Av. San Martín, with a bright living-dining room, three bedrooms and a full kitchen. Cafés, shops and Sarmiento pedestrian street a few blocks away.', pt: 'Um apartamento amplo a metros da Av. San Martín, com sala de estar e jantar iluminada, três quartos e cozinha completa. Cafés, lojas e o calçadão Sarmiento a poucas quadras.' },
     overview: [
-      { t: { es: 'La galería', en: 'The porch', pt: 'A varanda' }, p: { es: 'El corazón de la casa: parrilla, mesa larga y vista al jardín. Pensada para asados que empiezan temprano y terminan tarde.', en: 'The heart of the house: grill, long table and garden views. Made for asados that start early and end late.', pt: 'O coração da casa: churrasqueira, mesa comprida e vista para o jardim. Feita para churrascos que começam cedo e terminam tarde.' } },
-      { t: { es: 'Para familias', en: 'For families', pt: 'Para famílias' }, p: { es: 'Tres dormitorios, dos baños y espacio de sobra. Cuna a pedido y jardín cerrado para que los chicos jueguen tranquilos.', en: 'Three bedrooms, two bathrooms and room to spare. Crib on request and an enclosed garden for kids to play safely.', pt: 'Três quartos, dois banheiros e espaço de sobra. Berço sob pedido e jardim fechado para as crianças brincarem.' } },
-      { t: { es: 'Bodegas cerca', en: 'Wineries nearby', pt: 'Vinícolas perto' }, p: { es: 'Luján de Cuyo está a diez minutos: ideal para combinar con la Ruta del Malbec.', en: 'Luján de Cuyo is ten minutes away — ideal for the Malbec Route.', pt: 'Luján de Cuyo fica a dez minutos: ideal para combinar com a Rota do Malbec.' } }
+      { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Ventanal a la calle, sillón amplio, Smart TV y mesa para seis. Aire acondicionado y calefacción.', en: 'A large street-facing window, a big sofa, a Smart TV and a table for six. Air conditioning and heating.', pt: 'Janela ampla para a rua, sofá grande, Smart TV e mesa para seis. Ar-condicionado e aquecimento.' } },
+      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Dos dormitorios con cama matrimonial y uno con dos camas individuales. Ropa de cama y toallas incluidas.', en: 'Two bedrooms with a double bed and one with two single beds. Bed linen and towels included.', pt: 'Dois quartos com cama de casal e um com duas camas de solteiro. Roupa de cama e toalhas incluídas.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina completa con horno, heladera, microondas, pava eléctrica y tostadora.', en: 'Full kitchen with oven, fridge, microwave, electric kettle and toaster.', pt: 'Cozinha completa com forno, geladeira, micro-ondas, chaleira elétrica e torradeira.' } }
     ],
-    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'coffee', 'washer', 'tv', 'linens', 'hairdryer', 'crib'], outdoor: ['pool', 'grill', 'garden', 'parking'], extras: ['concierge', 'transfer', 'tours', 'pets'] },
-    location: { text: { es: 'En Chacras de Coria, el barrio verde de Mendoza: casonas, restaurantes de campo y la plaza con feria los fines de semana.', en: 'In Chacras de Coria, Mendoza\'s leafy neighbourhood: old houses, country restaurants and a square with a weekend market.', pt: 'Em Chacras de Coria, o bairro verde de Mendoza: casarões, restaurantes de campo e a praça com feira nos fins de semana.' }, map: 'Chacras de Coria, Mendoza', times: [['chacras', 5], ['lujan', 10], ['palmares', 12], ['plaza', 25], ['airport', 35], ['uco', 70]] }
+    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'tv', 'linens'], outdoor: [], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'En el microcentro, a metros de Av. San Martín: cafés con mesas en la vereda, comercios y la peatonal Sarmiento a pocas cuadras.', en: 'In the city centre, steps from Av. San Martín: sidewalk cafés, shops and Sarmiento pedestrian street a few blocks away.', pt: 'No centro, a metros da Av. San Martín: cafés com mesas na calçada, lojas e o calçadão Sarmiento a poucas quadras.' }, map: 'Amigorena 14, Ciudad de Mendoza, Mendoza, Argentina', times: [['sanmartin', 1], ['peatonal', 5], ['plaza', 8], ['aristides', 20], ['airport', 20], ['lujan', 30]] }
   },
-  cabernet: {
+  'espana-1091': {
     beds: 3,
-    gallery: ['img/apt4.jpg', 'img/apt4b.jpg', 'img/apt5b.jpg', 'img/apt6.jpg', 'img/g2.jpg'],
-    title: { es: 'Espacio para todos <em>y cochera propia.</em>', en: 'Room for everyone <em>and private parking.</em>', pt: 'Espaço para todos <em>e garagem própria.</em>' },
-    intro: { es: 'Un departamento familiar en Godoy Cruz, cerca de Palmares y con salida rápida a las rutas de montaña y bodegas.', en: 'A family apartment in Godoy Cruz, near Palmares and with quick access to the mountain and winery routes.', pt: 'Um apartamento familiar em Godoy Cruz, perto do Palmares e com saída rápida para as rotas de montanha e vinícolas.' },
+    gallery: rgmGal('espana-1091', 10),
+    title: { es: 'Un balcón entre árboles, <em>junto a la peatonal.</em>', en: 'A leafy balcony, <em>next to the pedestrian street.</em>', pt: 'Uma varanda entre árvores, <em>junto ao calçadão.</em>' },
+    intro: { es: 'Sobre calle España, a metros de la peatonal Sarmiento. Living-comedor con salida a un balcón entre los árboles, dos dormitorios y cocina completa: el centro de Mendoza a la puerta.', en: 'On España street, steps from Sarmiento pedestrian street. A living-dining room opening onto a balcony among the trees, two bedrooms and a full kitchen: downtown Mendoza on your doorstep.', pt: 'Na rua España, a metros do calçadão Sarmiento. Sala de estar e jantar com saída para uma varanda entre as árvores, dois quartos e cozinha completa: o centro de Mendoza na porta.' },
     overview: [
-      { t: { es: 'Cómodo y práctico', en: 'Comfortable and practical', pt: 'Confortável e prático' }, p: { es: 'Living con sofá cama, cocina completa y lavarropas. Todo lo necesario para estadías de una semana o más.', en: 'Living room with sofa bed, full kitchen and washing machine. Everything for stays of a week or more.', pt: 'Sala com sofá-cama, cozinha completa e máquina de lavar. Tudo para estadias de uma semana ou mais.' } },
-      { t: { es: 'Con auto', en: 'By car', pt: 'De carro' }, p: { es: 'Cochera cubierta incluida y acceso rápido al Acceso Sur para salir a Luján, Maipú o la montaña.', en: 'Covered parking included and quick access to the southern highway towards Luján, Maipú or the mountains.', pt: 'Garagem coberta incluída e acesso rápido à rodovia sul rumo a Luján, Maipú ou a montanha.' } }
+      { t: { es: 'El living y el balcón', en: 'Living room and balcony', pt: 'Sala e varanda' }, p: { es: 'Mesa para seis, sillón, TV y rincón de trabajo. El ventanal se abre a un balcón con mesa y sillas bajo los árboles de la calle.', en: 'A table for six, a sofa, a TV and a work corner. The glass door opens onto a balcony with a table and chairs under the street trees.', pt: 'Mesa para seis, sofá, TV e canto de trabalho. A porta de vidro abre para uma varanda com mesa e cadeiras sob as árvores da rua.' } },
+      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Un dormitorio con cama matrimonial y otro con cama individual y cama carrito, ambos con ventilador de techo.', en: 'One bedroom with a double bed and another with a single bed and a trundle bed, both with ceiling fans.', pt: 'Um quarto com cama de casal e outro com cama de solteiro e bicama, ambos com ventilador de teto.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina completa con horno, anafe, heladera, microondas y pava eléctrica.', en: 'Full kitchen with oven, cooktop, fridge, microwave and electric kettle.', pt: 'Cozinha completa com forno, cooktop, geladeira, micro-ondas e chaleira elétrica.' } }
     ],
-    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'coffee', 'washer', 'tv', 'desk', 'linens', 'crib'], outdoor: ['balcony', 'parking', 'elevator'], extras: ['selfcheck', 'concierge', 'transfer', 'tours'] },
-    location: { text: { es: 'En Godoy Cruz, a cinco minutos de Palmares Open Mall y a quince del centro de Mendoza.', en: 'In Godoy Cruz, five minutes from Palmares Open Mall and fifteen from downtown Mendoza.', pt: 'Em Godoy Cruz, a cinco minutos do Palmares Open Mall e a quinze do centro de Mendoza.' }, map: 'Godoy Cruz, Mendoza', times: [['palmares', 5], ['plaza', 15], ['lujan', 20], ['airport', 25], ['potrerillos', 50]] }
+    amenities: { indoor: ['wifi', 'ac', 'fan', 'kitchen', 'tv', 'desk', 'linens'], outdoor: ['balcony'], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'En el corazón del centro, junto a la peatonal Sarmiento y a tres cuadras de Plaza Independencia: restaurantes, cafés y comercios a pie.', en: 'In the heart of downtown, next to Sarmiento pedestrian street and three blocks from Plaza Independencia: restaurants, cafés and shops on foot.', pt: 'No coração do centro, junto ao calçadão Sarmiento e a três quadras da Plaza Independencia: restaurantes, cafés e lojas a pé.' }, map: 'España 1091, Ciudad de Mendoza, Mendoza, Argentina', times: [['peatonal', 1], ['plaza', 5], ['aristides', 15], ['park', 10], ['airport', 20], ['lujan', 30]] }
   },
-  bonarda: {
+  'belgrano-487': {
     beds: 2,
-    gallery: ['img/apt5.jpg', 'img/apt5b.jpg', 'img/apt6b.jpg', 'img/apt2b.jpg', 'img/g3.jpg'],
-    title: { es: 'Terraza propia <em>en el barrio más vivo.</em>', en: 'A private terrace <em>in the liveliest street.</em>', pt: 'Terraço próprio <em>no bairro mais animado.</em>' },
-    intro: { es: 'Diseño cálido a una cuadra de Arístides Villanueva, la calle de bares y restaurantes. Terraza para desayunar al sol.', en: 'Warm design one block from Arístides Villanueva, the street of bars and restaurants. A terrace for breakfast in the sun.', pt: 'Design acolhedor a uma quadra da Arístides Villanueva, a rua de bares e restaurantes. Terraço para o café da manhã ao sol.' },
+    gallery: rgmGal('belgrano-487', 14),
+    title: { es: 'Luz de mañana <em>y el Parque cerca.</em>', en: 'Morning light <em>and the Park nearby.</em>', pt: 'Luz da manhã <em>e o Parque perto.</em>' },
+    intro: { es: 'Un departamento luminoso sobre calle Belgrano, con ventanales, cocina completa y comedor. Cerca de la Calle Arístides Villanueva y del Parque General San Martín.', en: 'A bright apartment on Belgrano street, with large windows, a full kitchen and a dining area. Close to Arístides Villanueva and General San Martín Park.', pt: 'Um apartamento iluminado na rua Belgrano, com janelas amplas, cozinha completa e sala de jantar. Perto da Arístides Villanueva e do Parque General San Martín.' },
     overview: [
-      { t: { es: 'La terraza', en: 'The terrace', pt: 'O terraço' }, p: { es: 'Mesa, reposeras y plantas. El lugar para el primer café de la mañana o una copa al final del día.', en: 'Table, loungers and plants. The spot for your first coffee or a glass at the end of the day.', pt: 'Mesa, espreguiçadeiras e plantas. O lugar para o primeiro café ou uma taça no fim do dia.' } },
-      { t: { es: 'Adentro', en: 'Inside', pt: 'Por dentro' }, p: { es: 'Un dormitorio con cama queen y sofá cama en el living para una tercera persona.', en: 'One bedroom with a queen bed plus a sofa bed in the living room for a third guest.', pt: 'Um quarto com cama queen e sofá-cama na sala para uma terceira pessoa.' } }
+      { t: { es: 'El espacio', en: 'The space', pt: 'O espaço' }, p: { es: 'Ambientes claros con ventanales, comedor para cuatro, TV y aire acondicionado.', en: 'Light-filled rooms with big windows, dining for four, a TV and air conditioning.', pt: 'Ambientes claros com janelas amplas, mesa para quatro, TV e ar-condicionado.' } },
+      { t: { es: 'Para dormir', en: 'Sleeping', pt: 'Para dormir' }, p: { es: 'Camas matrimoniales con ropa de cama y toallas incluidas; hasta cuatro huéspedes.', en: 'Double beds with linen and towels included; up to four guests.', pt: 'Camas de casal com roupa de cama e toalhas incluídas; até quatro hóspedes.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina completa con horno, anafe, heladera y microondas.', en: 'Full kitchen with oven, cooktop, fridge and microwave.', pt: 'Cozinha completa com forno, cooktop, geladeira e micro-ondas.' } }
     ],
-    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'coffee', 'tv', 'linens', 'hairdryer'], outdoor: ['terrace'], extras: ['selfcheck', 'concierge', 'transfer', 'tours'] },
-    location: { text: { es: 'A una cuadra de Arístides Villanueva y a cinco del Parque General San Martín.', en: 'One block from Arístides Villanueva and five from General San Martín Park.', pt: 'A uma quadra da Arístides Villanueva e a cinco do Parque General San Martín.' }, map: 'Arístides Villanueva, Mendoza', times: [['aristides', 2], ['park', 8], ['plaza', 12], ['airport', 22], ['lujan', 30]] }
+    amenities: { indoor: ['wifi', 'ac', 'kitchen', 'tv', 'linens'], outdoor: [], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'Sobre calle Belgrano, entre el centro y el Parque: la Calle Arístides Villanueva, con sus bares y restaurantes, queda a unas cuadras.', en: 'On Belgrano street, between downtown and the Park: Arístides Villanueva, with its bars and restaurants, is a few blocks away.', pt: 'Na rua Belgrano, entre o centro e o Parque: a Arístides Villanueva, com seus bares e restaurantes, fica a poucas quadras.' }, map: 'Belgrano 487, Ciudad de Mendoza, Mendoza, Argentina', times: [['aristides', 10], ['park', 6], ['plaza', 12], ['airport', 20], ['lujan', 30]] }
   },
-  uco: {
-    beds: 3,
-    gallery: ['img/apt6.jpg', 'img/apt6b.jpg', 'img/apt3b.jpg', 'img/apt4b.jpg', 'img/g1.jpg'],
-    title: { es: 'Silencio, jardín <em>y tiempo para quedarse.</em>', en: 'Silence, a garden <em>and time to stay.</em>', pt: 'Silêncio, jardim <em>e tempo para ficar.</em>' },
-    intro: { es: 'Un departamento tranquilo en Chacras de Coria, con jardín propio y escritorio. Pensado para estadías largas y para trabajar a distancia.', en: 'A quiet apartment in Chacras de Coria, with its own garden and a desk. Designed for long stays and remote work.', pt: 'Um apartamento tranquilo em Chacras de Coria, com jardim próprio e escrivaninha. Pensado para estadias longas e trabalho remoto.' },
+  'mitre-660': {
+    beds: 1,
+    gallery: rgmGal('mitre-660', 11),
+    title: { es: 'Un monoambiente <em>pensado para dos.</em>', en: 'A studio <em>made for two.</em>', pt: 'Um estúdio <em>pensado para dois.</em>' },
+    intro: { es: 'Un monoambiente práctico y luminoso sobre Av. Mitre, con cama matrimonial, kitchenette, escritorio y una vista abierta a la ciudad. Ideal para parejas o viajes de trabajo.', en: 'A bright, practical studio on Av. Mitre, with a double bed, kitchenette, desk and an open view over the city. Perfect for couples or work trips.', pt: 'Um estúdio prático e iluminado na Av. Mitre, com cama de casal, cozinha americana, escrivaninha e vista aberta da cidade. Ideal para casais ou viagens de trabalho.' },
     overview: [
-      { t: { es: 'Para quedarse', en: 'To stay a while', pt: 'Para ficar' }, p: { es: 'Wi-Fi rápido, escritorio junto a la ventana, lavarropas y cocina completa. Tarifas especiales por mes.', en: 'Fast Wi-Fi, a desk by the window, washing machine and full kitchen. Special monthly rates.', pt: 'Wi-Fi rápido, mesa junto à janela, máquina de lavar e cozinha completa. Tarifas especiais por mês.' } },
-      { t: { es: 'El jardín', en: 'The garden', pt: 'O jardim' }, p: { es: 'Césped, árboles y una mesa afuera para almorzar a la sombra.', en: 'Lawn, trees and an outdoor table for lunch in the shade.', pt: 'Gramado, árvores e uma mesa externa para almoçar à sombra.' } }
+      { t: { es: 'El espacio', en: 'The space', pt: 'O espaço' }, p: { es: 'Cama matrimonial, mesa para dos, escritorio, TV y aire acondicionado, todo en un ambiente luminoso.', en: 'A double bed, a table for two, a desk, a TV and air conditioning, all in one bright room.', pt: 'Cama de casal, mesa para dois, escrivaninha, TV e ar-condicionado, tudo num ambiente iluminado.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Kitchenette con anafe, microondas y heladera, suficiente para desayunos y comidas simples.', en: 'Kitchenette with cooktop, microwave and fridge, enough for breakfasts and simple meals.', pt: 'Cozinha americana com cooktop, micro-ondas e geladeira, suficiente para cafés da manhã e refeições simples.' } }
     ],
-    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'coffee', 'washer', 'tv', 'desk', 'linens'], outdoor: ['garden', 'grill', 'parking'], extras: ['concierge', 'transfer', 'tours', 'pets'] },
-    location: { text: { es: 'En una calle arbolada de Chacras de Coria, a minutos de la plaza y de las primeras bodegas de Luján.', en: 'On a tree-lined street in Chacras de Coria, minutes from the square and the first Luján wineries.', pt: 'Numa rua arborizada de Chacras de Coria, a minutos da praça e das primeiras vinícolas de Luján.' }, map: 'Chacras de Coria, Mendoza', times: [['chacras', 4], ['lujan', 10], ['palmares', 12], ['plaza', 25], ['airport', 35], ['uco', 70]] }
+    amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'tv', 'desk', 'linens'], outdoor: ['cityview'], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'Sobre Av. Mitre, en el centro: Plaza Independencia a pocas cuadras y la Calle Arístides Villanueva a un paseo.', en: 'On Av. Mitre, downtown: Plaza Independencia a few blocks away and Arístides Villanueva within a short walk.', pt: 'Na Av. Mitre, no centro: a Plaza Independencia a poucas quadras e a Arístides Villanueva a uma caminhada.' }, map: 'Av. Bartolomé Mitre 660, Ciudad de Mendoza, Mendoza, Argentina', times: [['plaza', 7], ['peatonal', 8], ['aristides', 15], ['park', 8], ['airport', 20], ['lujan', 30]] }
+  },
+  'espana-1485': {
+    gallery: ['img/apts/espana-1485/01.jpg'],
+    title: { es: 'Sobre Av. España, <em>en el centro.</em>', en: 'On Av. España, <em>downtown.</em>', pt: 'Na Av. España, <em>no centro.</em>' },
+    intro: { es: 'Muy pronto vas a ver acá las fotos y el detalle de este departamento. Mientras tanto, escribinos y te contamos todo.', en: 'Photos and details of this apartment are coming soon. In the meantime, message us and we’ll tell you all about it.', pt: 'Em breve você vai ver aqui as fotos e os detalhes deste apartamento. Enquanto isso, fale com a gente e contamos tudo.' },
+    overview: [],
+    amenities: { extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'Sobre Av. España, en el centro de Mendoza, a unos minutos a pie de Plaza Independencia y la peatonal Sarmiento.', en: 'On Av. España in downtown Mendoza, a few minutes’ walk from Plaza Independencia and Sarmiento pedestrian street.', pt: 'Na Av. España, no centro de Mendoza, a poucos minutos a pé da Plaza Independencia e do calçadão Sarmiento.' }, map: 'Av. España 1485, Ciudad de Mendoza, Mendoza, Argentina', times: [['plaza', 10], ['peatonal', 8], ['aristides', 20], ['airport', 18], ['lujan', 35]] }
   }
 };

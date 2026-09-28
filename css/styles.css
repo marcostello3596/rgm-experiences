@@ -790,3 +790,27 @@ textarea.book__input { resize: vertical; }
 .xs-card__media { aspect-ratio: 4 / 5; }
 .xs-card__media .apts__badge { z-index: 2; }
 .chip[aria-pressed="true"] { background: var(--wine); border-color: var(--wine); color: var(--cream); }
+
+/* ---------- Mapa de ubicaciones (/propiedades/) ---------- */
+.pmap { background: var(--cream); }
+.pmap__tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+.pmap__tab { font: 500 12px/1 var(--f-body); letter-spacing: .18em; text-transform: uppercase; padding: 11px 16px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); cursor: pointer; transition: background .3s, color .3s, border-color .3s; }
+.pmap__tab[aria-pressed="true"] { background: var(--wine); border-color: var(--wine); color: var(--cream); }
+.pmap__map { height: clamp(380px, 56vw, 620px); max-width: 100%; border-radius: 8px; overflow: hidden; background: var(--sand-2); z-index: 0; }
+.pmap__pin { width: 34px; height: 34px; border-radius: 50%; background: var(--wine); border: 2px solid var(--gold-soft); box-shadow: 0 6px 16px rgba(31, 34, 38, .28); display: grid; place-items: center; color: var(--gold-soft); font: italic 400 15px/1 var(--f-display); transition: transform .25s var(--ease); }
+.pmap__pin:hover { transform: scale(1.12); }
+.pmap .leaflet-popup-content-wrapper { border-radius: 8px; padding: 0; overflow: hidden; }
+.pmap .leaflet-popup-content { margin: 0; width: 220px !important; font-family: var(--f-body); }
+.pmap__pop img { display: block; width: 100%; height: 130px; object-fit: cover; }
+.pmap__pop div { padding: 12px 14px 14px; }
+.pmap__pop .eyebrow { color: var(--gold); margin: 0 0 4px; }
+.pmap__pop strong { display: block; font: italic 400 20px/1.1 var(--f-display); color: var(--wine); margin-bottom: 8px; }
+.pmap__pop a { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); }
+.pmap .leaflet-control-attribution { font-size: 10px; }
+.pmap .leaflet-tile-pane { filter: grayscale(.8) sepia(.18) saturate(1.1) brightness(1.02) contrast(.95); }
+
+.apt-gal--single { grid-template-columns: 1fr; grid-template-rows: clamp(260px, 34vw, 480px); }
+.apt-gal--single .apt-gal__tile img { object-position: 50% 45%; }
+.apt-gal__all[hidden], .apt-img[hidden] { display: none; }
+
+.apt-head__stats[hidden] { display: none; }
