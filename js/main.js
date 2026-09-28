@@ -27,6 +27,8 @@
     return s;
   }
   function L(obj) { return obj && typeof obj === 'object' ? (obj[lang] || obj.es) : obj; }
+  // Versión liviana (800px) para tarjetas y miniaturas: menos memoria y decodificación más rápida al scrollear
+  function sm(src) { return /^img\/(apts\/|exp-)/.test(src) ? src.replace(/^img\//, 'img/sm/') : src; }
   function fmtNum(n) { return n == null ? '—' : String(n).replace('.', lang === 'en' ? '.' : ','); }
   // Departamento vs casa, monoambiente y datos sin cargar (null)
   function aptPrefix(a) { return a.kind === 'house' ? t('apts.prefixHouse') : t('apts.prefix'); }
@@ -92,10 +94,10 @@
     main.innerHTML = APTS.map(function (a, i) {
       return '<div class="apts__slide" data-i="' + i + '">' +
         (a.badge ? '<span class="apts__badge">' + L(a.badge) + '</span>' : '') +
-        '<img src="' + a.img + '" alt="' + a.name + '" ' + (i ? 'loading="lazy"' : '') + ' draggable="false"></div>';
+        '<img decoding="async" src="' + a.img + '" alt="' + a.name + '" ' + (i ? 'loading="lazy"' : '') + ' draggable="false"></div>';
     }).join('');
     second.innerHTML = APTS.map(function (a, i) {
-      return '<div class="apts__second-img"><img src="' + a.img2 + '" alt="" loading="lazy" draggable="false"></div>';
+      return '<div class="apts__second-img"><img decoding="async" src="' + sm(a.img2) + '" alt="" loading="lazy" draggable="false"></div>';
     }).join('');
     cards.innerHTML = APTS.map(function (a) {
       return '<article class="apts__card">' +
@@ -115,7 +117,7 @@
     var track = $('[data-exp-track]'); if (!track) return;
     track.innerHTML = EXPS.map(function (e, i) {
       return '<article class="exp-card" data-i="' + i + '">' +
-        '<img src="' + e.img + '" alt="" loading="lazy" draggable="false">' +
+        '<img decoding="async" src="' + sm(e.img) + '" alt="" loading="lazy" draggable="false">' +
         '<a class="exp-card__cta" href="' + expURL(e) + '" aria-label="' + t('x.view') + ': ' + L(e.name) + '">' + arrowSvg + '</a>' +
         '<div class="exp-card__body">' +
         '<span class="exp-card__place">' + L(e.place) + '</span>' +
@@ -171,7 +173,7 @@
 
   function renderGallery() {
     var track = $('[data-gal-track]'); if (!track || track.children.length) return;
-    track.innerHTML = GAL.map(function (src) { return '<figure class="gal__item" style="margin:0"><img src="' + src + '" alt="" loading="lazy"></figure>'; }).join('');
+    track.innerHTML = GAL.map(function (src) { return '<figure class="gal__item" style="margin:0"><img decoding="async" src="' + src + '" alt="" loading="lazy"></figure>'; }).join('');
   }
 
   function renderAll() {
@@ -217,8 +219,12 @@
   /* ================= Lenis ================= */
   var lenis = null;
   if (window.Lenis && !reduced) {
-    lenis = new Lenis({ lerp: 0.09, smoothWheel: true, prevent: function (node) { return !!(node.closest && node.closest('[data-lenis-prevent], dialog')); } });
+    lenis = new Lenis({
+      lerp: 0.12, wheelMultiplier: 1, smoothWheel: true, syncTouch: false,
+      prevent: function (node) { return !!(node.closest && node.closest('[data-lenis-prevent], dialog')); }
+    });
     if (gsap && ST) {
+      ST.config({ ignoreMobileResize: true });
       lenis.on('scroll', ST.update);
       gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
       gsap.ticker.lagSmoothing(0);
@@ -254,13 +260,16 @@
   function curtainIn() {
     if (!gsap || !bars.length || reduced) { if (curtain) curtain.style.display = 'none'; return; }
     gsap.set(bars, { scaleY: 1, transformOrigin: '50% 0%' });
-    gsap.to(bars, { scaleY: 0, duration: .9, ease: 'power4.inOut', stagger: { each: .035, from: 'center' }, delay: .1 });
+    gsap.to(bars, { scaleY: 0, duration: .9, ease: 'power4.inOut', stagger: { each: .035, from: 'center' }, delay: .1, onComplete: curtainOff });
   }
+  function curtainOn() { if (curtain) curtain.style.visibility = 'visible'; }
+  function curtainOff() { if (curtain) curtain.style.visibility = 'hidden'; }
   function curtainTo(cb) {
     // salto largo: cubrimos, saltamos y descubrimos. Salto corto: scroll suave.
     var target = cb.target, far = target && Math.abs(target.getBoundingClientRect().top) > window.innerHeight * 1.6;
     if (!gsap || !bars.length || reduced || !far) { cb(); return; }
-    gsap.timeline()
+    curtainOn();
+    gsap.timeline({ onComplete: curtainOff })
       .set(bars, { transformOrigin: '50% 100%' })
       .to(bars, { scaleY: 1, duration: .55, ease: 'power3.in', stagger: { each: .025, from: 'edges' } })
       .add(function () {
@@ -272,23 +281,29 @@
   }
 
   /* ================= Nav ================= */
-  var nav = $('[data-nav]'), hero = $('#hero'), lastY = 0;
+  var nav = $('[data-nav]'), hero = $('#hero'), lastY = 0, heroH = 200, ticking = false;
+  var mcEl = $('.mobile-cta'), waEl = $('[data-wa-float]'), st = {};
+  function measure() { heroH = hero ? hero.offsetHeight - 80 : 200; }
+  function flag(el, cls, on, key) { if (el && st[key] !== on) { st[key] = on; el.classList.toggle(cls, on); } }
   function onScroll() {
-    var y = window.scrollY || window.pageYOffset;
-    var heroH = hero ? hero.offsetHeight - 80 : 200;
-    nav.classList.toggle('is-solid', y > 40);
-    nav.classList.toggle('is-hidden', y > heroH && y > lastY + 2 && !drawerOpen);
-    if (y < lastY - 2) nav.classList.remove('is-hidden');
+    ticking = false;
+    var y = lenis ? lenis.scroll : (window.scrollY || window.pageYOffset);
+    flag(nav, 'is-solid', y > 40, 'solid');
+    if (y > lastY + 2 && y > heroH && !drawerOpen) flag(nav, 'is-hidden', true, 'hidden');
+    else if (y < lastY - 2 || y <= heroH) flag(nav, 'is-hidden', false, 'hidden');
     lastY = y;
-    var mc = $('.mobile-cta'); if (mc) mc.classList.toggle('is-visible', y > heroH);
-    var wa = $('[data-wa-float]');
-    if (wa && gsap) {
+    flag(mcEl, 'is-visible', y > heroH, 'mc');
+    if (waEl && gsap) {
       var show = y > heroH * .6;
-      if (wa._shown !== show) { wa._shown = show; gsap.to(wa, { autoAlpha: show ? 1 : 0, scale: show ? 1 : .6, duration: .4, ease: 'power2.out' }); }
+      if (waEl._shown !== show) { waEl._shown = show; gsap.to(waEl, { autoAlpha: show ? 1 : 0, scale: show ? 1 : .6, duration: .4, ease: 'power2.out', overwrite: true }); }
     }
   }
+  function queueScroll() { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }
   if (gsap) gsap.set('[data-wa-float]', { autoAlpha: 0, scale: .6 });
-  window.addEventListener('scroll', onScroll, { passive: true });
+  measure();
+  window.addEventListener('resize', function () { measure(); queueScroll(); });
+  window.addEventListener('load', measure);
+  if (lenis) lenis.on('scroll', queueScroll); else window.addEventListener('scroll', queueScroll, { passive: true });
 
   /* Drawer */
   var drawer = $('[data-drawer]'), drawerOpen = false;
@@ -411,8 +426,8 @@
       return '<article class="prop">' +
         '<a class="prop__media" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true">' +
           (a.badge ? '<span class="apts__badge">' + L(a.badge) + '</span>' : '') +
-          '<img class="prop__img" src="' + a.img + '" alt="" loading="lazy">' +
-          '<img class="prop__img prop__img--2" src="' + a.img2 + '" alt="" loading="lazy">' +
+          '<img decoding="async" class="prop__img" src="' + sm(a.img) + '" alt="" loading="lazy">' +
+          '<img decoding="async" class="prop__img prop__img--2" src="' + sm(a.img2) + '" alt="" loading="lazy">' +
         '</a>' +
         '<div class="prop__body">' +
           '<p class="eyebrow prop__zone">' + zoneName(a.zone) + '</p>' +
@@ -492,7 +507,7 @@
       }).join('');
       $('[data-book-exps]', dlg).innerHTML = EXPS.map(function (e, i) {
         return '<label class="check check--exp"><input type="checkbox" value="' + i + '"' + (st.exps[i] ? ' checked' : '') + ' data-book-exp>' +
-          '<img src="' + e.img + '" alt="" loading="lazy"><span><strong>' + L(e.name) + '</strong><small>' + L(e.duration) + ' · ' + L(e.place) + '</small></span></label>';
+          '<img decoding="async" src="' + sm(e.img) + '" alt="" loading="lazy"><span><strong>' + L(e.name) + '</strong><small>' + L(e.duration) + ' · ' + L(e.place) + '</small></span></label>';
       }).join('');
       if (a && st.guests > maxGuests(a)) st.guests = maxGuests(a);
       $('[data-book-guests]', dlg).textContent = st.guests;
@@ -583,9 +598,10 @@
       if (map || !window.L) return;
       var pts = APTS.filter(function (a) { return a.coords; });
       map = window.L.map(el, { scrollWheelZoom: false, zoomControl: true, attributionControl: true });
-      window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
+      // Mapa base gris claro (sin filtros CSS: los filtros sobre las teselas hacen pesado el scroll)
+      var esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
+      window.L.tileLayer(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap' }).addTo(map);
+      window.L.tileLayer(esri + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
       pts.forEach(function (a, i) {
         var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? '⌂' : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] });
         var m = window.L.marker(a.coords, { icon: icon, title: aptLabel(a), alt: aptLabel(a) }).addTo(map);
@@ -596,7 +612,7 @@
     function popups() {
       markers.forEach(function (m) {
         var a = m._apt, z = CFG.zones.filter(function (x) { return x.es === a.zone; })[0];
-        m.bindPopup('<div class="pmap__pop"><img src="' + a.img + '" alt=""><div><p class="eyebrow">' + (z ? L(z) : a.zone) + '</p><strong>' + aptLabel(a) + '</strong><a href="' + aptURL(a) + '">' + t(a.kind === 'house' ? 'apt.viewHouse' : 'apt.view') + ' →</a></div></div>');
+        m.bindPopup('<div class="pmap__pop"><img decoding="async" src="' + sm(a.img) + '" alt=""><div><p class="eyebrow">' + (z ? L(z) : a.zone) + '</p><strong>' + aptLabel(a) + '</strong><a href="' + aptURL(a) + '">' + t(a.kind === 'house' ? 'apt.viewHouse' : 'apt.view') + ' →</a></div></div>');
       });
     }
     function view(v) {
@@ -609,7 +625,10 @@
     $$('[data-map-view]').forEach(function (b) { b.addEventListener('click', function () { init(); view(b.getAttribute('data-map-view')); }); });
     document.addEventListener('rgm:lang', function () { if (map) popups(); });
     var tries = 0;
-    (function wait() { if (window.L) { if ('IntersectionObserver' in window) { var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); init(); } }, { rootMargin: '300px' }); io.observe(el); } else init(); } else if (tries++ < 50) setTimeout(wait, 200); })();
+    // Fuera de pantalla el mapa no se compone (sus teselas son muchas capas y pesan al scrollear)
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { el.classList.toggle('is-off', !e[0].isIntersecting); }, { rootMargin: '200px' }).observe(el);
+    var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 600); };
+    (function wait() { if (window.L) idle(init, { timeout: 2500 }); else if (tries++ < 50) setTimeout(wait, 200); })();
   })();
 
   /* ================= Ficha de departamento (/propiedades/<slug>/) ================= */
@@ -632,7 +651,7 @@
       $('[data-apt-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
         return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '">' +
           (i === 0 && a.badge ? '<span class="apts__badge">' + L(a.badge) + '</span>' : '') +
-          '<img src="' + src + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
+          '<img decoding="async" src="' + (i ? sm(src) : src) + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
       }).join('');
       $('[data-apt-h2]').innerHTML = L(D.title) || L(a.tag);
       $('[data-apt-intro]').textContent = L(D.intro) || L(a.tag);
@@ -669,7 +688,7 @@
       // otros departamentos
       $('[data-apt-more]').innerHTML = APTS.filter(function (x) { return x !== a; }).slice(0, 3).map(function (x) {
         return '<article class="prop"><a class="prop__media" href="' + aptURL(x) + '" tabindex="-1" aria-hidden="true">' +
-          '<img class="prop__img" src="' + x.img + '" alt="" loading="lazy"><img class="prop__img prop__img--2" src="' + x.img2 + '" alt="" loading="lazy"></a>' +
+          '<img decoding="async" class="prop__img" src="' + sm(x.img) + '" alt="" loading="lazy"><img decoding="async" class="prop__img prop__img--2" src="' + sm(x.img2) + '" alt="" loading="lazy"></a>' +
           '<div class="prop__body"><p class="eyebrow prop__zone">' + zoneName(x.zone) + '</p><h3 class="prop__name"><a href="' + aptURL(x) + '">' + aptLabel(x) + '</a></h3>' +
           '<p class="prop__tag">' + L(x.tag) + '</p></div></article>';
       }).join('');
@@ -757,7 +776,7 @@
         ['x.duration', L(x.duration)], ['x.group', L(f.group) || '—'], ['x.transfer', f.transfer ? t('x.transferYes') : '—'], ['x.langs', f.langs || 'ES']
       ].map(function (r) { return '<div><dt class="eyebrow">' + t(r[0]) + '</dt><dd>' + r[1] + '</dd></div>'; }).join('');
       $('[data-x-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
-        return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '"><img src="' + src + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
+        return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '"><img decoding="async" src="' + src + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
       }).join('');
       $('[data-x-h2]').innerHTML = L(D.title) || L(x.name);
       $('[data-x-intro]').textContent = L(D.intro) || L(x.text);
@@ -771,7 +790,7 @@
       $('[data-x-people]').textContent = people;
       $('[data-x-wide]').src = gallery[1] || gallery[0];
       $('[data-x-more]').innerHTML = EXPS.filter(function (o) { return o !== x; }).slice(0, 3).map(function (o) {
-        return '<article class="prop"><a class="prop__media" href="' + expURL(o) + '" tabindex="-1" aria-hidden="true"><img class="prop__img" src="' + o.img + '" alt="" loading="lazy"></a>' +
+        return '<article class="prop"><a class="prop__media" href="' + expURL(o) + '" tabindex="-1" aria-hidden="true"><img decoding="async" class="prop__img" src="' + o.img + '" alt="" loading="lazy"></a>' +
           '<div class="prop__body"><p class="eyebrow prop__zone">' + L(o.place) + '</p><h3 class="prop__name"><a href="' + expURL(o) + '">' + L(o.name) + '</a></h3>' +
           '<p class="prop__tag">' + L(o.text) + '</p></div></article>';
       }).join('');
@@ -823,7 +842,7 @@
         var i = EXPS.indexOf(x);
         return '<article class="prop xs-card">' +
           '<a class="prop__media xs-card__media" href="' + expURL(x) + '" tabindex="-1" aria-hidden="true">' +
-            '<span class="apts__badge">' + L(x.duration) + '</span><img class="prop__img" src="' + x.img + '" alt="" loading="lazy"></a>' +
+            '<span class="apts__badge">' + L(x.duration) + '</span><img decoding="async" class="prop__img" src="' + sm(x.img) + '" alt="" loading="lazy"></a>' +
           '<div class="prop__body"><p class="eyebrow prop__zone">' + L(x.place) + '</p>' +
             '<h2 class="prop__name"><a href="' + expURL(x) + '">' + L(x.name) + '</a></h2>' +
             '<p class="prop__tag">' + L(x.text) + '</p>' +
@@ -863,6 +882,7 @@
   function goTo(url) {
     url = fixUrl(url);
     if (!gsap || !bars.length || reduced) { location.href = url; return; }
+    curtainOn();
     gsap.timeline()
       .set(bars, { transformOrigin: '50% 100%' })
       .to(bars, { scaleY: 1, duration: .6, ease: 'power3.in', stagger: { each: .025, from: 'edges' } })
@@ -877,7 +897,7 @@
     if (PAGE === 'home' && href.indexOf('./#') === 0) return;
     e.preventDefault(); closeDrawer(); goTo(href);
   });
-  window.addEventListener('pageshow', function (e) { if (e.persisted && bars.length && gsap) gsap.set(bars, { scaleY: 0 }); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted && bars.length && gsap) { gsap.set(bars, { scaleY: 0 }); curtainOff(); } });
 
   /* ================= Contacto ================= */
   function updateContactPh() { /* placeholder se aplica vía data-i18n-attr */ }
@@ -1028,6 +1048,8 @@
     track.addEventListener('focusout', function () { if (tw) tw.resume(); });
     window.addEventListener('resize', function () { clearTimeout(refresh._t); refresh._t = setTimeout(refresh, 250); });
     refresh();
+    // Fuera de pantalla no anima (ahorra repintados mientras se scrollea el resto de la página)
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { if (tw) e[0].isIntersecting ? tw.resume() : tw.pause(); }, { rootMargin: '100px' }).observe(track);
     return { refresh: refresh };
   })();
 
@@ -1063,7 +1085,7 @@
         x: function () { return -dist(); }, ease: 'none',
         scrollTrigger: {
           trigger: gal, start: 'top top', end: function () { return '+=' + dist(); },
-          pin: true, scrub: 1, invalidateOnRefresh: true, anticipatePin: 1,
+          pin: true, scrub: .6, invalidateOnRefresh: true, anticipatePin: 1,
           onUpdate: function (self) { gsap.set('[data-gal-progress]', { scaleX: self.progress }); }
         }
       });
