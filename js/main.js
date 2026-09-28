@@ -597,7 +597,10 @@
     function init() {
       if (map || !window.L) return;
       var pts = APTS.filter(function (a) { return a.coords; });
-      map = window.L.map(el, { scrollWheelZoom: false, zoomControl: true, attributionControl: true });
+      // La rueda del mouse sigue scrolleando la página (no hace zoom ni frena el scroll suave).
+      // En pantallas táctiles el mapa no se arrastra con un dedo, así el scroll de la página no se traba; zoom con los botones.
+      var touch = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      map = window.L.map(el, { scrollWheelZoom: false, dragging: !touch, tap: false, zoomControl: true, attributionControl: true });
       // Mapa base gris claro (sin filtros CSS: los filtros sobre las teselas hacen pesado el scroll)
       var esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
       window.L.tileLayer(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap' }).addTo(map);
