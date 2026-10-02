@@ -60,12 +60,10 @@ window.RGM_APARTMENTS = [
     bedrooms: 0, baths: 1, sleeps: 2, parking: false
   },
   {
-    slug: 'espana-1485', name: 'España 1485', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-1485/01.jpg', img2: 'img/apts/espana-1485/01.jpg',
+    slug: 'espana-1485', name: 'España 1485', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-1485/01.jpg', img2: 'img/apts/espana-1485/03.jpg',
     coords: [-32.88620, -68.84082],
-    badge: { es: 'Fotos próximamente', en: 'Photos coming soon', pt: 'Fotos em breve' },
-    tag: { es: 'Sobre Av. España · En el centro de Mendoza', en: 'On Av. España · In downtown Mendoza', pt: 'Na Av. España · No centro de Mendoza' },
-    // Completar cuando estén los datos: dormitorios, baños y huéspedes (null = no se muestra).
-    bedrooms: null, baths: null, sleeps: null, parking: false
+    tag: { es: 'Luminoso · Piso de parquet · Sobre Av. España arbolada', en: 'Bright · Parquet floors · On leafy Av. España', pt: 'Iluminado · Piso de parquet · Na arborizada Av. España' },
+    bedrooms: 1, baths: 1, sleeps: 4, parking: false
   }
 ];
 

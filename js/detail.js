@@ -148,11 +148,16 @@ window.RGM_DETAILS = {
     location: { text: { es: 'Sobre Av. Mitre, en el centro: Plaza Independencia a pocas cuadras y la Calle Arístides Villanueva a un paseo.', en: 'On Av. Mitre, downtown: Plaza Independencia a few blocks away and Arístides Villanueva within a short walk.', pt: 'Na Av. Mitre, no centro: a Plaza Independencia a poucas quadras e a Arístides Villanueva a uma caminhada.' }, map: 'Av. Bartolomé Mitre 660, Ciudad de Mendoza, Mendoza, Argentina', times: [['plaza', 7], ['peatonal', 8], ['aristides', 15], ['park', 8], ['airport', 20], ['lujan', 30]] }
   },
   'espana-1485': {
-    gallery: ['img/apts/espana-1485/01.jpg'],
-    title: { es: 'Sobre Av. España, <em>en el centro.</em>', en: 'On Av. España, <em>downtown.</em>', pt: 'Na Av. España, <em>no centro.</em>' },
-    intro: { es: 'Muy pronto vas a ver acá las fotos y el detalle de este departamento. Mientras tanto, escribinos y te contamos todo.', en: 'Photos and details of this apartment are coming soon. In the meantime, message us and we’ll tell you all about it.', pt: 'Em breve você vai ver aqui as fotos e os detalhes deste apartamento. Enquanto isso, fale com a gente e contamos tudo.' },
-    overview: [],
-    amenities: { extras: ['concierge', 'transfer', 'tours'] },
-    location: { text: { es: 'Sobre Av. España, en el centro de Mendoza, a unos minutos a pie de Plaza Independencia y la peatonal Sarmiento.', en: 'On Av. España in downtown Mendoza, a few minutes’ walk from Plaza Independencia and Sarmiento pedestrian street.', pt: 'Na Av. España, no centro de Mendoza, a poucos minutos a pé da Plaza Independencia e do calçadão Sarmiento.' }, map: 'Av. España 1485, Ciudad de Mendoza, Mendoza, Argentina', times: [['plaza', 10], ['peatonal', 8], ['aristides', 20], ['airport', 18], ['lujan', 35]] }
+    beds: 2,
+    gallery: rgmGal('espana-1485', 7),
+    title: { es: 'Luz, parquet <em>y la ciudad a pie.</em>', en: 'Light, parquet <em>and the city on foot.</em>', pt: 'Luz, parquet <em>e a cidade a pé.</em>' },
+    intro: { es: 'Un departamento luminoso sobre Av. España, con piso de parquet, living-comedor amplio, un dormitorio y cocina completa. Afuera, una avenida arbolada con cafés y comercios.', en: 'A bright apartment on Av. España, with parquet floors, a roomy living-dining area, one bedroom and a full kitchen. Outside, a tree-lined avenue with cafés and shops.', pt: 'Um apartamento iluminado na Av. España, com piso de parquet, sala de estar e jantar ampla, um quarto e cozinha completa. Lá fora, uma avenida arborizada com cafés e lojas.' },
+    overview: [
+      { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Ambiente amplio con ventanal, mesa para cuatro, TV y aire acondicionado. Suma una cama matrimonial para dos huéspedes más.', en: 'A spacious room with a large window, a table for four, a TV and air conditioning. It also has a double bed for two more guests.', pt: 'Ambiente amplo com janelão, mesa para quatro, TV e ar-condicionado. Tem também uma cama de casal para mais dois hóspedes.' } },
+      { t: { es: 'El dormitorio', en: 'The bedroom', pt: 'O quarto' }, p: { es: 'Cama matrimonial, placard amplio y ventana a la calle. Ropa de cama y toallas incluidas.', en: 'A double bed, a large wardrobe and a street-facing window. Bed linen and towels included.', pt: 'Cama de casal, armário amplo e janela para a rua. Roupa de cama e toalhas incluídas.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina separada con horno, anafe, heladera y microondas.', en: 'Separate kitchen with oven, cooktop, fridge and microwave.', pt: 'Cozinha separada com forno, cooktop, geladeira e micro-ondas.' } }
+    ],
+    amenities: { indoor: ['wifi', 'ac', 'kitchen', 'tv', 'linens'], outdoor: ['elevator'], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'Sobre Av. España, una avenida arbolada del centro de Mendoza con cafés y comercios, a unos minutos a pie de Plaza Independencia y la peatonal Sarmiento.', en: 'On Av. España, a tree-lined avenue in downtown Mendoza with cafés and shops, a few minutes’ walk from Plaza Independencia and Sarmiento pedestrian street.', pt: 'Na Av. España, uma avenida arborizada do centro de Mendoza com cafés e lojas, a poucos minutos a pé da Plaza Independencia e do calçadão Sarmiento.' }, map: 'Av. España 1485, Ciudad de Mendoza, Mendoza, Argentina', times: [['plaza', 10], ['peatonal', 8], ['aristides', 20], ['airport', 18], ['lujan', 35]] }
   }
 };
