@@ -5,20 +5,92 @@
  * - itinerary: pasos del día (hora opcional).
  * - includes / excludes: qué incluye y qué no.
  * - info: datos útiles (punto de encuentro, qué llevar, temporada…).
- * Los contenidos son de EJEMPLO: ajustalos a lo que realmente ofrece RGM. */
+ * Revisá que lo que dice cada ficha (qué incluye, duración) coincida con lo que ofrece RGM. */
 
 window.RGM_EXP_DETAILS = {
-  'ruta-del-malbec': {
+  'alta-montana': {
+    gallery: ['img/exp-snow.jpg', 'img/exp-river.jpg', 'img/g7.jpg', 'img/g3.jpg', 'img/g4.jpg'],
+    facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
+    title: { es: 'Hasta el pie <em>del Aconcagua.</em>', en: 'To the foot <em>of Aconcagua.</em>', pt: 'Até o pé <em>do Aconcágua.</em>' },
+    intro: { es: 'Un día por la ruta 7 hacia la frontera con Chile: el dique Potrerillos, el valle de Uspallata, Puente del Inca y el mirador del Aconcagua, la montaña más alta de América.', en: 'A day along Route 7 towards the Chilean border: Potrerillos dam, the Uspallata valley, Puente del Inca and the Aconcagua lookout — the highest mountain in the Americas.', pt: 'Um dia pela rota 7 rumo à fronteira com o Chile: a represa de Potrerillos, o vale de Uspallata, a Puente del Inca e o mirante do Aconcágua, a montanha mais alta das Américas.' },
+    itinerary: [
+      { h: '08:00', t: { es: 'Salida', en: 'Departure', pt: 'Saída' }, p: { es: 'Traslado desde tu alojamiento hacia la precordillera.', en: 'Transfer from your apartment into the foothills.', pt: 'Traslado do seu apartamento até a pré-cordilheira.' } },
+      { h: '09:00', t: { es: 'Dique Potrerillos', en: 'Potrerillos dam', pt: 'Represa de Potrerillos' }, p: { es: 'Parada fotográfica frente al lago y el Cordón del Plata.', en: 'Photo stop by the lake and the Cordón del Plata.', pt: 'Parada para fotos diante do lago e do Cordón del Plata.' } },
+      { h: '10:30', t: { es: 'Uspallata', en: 'Uspallata', pt: 'Uspallata' }, p: { es: 'Recorrido por el valle y sus cerros de colores.', en: 'Drive through the valley and its coloured hills.', pt: 'Passeio pelo vale e seus morros coloridos.' } },
+      { h: '13:00', t: { es: 'Puente del Inca y Aconcagua', en: 'Puente del Inca & Aconcagua', pt: 'Puente del Inca e Aconcágua' }, p: { es: 'El puente natural y el mirador de Horcones frente a la cara sur.', en: 'The natural bridge and the Horcones lookout facing the south face.', pt: 'A ponte natural e o mirante de Horcones diante da face sul.' } },
+      { h: '18:30', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Vuelta a Mendoza con parada para merendar.', en: 'Back to Mendoza with a stop for afternoon tea.', pt: 'Volta a Mendoza com parada para o lanche.' } }
+    ],
+    includes: { es: ['Traslado ida y vuelta', 'Guía durante el recorrido', 'Paradas fotográficas'], en: ['Round-trip transfer', 'Guide throughout the route', 'Photo stops'], pt: ['Traslado ida e volta', 'Guia durante o percurso', 'Paradas para fotos'] },
+    excludes: { es: ['Comidas', 'Entrada al Parque Provincial Aconcagua'], en: ['Meals', 'Aconcagua Provincial Park entrance'], pt: ['Refeições', 'Entrada no Parque Provincial Aconcágua'] },
+    info: [
+      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Abrigo en capas, lentes de sol y protector: arriba hace frío y el sol es fuerte.', en: 'Layers, sunglasses and sunscreen: it is cold up high and the sun is strong.', pt: 'Roupas em camadas, óculos de sol e protetor: lá em cima faz frio e o sol é forte.' } },
+      { t: { es: 'Documentos', en: 'Documents', pt: 'Documentos' }, p: { es: 'Llevá tu documento: la ruta pasa por controles cerca de la frontera.', en: 'Bring your ID: the route passes checkpoints near the border.', pt: 'Leve seu documento: a rota passa por controles perto da fronteira.' } },
+      { t: { es: 'Temporada', en: 'Season', pt: 'Temporada' }, p: { es: 'Todo el año; en invierno puede suspenderse por nieve en la ruta.', en: 'All year; in winter it may be suspended due to snow on the road.', pt: 'O ano todo; no inverno pode ser suspenso por neve na estrada.' } }
+    ]
+  },
+  'potrerillos-cabalgata': {
+    gallery: ['img/exp-horse.jpg', 'img/exp-river.jpg', 'img/g3.jpg', 'img/g7.jpg', 'img/g5.jpg'],
+    facts: { group: { es: 'Grupos reducidos', en: 'Small groups', pt: 'Grupos reduzidos' }, transfer: true, langs: 'ES · EN' },
+    title: { es: 'El dique, la montaña <em>y a caballo.</em>', en: 'The lake, the mountains <em>and on horseback.</em>', pt: 'A represa, a montanha <em>e a cavalo.</em>' },
+    intro: { es: 'Un día en Potrerillos, a una hora de la ciudad: el dique con la cordillera de fondo y una cabalgata guiada por la precordillera, apta para quienes nunca montaron.', en: 'A day in Potrerillos, an hour from the city: the lake with the Andes behind it and a guided horseback ride through the foothills, suitable for first-timers.', pt: 'Um dia em Potrerillos, a uma hora da cidade: a represa com a cordilheira ao fundo e uma cavalgada guiada pela pré-cordilheira, para quem nunca montou.' },
+    itinerary: [
+      { h: '01', t: { es: 'Te buscamos', en: 'Pick-up', pt: 'Buscamos você' }, p: { es: 'Traslado desde tu alojamiento por la ruta 7 hacia la montaña.', en: 'Transfer from your lodging along route 7 into the mountains.', pt: 'Traslado da sua hospedagem pela rota 7 rumo à montanha.' } },
+      { h: '02', t: { es: 'Dique Potrerillos', en: 'Potrerillos dam', pt: 'Represa de Potrerillos' }, p: { es: 'Paradas frente al lago y el Cordón del Plata.', en: 'Stops by the lake facing the Cordón del Plata range.', pt: 'Paradas em frente ao lago e ao Cordón del Plata.' } },
+      { h: '03', t: { es: 'Cabalgata', en: 'Horseback ride', pt: 'Cavalgada' }, p: { es: 'Recorrido a caballo con guías baqueanos entre quebradas y cerros.', en: 'A ride with local guides through ravines and hills.', pt: 'Passeio a cavalo com guias locais entre ravinas e morros.' } },
+      { h: '04', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Vuelta a tu alojamiento por la tarde.', en: 'Back to your lodging in the afternoon.', pt: 'Volta à sua hospedagem à tarde.' } }
+    ],
+    includes: { es: ['Traslado ida y vuelta', 'Cabalgata guiada', 'Paradas en el dique'], en: ['Round-trip transfer', 'Guided horseback ride', 'Stops at the dam'], pt: ['Traslado ida e volta', 'Cavalgada guiada', 'Paradas na represa'] },
+    excludes: { es: ['Comidas', 'Propinas'], en: ['Meals', 'Tips'], pt: ['Refeições', 'Gorjetas'] },
+    info: [
+      { t: { es: 'Nivel', en: 'Level', pt: 'Nível' }, p: { es: 'Apta para principiantes.', en: 'Suitable for beginners.', pt: 'Para iniciantes.' } },
+      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Pantalón largo, calzado cerrado, gorra y protector solar.', en: 'Long trousers, closed shoes, a cap and sunscreen.', pt: 'Calça comprida, calçado fechado, boné e protetor solar.' } }
+    ]
+  },
+  'termas-de-cacheuta': {
+    gallery: ['img/exp-river.jpg', 'img/g7.jpg', 'img/g3.jpg', 'img/exp-snow.jpg', 'img/g4.jpg'],
+    facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
+    title: { es: 'Agua termal <em>entre montañas.</em>', en: 'Thermal water <em>among the mountains.</em>', pt: 'Água termal <em>entre montanhas.</em>' },
+    intro: { es: 'A unos 40 km de la ciudad, en la quebrada del río Mendoza, las termas de Cacheuta tienen piletas de agua termal al aire libre rodeadas de montañas. Un día para relajarse.', en: 'About 40 km from the city, in the Mendoza river canyon, Cacheuta has open-air thermal pools surrounded by mountains. A day to unwind.', pt: 'A cerca de 40 km da cidade, no vale do rio Mendoza, as termas de Cacheuta têm piscinas termais ao ar livre cercadas de montanhas. Um dia para relaxar.' },
+    itinerary: [
+      { h: '01', t: { es: 'Te buscamos', en: 'Pick-up', pt: 'Buscamos você' }, p: { es: 'Traslado desde tu alojamiento hacia Cacheuta.', en: 'Transfer from your lodging to Cacheuta.', pt: 'Traslado da sua hospedagem até Cacheuta.' } },
+      { h: '02', t: { es: 'Día en las termas', en: 'Day at the springs', pt: 'Dia nas termas' }, p: { es: 'Piletas termales al aire libre con vista a la montaña.', en: 'Open-air thermal pools with mountain views.', pt: 'Piscinas termais ao ar livre com vista para a montanha.' } },
+      { h: '03', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Vuelta a tu alojamiento al final de la tarde.', en: 'Back to your lodging in the late afternoon.', pt: 'Volta à sua hospedagem no fim da tarde.' } }
+    ],
+    includes: { es: ['Traslado ida y vuelta', 'Coordinación de la entrada'], en: ['Round-trip transfer', 'Entry coordination'], pt: ['Traslado ida e volta', 'Coordenação da entrada'] },
+    excludes: { es: ['Comidas', 'Servicios adicionales del complejo'], en: ['Meals', 'Extra services at the complex'], pt: ['Refeições', 'Serviços adicionais do complexo'] },
+    info: [
+      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Malla, toalla, ojotas, gorra y protector solar.', en: 'Swimsuit, towel, flip-flops, a cap and sunscreen.', pt: 'Roupa de banho, toalha, chinelos, boné e protetor solar.' } },
+      { t: { es: 'Temporada', en: 'Season', pt: 'Temporada' }, p: { es: 'Todo el año.', en: 'All year.', pt: 'O ano todo.' } }
+    ]
+  },
+  'bodegas-maipu': {
+    gallery: ['img/exp-vineglass.jpg', 'img/g1.jpg', 'img/exp-cellar.jpg', 'img/g2.jpg', 'img/g6.jpg'],
+    facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
+    title: { es: 'Bodegas y olivares <em>cerca de la ciudad.</em>', en: 'Wineries and olive groves <em>close to the city.</em>', pt: 'Vinícolas e olivais <em>perto da cidade.</em>' },
+    intro: { es: 'Maipú es una de las zonas vitivinícolas más tradicionales de Mendoza: bodegas históricas y familiares, olivares y caminos rurales a pocos minutos del centro.', en: 'Maipú is one of Mendoza’s most traditional wine areas: historic and family wineries, olive groves and country roads minutes from downtown.', pt: 'Maipú é uma das regiões vinícolas mais tradicionais de Mendoza: vinícolas históricas e familiares, olivais e estradas rurais a minutos do centro.' },
+    itinerary: [
+      { h: '01', t: { es: 'Te buscamos', en: 'Pick-up', pt: 'Buscamos você' }, p: { es: 'Traslado desde tu alojamiento hacia Maipú.', en: 'Transfer from your lodging to Maipú.', pt: 'Traslado da sua hospedagem até Maipú.' } },
+      { h: '02', t: { es: 'Bodegas', en: 'Wineries', pt: 'Vinícolas' }, p: { es: 'Visitas y degustaciones en bodegas de la zona.', en: 'Visits and tastings at local wineries.', pt: 'Visitas e degustações em vinícolas da região.' } },
+      { h: '03', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Vuelta a tu alojamiento.', en: 'Back to your lodging.', pt: 'Volta à sua hospedagem.' } }
+    ],
+    includes: { es: ['Traslado ida y vuelta', 'Visitas y degustaciones', 'Coordinación de reservas'], en: ['Round-trip transfer', 'Visits and tastings', 'Booking coordination'], pt: ['Traslado ida e volta', 'Visitas e degustações', 'Coordenação das reservas'] },
+    excludes: { es: ['Almuerzo', 'Compras de vinos', 'Propinas'], en: ['Lunch', 'Wine purchases', 'Tips'], pt: ['Almoço', 'Compras de vinhos', 'Gorjetas'] },
+    info: [
+      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Calzado cómodo y protector solar.', en: 'Comfortable shoes and sunscreen.', pt: 'Calçado confortável e protetor solar.' } },
+      { t: { es: 'Temporada', en: 'Season', pt: 'Temporada' }, p: { es: 'Todo el año. En vendimia (febrero–abril) conviene reservar con anticipación.', en: 'All year. During harvest (February–April) book in advance.', pt: 'O ano todo. Na vindima (fevereiro–abril) reserve com antecedência.' } }
+    ]
+  },
+  'bodegas-lujan-de-cuyo': {
     gallery: ['img/exp-tasting.jpg', 'img/g1.jpg', 'img/g4.jpg', 'img/exp-cellar.jpg', 'img/g6.jpg'],
     facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
     title: { es: 'Tres bodegas, <em>un almuerzo largo.</em>', en: 'Three wineries, <em>one long lunch.</em>', pt: 'Três vinícolas, <em>um almoço longo.</em>' },
     intro: { es: 'Luján de Cuyo es la cuna del Malbec. En un día recorrés tres bodegas de estilos distintos —una familiar, una histórica y una de autor— con degustaciones guiadas y un almuerzo de pasos entre viñedos.', en: 'Luján de Cuyo is the cradle of Malbec. In one day you visit three wineries of different styles — a family estate, a historic house and a boutique winery — with guided tastings and a multi-course lunch among the vines.', pt: 'Luján de Cuyo é o berço do Malbec. Em um dia você visita três vinícolas de estilos diferentes — uma familiar, uma histórica e uma de autor — com degustações guiadas e almoço harmonizado entre vinhedos.' },
     itinerary: [
-      { h: '09:30', t: { es: 'Te buscamos', en: 'Pick-up', pt: 'Buscamos você' }, p: { es: 'Traslado privado desde tu departamento hacia Luján de Cuyo.', en: 'Private transfer from your apartment to Luján de Cuyo.', pt: 'Traslado privado do seu apartamento até Luján de Cuyo.' } },
+      { h: '09:30', t: { es: 'Te buscamos', en: 'Pick-up', pt: 'Buscamos você' }, p: { es: 'Traslado privado desde tu alojamiento hacia Luján de Cuyo.', en: 'Private transfer from your apartment to Luján de Cuyo.', pt: 'Traslado privado do seu apartamento até Luján de Cuyo.' } },
       { h: '10:15', t: { es: 'Primera bodega', en: 'First winery', pt: 'Primeira vinícola' }, p: { es: 'Recorrido por viñedo y sala de barricas, y degustación de tres vinos.', en: 'Vineyard and barrel-room tour, and a three-wine tasting.', pt: 'Passeio pelo vinhedo e sala de barricas, e degustação de três vinhos.' } },
       { h: '12:00', t: { es: 'Segunda bodega', en: 'Second winery', pt: 'Segunda vinícola' }, p: { es: 'Una casa histórica: cava subterránea y Malbec de viñas viejas.', en: 'A historic house: underground cellar and old-vine Malbec.', pt: 'Uma casa histórica: cave subterrânea e Malbec de vinhas velhas.' } },
       { h: '13:30', t: { es: 'Almuerzo de pasos', en: 'Multi-course lunch', pt: 'Almoço harmonizado' }, p: { es: 'Menú de temporada maridado, con vista a la cordillera.', en: 'Seasonal paired menu facing the Andes.', pt: 'Menu da estação harmonizado, com vista para a cordilheira.' } },
-      { h: '16:30', t: { es: 'Tercera bodega y regreso', en: 'Third winery and return', pt: 'Terceira vinícola e retorno' }, p: { es: 'Degustación final y vuelta al departamento cerca de las 18 h.', en: 'Final tasting and back at your apartment around 6 pm.', pt: 'Degustação final e volta ao apartamento por volta das 18h.' } }
+      { h: '16:30', t: { es: 'Tercera bodega y regreso', en: 'Third winery and return', pt: 'Terceira vinícola e retorno' }, p: { es: 'Degustación final y vuelta a tu alojamiento cerca de las 18 h.', en: 'Final tasting and back at your apartment around 6 pm.', pt: 'Degustação final e volta ao apartamento por volta das 18h.' } }
     ],
     includes: { es: ['Traslado privado ida y vuelta', 'Visitas y degustaciones en 3 bodegas', 'Almuerzo de pasos maridado', 'Coordinación de reservas'], en: ['Private round-trip transfer', 'Visits and tastings at 3 wineries', 'Multi-course paired lunch', 'Booking coordination'], pt: ['Traslado privado ida e volta', 'Visitas e degustações em 3 vinícolas', 'Almoço harmonizado', 'Coordenação das reservas'] },
     excludes: { es: ['Compras de vinos', 'Propinas'], en: ['Wine purchases', 'Tips'], pt: ['Compras de vinhos', 'Gorjetas'] },
@@ -47,76 +119,36 @@ window.RGM_EXP_DETAILS = {
       { t: { es: 'Temporada', en: 'Season', pt: 'Temporada' }, p: { es: 'Todo el año. Otoño es ideal por los colores de los viñedos.', en: 'All year. Autumn is ideal for the vineyard colours.', pt: 'O ano todo. O outono é ideal pelas cores dos vinhedos.' } }
     ]
   },
-  'alta-montana': {
-    gallery: ['img/exp-snow.jpg', 'img/exp-river.jpg', 'img/g7.jpg', 'img/g3.jpg', 'img/g4.jpg'],
-    facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
-    title: { es: 'Hasta el pie <em>del Aconcagua.</em>', en: 'To the foot <em>of Aconcagua.</em>', pt: 'Até o pé <em>do Aconcágua.</em>' },
-    intro: { es: 'Un día por la ruta 7 hacia la frontera con Chile: el dique Potrerillos, el valle de Uspallata, Puente del Inca y el mirador del Aconcagua, la montaña más alta de América.', en: 'A day along Route 7 towards the Chilean border: Potrerillos dam, the Uspallata valley, Puente del Inca and the Aconcagua lookout — the highest mountain in the Americas.', pt: 'Um dia pela rota 7 rumo à fronteira com o Chile: a represa de Potrerillos, o vale de Uspallata, a Puente del Inca e o mirante do Aconcágua, a montanha mais alta das Américas.' },
+  'alquiler-de-autos': {
+    gallery: ['img/g7.jpg', 'img/g4.jpg', 'img/exp-snow.jpg', 'img/g2.jpg', 'img/exp-andes.jpg'],
+    facts: { group: { es: 'Por día', en: 'Per day', pt: 'Por dia' }, transfer: false, langs: 'ES · EN · PT' },
+    title: { es: 'Mendoza <em>a tu ritmo.</em>', en: 'Mendoza <em>at your own pace.</em>', pt: 'Mendoza <em>no seu ritmo.</em>' },
+    intro: { es: 'Si preferís moverte por tu cuenta, te coordinamos el alquiler de un auto por los días que necesites: bodegas, alta montaña y rutas escénicas sin horarios.', en: 'If you prefer to get around on your own, we arrange a rental car for the days you need: wineries, high mountains and scenic roads on your schedule.', pt: 'Se prefere se deslocar por conta própria, combinamos o aluguel de um carro pelos dias que precisar: vinícolas, alta montanha e estradas cênicas sem horários.' },
     itinerary: [
-      { h: '08:00', t: { es: 'Salida', en: 'Departure', pt: 'Saída' }, p: { es: 'Traslado desde tu departamento hacia la precordillera.', en: 'Transfer from your apartment into the foothills.', pt: 'Traslado do seu apartamento até a pré-cordilheira.' } },
-      { h: '09:00', t: { es: 'Dique Potrerillos', en: 'Potrerillos dam', pt: 'Represa de Potrerillos' }, p: { es: 'Parada fotográfica frente al lago y el Cordón del Plata.', en: 'Photo stop by the lake and the Cordón del Plata.', pt: 'Parada para fotos diante do lago e do Cordón del Plata.' } },
-      { h: '10:30', t: { es: 'Uspallata', en: 'Uspallata', pt: 'Uspallata' }, p: { es: 'Recorrido por el valle y sus cerros de colores.', en: 'Drive through the valley and its coloured hills.', pt: 'Passeio pelo vale e seus morros coloridos.' } },
-      { h: '13:00', t: { es: 'Puente del Inca y Aconcagua', en: 'Puente del Inca & Aconcagua', pt: 'Puente del Inca e Aconcágua' }, p: { es: 'El puente natural y el mirador de Horcones frente a la cara sur.', en: 'The natural bridge and the Horcones lookout facing the south face.', pt: 'A ponte natural e o mirante de Horcones diante da face sul.' } },
-      { h: '18:30', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Vuelta a Mendoza con parada para merendar.', en: 'Back to Mendoza with a stop for afternoon tea.', pt: 'Volta a Mendoza com parada para o lanche.' } }
+      { h: '01', t: { es: 'Nos escribís', en: 'Message us', pt: 'Fale com a gente' }, p: { es: 'Contanos fechas y cantidad de días.', en: 'Tell us your dates and number of days.', pt: 'Conte as datas e a quantidade de dias.' } },
+      { h: '02', t: { es: 'Te confirmamos', en: 'We confirm', pt: 'Confirmamos' }, p: { es: 'Te pasamos disponibilidad y condiciones por WhatsApp.', en: 'We send availability and terms over WhatsApp.', pt: 'Enviamos disponibilidade e condições pelo WhatsApp.' } },
+      { h: '03', t: { es: 'A la ruta', en: 'Hit the road', pt: 'Pé na estrada' }, p: { es: 'Retirás el auto y recorrés Mendoza como quieras.', en: 'Pick up the car and explore Mendoza your way.', pt: 'Retire o carro e conheça Mendoza do seu jeito.' } }
     ],
-    includes: { es: ['Traslado ida y vuelta', 'Guía durante el recorrido', 'Paradas fotográficas'], en: ['Round-trip transfer', 'Guide throughout the route', 'Photo stops'], pt: ['Traslado ida e volta', 'Guia durante o percurso', 'Paradas para fotos'] },
-    excludes: { es: ['Comidas', 'Entrada al Parque Provincial Aconcagua'], en: ['Meals', 'Aconcagua Provincial Park entrance'], pt: ['Refeições', 'Entrada no Parque Provincial Aconcágua'] },
+    includes: { es: ['Auto por día', 'Coordinación por WhatsApp'], en: ['Car per day', 'WhatsApp coordination'], pt: ['Carro por dia', 'Coordenação pelo WhatsApp'] },
+    excludes: { es: ['Combustible', 'Peajes y estacionamiento'], en: ['Fuel', 'Tolls and parking'], pt: ['Combustível', 'Pedágios e estacionamento'] },
     info: [
-      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Abrigo en capas, lentes de sol y protector: arriba hace frío y el sol es fuerte.', en: 'Layers, sunglasses and sunscreen: it is cold up high and the sun is strong.', pt: 'Roupas em camadas, óculos de sol e protetor: lá em cima faz frio e o sol é forte.' } },
-      { t: { es: 'Documentos', en: 'Documents', pt: 'Documentos' }, p: { es: 'Llevá tu documento: la ruta pasa por controles cerca de la frontera.', en: 'Bring your ID: the route passes checkpoints near the border.', pt: 'Leve seu documento: a rota passa por controles perto da fronteira.' } },
-      { t: { es: 'Temporada', en: 'Season', pt: 'Temporada' }, p: { es: 'Todo el año; en invierno puede suspenderse por nieve en la ruta.', en: 'All year; in winter it may be suspended due to snow on the road.', pt: 'O ano todo; no inverno pode ser suspenso por neve na estrada.' } }
+      { t: { es: 'Requisitos', en: 'Requirements', pt: 'Requisitos' }, p: { es: 'Licencia de conducir vigente. Te confirmamos el resto de las condiciones al consultar.', en: 'A valid driving licence. We confirm the other terms when you enquire.', pt: 'Carteira de motorista válida. Confirmamos as demais condições na consulta.' } },
+      { t: { es: 'Alta montaña', en: 'High Andes', pt: 'Alta montanha' }, p: { es: 'En invierno la ruta 7 puede cerrarse por nieve: consultá antes de salir.', en: 'In winter route 7 may close due to snow: check before you go.', pt: 'No inverno a rota 7 pode fechar por neve: consulte antes de sair.' } }
     ]
   },
-  'cabalgata-al-atardecer': {
-    gallery: ['img/exp-horse.jpg', 'img/g5.jpg', 'img/g6.jpg', 'img/g7.jpg', 'img/g3.jpg'],
-    facts: { group: { es: 'Grupos reducidos', en: 'Small groups', pt: 'Grupos reduzidos' }, transfer: true, langs: 'ES · EN' },
-    title: { es: 'A caballo <em>hasta que cae el sol.</em>', en: 'On horseback <em>until the sun goes down.</em>', pt: 'A cavalo <em>até o sol se pôr.</em>' },
-    intro: { es: 'Una cabalgata tranquila por la precordillera mendocina, apta para quienes nunca montaron, que termina con un asado criollo mientras oscurece sobre la ciudad.', en: 'A gentle ride through the Mendoza foothills, suitable for first-time riders, ending with a traditional asado as night falls over the city.', pt: 'Uma cavalgada tranquila pela pré-cordilheira mendocina, apta para quem nunca montou, que termina com um churrasco crioulo enquanto escurece sobre a cidade.' },
-    itinerary: [
-      { h: '16:00', t: { es: 'Te buscamos', en: 'Pick-up', pt: 'Buscamos você' }, p: { es: 'Traslado hasta el puesto en el pie de monte.', en: 'Transfer to the ranch in the foothills.', pt: 'Traslado até o rancho no pé da montanha.' } },
-      { h: '17:00', t: { es: 'Cabalgata', en: 'The ride', pt: 'A cavalgada' }, p: { es: 'Dos horas entre jarillas y quebradas con guías baqueanos.', en: 'Two hours among shrubs and ravines with local guides.', pt: 'Duas horas entre arbustos e ravinas com guias locais.' } },
-      { h: '19:30', t: { es: 'Asado criollo', en: 'Traditional asado', pt: 'Churrasco crioulo' }, p: { es: 'Asado, empanadas y vino al aire libre.', en: 'Asado, empanadas and wine outdoors.', pt: 'Churrasco, empanadas e vinho ao ar livre.' } },
-      { h: '22:00', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Vuelta a tu departamento.', en: 'Back to your apartment.', pt: 'Volta ao seu apartamento.' } }
-    ],
-    includes: { es: ['Traslado ida y vuelta', 'Cabalgata guiada', 'Asado con bebidas'], en: ['Round-trip transfer', 'Guided ride', 'Asado with drinks'], pt: ['Traslado ida e volta', 'Cavalgada guiada', 'Churrasco com bebidas'] },
-    excludes: { es: ['Propinas'], en: ['Tips'], pt: ['Gorjetas'] },
-    info: [
-      { t: { es: 'Nivel', en: 'Level', pt: 'Nível' }, p: { es: 'Apta para principiantes. Edad mínima sugerida: 8 años.', en: 'Suitable for beginners. Suggested minimum age: 8.', pt: 'Apta para iniciantes. Idade mínima sugerida: 8 anos.' } },
-      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Pantalón largo, calzado cerrado y abrigo para la noche.', en: 'Long trousers, closed shoes and a jacket for the evening.', pt: 'Calça comprida, calçado fechado e agasalho para a noite.' } }
-    ]
-  },
-  'bodegas-en-bici': {
-    gallery: ['img/exp-vineglass.jpg', 'img/g2.jpg', 'img/g1.jpg', 'img/g6.jpg', 'img/exp-cellar.jpg'],
-    facts: { group: { es: 'Libre, a tu ritmo', en: 'Self-guided', pt: 'Livre, no seu ritmo' }, transfer: true, langs: 'ES · EN · PT' },
-    title: { es: 'Maipú <em>en dos ruedas.</em>', en: 'Maipú <em>on two wheels.</em>', pt: 'Maipú <em>sobre duas rodas.</em>' },
-    intro: { es: 'Caminos planos entre olivares y viñedos, bodegas familiares, una fábrica de aceite de oliva y chocolates artesanales. Pedaleás a tu ritmo con un mapa y nuestras recomendaciones.', en: 'Flat roads between olive groves and vineyards, family wineries, an olive-oil mill and artisan chocolates. Ride at your own pace with a map and our tips.', pt: 'Caminhos planos entre olivais e vinhedos, vinícolas familiares, uma fábrica de azeite e chocolates artesanais. Pedale no seu ritmo com um mapa e nossas dicas.' },
-    itinerary: [
-      { h: '10:00', t: { es: 'Traslado a Maipú', en: 'Transfer to Maipú', pt: 'Traslado a Maipú' }, p: { es: 'Te dejamos en el punto de alquiler de bicis.', en: 'We drop you at the bike rental point.', pt: 'Deixamos você no ponto de aluguel das bikes.' } },
-      { h: '10:30', t: { es: 'Recorrido libre', en: 'Free ride', pt: 'Passeio livre' }, p: { es: 'Dos o tres bodegas familiares, olivícola y degustaciones.', en: 'Two or three family wineries, an olive mill and tastings.', pt: 'Duas ou três vinícolas familiares, olivícola e degustações.' } },
-      { h: '16:30', t: { es: 'Regreso', en: 'Return', pt: 'Retorno' }, p: { es: 'Te buscamos y volvés al departamento.', en: 'We pick you up and take you back.', pt: 'Buscamos você e voltamos ao apartamento.' } }
-    ],
-    includes: { es: ['Traslado ida y vuelta', 'Alquiler de bicicleta', 'Mapa y recomendaciones'], en: ['Round-trip transfer', 'Bike rental', 'Map and recommendations'], pt: ['Traslado ida e volta', 'Aluguel de bicicleta', 'Mapa e recomendações'] },
-    excludes: { es: ['Degustaciones y almuerzo (se pagan en cada lugar)'], en: ['Tastings and lunch (paid on site)'], pt: ['Degustações e almoço (pagos em cada lugar)'] },
-    info: [
-      { t: { es: 'Nivel', en: 'Level', pt: 'Nível' }, p: { es: 'Fácil: caminos planos, unos 12 km en total.', en: 'Easy: flat roads, about 12 km in total.', pt: 'Fácil: caminhos planos, cerca de 12 km no total.' } },
-      { t: { es: 'Qué llevar', en: 'What to bring', pt: 'O que levar' }, p: { es: 'Gorra, agua y protector solar.', en: 'Cap, water and sunscreen.', pt: 'Boné, água e protetor solar.' } }
-    ]
-  },
-  'mendoza-esencial': {
-    gallery: ['img/exp-cellar.jpg', 'img/exp-tasting.jpg', 'img/exp-snow.jpg', 'img/g2.jpg', 'img/g6.jpg'],
+  'traslado-aeropuerto': {
+    gallery: ['img/g2.jpg', 'img/g4.jpg', 'img/hero.jpg', 'img/g6.jpg', 'img/contact.jpg'],
     facts: { group: { es: 'Privado', en: 'Private', pt: 'Privado' }, transfer: true, langs: 'ES · EN · PT' },
-    title: { es: 'Lo mejor de Mendoza <em>en cuatro días.</em>', en: 'The best of Mendoza <em>in four days.</em>', pt: 'O melhor de Mendoza <em>em quatro dias.</em>' },
-    intro: { es: 'Un paquete armado para una primera visita: tres noches en uno de nuestros departamentos, la Ruta del Malbec, un día de Alta Montaña y traslados desde y hasta el aeropuerto.', en: 'A package designed for a first visit: three nights in one of our apartments, the Malbec Route, a High Andes day and airport transfers.', pt: 'Um pacote pensado para a primeira visita: três noites em um dos nossos apartamentos, a Rota do Malbec, um dia de Alta Montanha e traslados de e para o aeroporto.' },
+    title: { es: 'De la puerta del avión <em>a tu alojamiento.</em>', en: 'From the plane <em>to your door.</em>', pt: 'Do avião <em>até a sua porta.</em>' },
+    intro: { es: 'Te esperamos en el aeropuerto El Plumerillo y te llevamos directo a tu alojamiento, sin taxis ni esperas. También te buscamos para el viaje de vuelta. Precio por traslado, hasta 4 pasajeros.', en: 'We meet you at El Plumerillo airport and take you straight to your lodging, no taxis or waiting. We also pick you up for your return flight. Price per transfer, up to 4 passengers.', pt: 'Esperamos você no aeroporto El Plumerillo e levamos direto à sua hospedagem, sem táxi nem espera. Também buscamos você para a volta. Preço por traslado, até 4 passageiros.' },
     itinerary: [
-      { h: { es: 'Día 1', en: 'Day 1', pt: 'Dia 1' }, t: { es: 'Llegada', en: 'Arrival', pt: 'Chegada' }, p: { es: 'Te buscamos en el aeropuerto y te llevamos al departamento. Tarde libre por el centro.', en: 'Airport pick-up and transfer to your apartment. Free afternoon downtown.', pt: 'Buscamos você no aeroporto e levamos ao apartamento. Tarde livre no centro.' } },
-      { h: { es: 'Día 2', en: 'Day 2', pt: 'Dia 2' }, t: { es: 'Ruta del Malbec', en: 'Malbec Route', pt: 'Rota do Malbec' }, p: { es: 'Tres bodegas en Luján de Cuyo con almuerzo de pasos.', en: 'Three Luján de Cuyo wineries with a multi-course lunch.', pt: 'Três vinícolas em Luján de Cuyo com almoço harmonizado.' } },
-      { h: { es: 'Día 3', en: 'Day 3', pt: 'Dia 3' }, t: { es: 'Alta Montaña', en: 'High Andes', pt: 'Alta Montanha' }, p: { es: 'Potrerillos, Uspallata, Puente del Inca y el Aconcagua.', en: 'Potrerillos, Uspallata, Puente del Inca and Aconcagua.', pt: 'Potrerillos, Uspallata, Puente del Inca e Aconcágua.' } },
-      { h: { es: 'Día 4', en: 'Day 4', pt: 'Dia 4' }, t: { es: 'Regreso', en: 'Departure', pt: 'Retorno' }, p: { es: 'Mañana libre y traslado al aeropuerto.', en: 'Free morning and airport transfer.', pt: 'Manhã livre e traslado ao aeroporto.' } }
+      { h: '01', t: { es: 'Nos pasás tu vuelo', en: 'Send us your flight', pt: 'Envie seu voo' }, p: { es: 'Con el número de vuelo seguimos tu horario de llegada.', en: 'With your flight number we track your arrival time.', pt: 'Com o número do voo acompanhamos o horário de chegada.' } },
+      { h: '02', t: { es: 'Te esperamos', en: 'We meet you', pt: 'Esperamos você' }, p: { es: 'Te recibimos en el aeropuerto y te ayudamos con el equipaje.', en: 'We greet you at the airport and help with your luggage.', pt: 'Recebemos você no aeroporto e ajudamos com a bagagem.' } },
+      { h: '03', t: { es: 'A tu alojamiento', en: 'To your lodging', pt: 'Até a hospedagem' }, p: { es: 'Traslado directo, unos 20 minutos hasta el centro.', en: 'Direct transfer, about 20 minutes to downtown.', pt: 'Traslado direto, cerca de 20 minutos até o centro.' } }
     ],
-    includes: { es: ['3 noches de alojamiento', 'Ruta del Malbec con almuerzo', 'Excursión de Alta Montaña', 'Traslados aeropuerto ida y vuelta', 'Asistencia por WhatsApp'], en: ['3 nights of lodging', 'Malbec Route with lunch', 'High Andes excursion', 'Round-trip airport transfers', 'WhatsApp assistance'], pt: ['3 noites de hospedagem', 'Rota do Malbec com almoço', 'Excursão de Alta Montanha', 'Traslados do aeroporto ida e volta', 'Atendimento por WhatsApp'] },
-    excludes: { es: ['Vuelos', 'Comidas no mencionadas'], en: ['Flights', 'Meals not listed'], pt: ['Voos', 'Refeições não mencionadas'] },
+    includes: { es: ['Traslado privado', 'Hasta 4 pasajeros con equipaje', 'Seguimiento del vuelo'], en: ['Private transfer', 'Up to 4 passengers with luggage', 'Flight tracking'], pt: ['Traslado privado', 'Até 4 passageiros com bagagem', 'Acompanhamento do voo'] },
     info: [
-      { t: { es: 'A medida', en: 'Tailor-made', pt: 'Sob medida' }, p: { es: 'Podemos sumar noches, cambiar excursiones o elegir el departamento que prefieras.', en: 'We can add nights, swap excursions or choose the apartment you prefer.', pt: 'Podemos somar noites, trocar passeios ou escolher o apartamento que preferir.' } }
+      { t: { es: 'Ida y vuelta', en: 'Both ways', pt: 'Ida e volta' }, p: { es: 'Podés sumar el traslado de regreso al aeropuerto en la misma consulta.', en: 'You can add the return transfer to the airport in the same enquiry.', pt: 'Você pode somar o traslado de volta ao aeroporto na mesma consulta.' } }
     ]
   }
 };

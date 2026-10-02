@@ -123,7 +123,7 @@
         '<span class="exp-card__place">' + L(e.place) + '</span>' +
         '<h3 class="exp-card__name"><a href="' + expURL(e) + '">' + L(e.name) + '</a></h3>' +
         '<p class="exp-card__text">' + L(e.text) + '</p>' +
-        '<div class="exp-card__meta"><span>' + t('exp.duration') + '<br>' + L(e.duration) + '</span>' +
+        '<div class="exp-card__meta"><span>' + t(e.type === 'service' ? 'exp.modality' : 'exp.duration') + '<br>' + L(e.duration) + '</span>' +
         '<button type="button" class="exp-card__add" data-book-exp-i="' + i + '">' + t('exp.book') + ' +</button></div>' +
         '</div></article>';
     }).join('');
@@ -776,7 +776,7 @@
       $('[data-x-place]').textContent = L(x.place);
       var f = D.facts || {};
       $('[data-x-stats]').innerHTML = [
-        ['x.duration', L(x.duration)], ['x.group', L(f.group) || '—'], ['x.transfer', f.transfer ? t('x.transferYes') : '—'], ['x.langs', f.langs || 'ES']
+        [x.type === 'service' ? 'exp.modality' : 'x.duration', L(x.duration)], ['x.group', L(f.group) || '—'], ['x.transfer', f.transfer ? t('x.transferYes') : '—'], ['x.langs', f.langs || 'ES']
       ].map(function (r) { return '<div><dt class="eyebrow">' + t(r[0]) + '</dt><dd>' + r[1] + '</dd></div>'; }).join('');
       $('[data-x-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
         return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '"><img decoding="async" src="' + src + '" alt="" ' + (i > 1 ? 'loading="lazy"' : '') + '></button>';
@@ -838,7 +838,7 @@
   var expsPage = (function () {
     if (PAGE !== 'exps') return null;
     var grid = $('[data-xs-grid]'), type = 'all', first = true;
-    try { var q = new URLSearchParams(location.search).get('tipo'); if (q && /^(day|half|pack)$/.test(q)) type = q; } catch (e) {}
+    try { var q = new URLSearchParams(location.search).get('tipo'); if (q && /^(tour|wine|service)$/.test(q)) type = q; } catch (e) {}
     function render() {
       var list = EXPS.filter(function (x) { return type === 'all' || x.type === type; });
       grid.innerHTML = list.map(function (x) {

@@ -10,9 +10,9 @@
 window.RGM_CONFIG = {
   // WhatsApp del ADMINISTRADOR: acá llegan todas las consultas de la web.
   // Formato internacional sin + ni espacios (ej. 5492611234567).
-  whatsapp: '5492610000000',
+  whatsapp: '5492614671604',
   email: 'hola@rgmexperiences.com',
-  phoneLabel: '+54 9 261 000 0000',
+  phoneLabel: '+54 9 261 467-1604',
   instagram: 'https://instagram.com/',
   facebook: 'https://facebook.com/',
   zones: [
@@ -71,56 +71,69 @@ window.RGM_APARTMENTS = [
  * requires: 'parking' → sólo se ofrece si el depto tiene `parking: true`. */
 window.RGM_EXTRAS = [
   { id: 'cochera', requires: 'parking', label: { es: 'Cochera', en: 'Parking space', pt: 'Garagem' } },
-  { id: 'traslado', label: { es: 'Traslado desde el aeropuerto', en: 'Airport transfer', pt: 'Traslado do aeroporto' } },
   { id: 'early', label: { es: 'Check-in temprano', en: 'Early check-in', pt: 'Check-in antecipado' } },
   { id: 'late', label: { es: 'Check-out tardío', en: 'Late check-out', pt: 'Check-out tardio' } },
   { id: 'cuna', label: { es: 'Cuna para bebé', en: 'Baby cot', pt: 'Berço' } },
   { id: 'bienvenida', label: { es: 'Compras de bienvenida', en: 'Welcome groceries', pt: 'Compras de boas-vindas' } }
 ];
 
-/* type: 'day' (día completo) · 'half' (medio día) · 'pack' (paquete) → filtros de /experiencias/ */
+/* type: 'tour' (excursiones) · 'wine' (bodegas) · 'service' (servicios) → filtros de /experiencias/ */
 window.RGM_EXPERIENCES = [
   {
-    slug: 'ruta-del-malbec', type: 'day', img: 'img/exp-tasting.jpg',
-    name: { es: 'Ruta del Malbec', en: 'Malbec Route', pt: 'Rota do Malbec' },
-    place: { es: 'Luján de Cuyo', en: 'Luján de Cuyo', pt: 'Luján de Cuyo' },
-    duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
-    text: { es: 'Tres bodegas, degustaciones guiadas y almuerzo de pasos entre viñedos.', en: 'Three wineries, guided tastings and a multi-course lunch among the vines.', pt: 'Três vinícolas, degustações guiadas e almoço harmonizado entre vinhedos.' }
-  },
-  {
-    slug: 'valle-de-uco', type: 'day', img: 'img/exp-andes.jpg',
-    name: { es: 'Valle de Uco', en: 'Uco Valley', pt: 'Vale de Uco' },
-    place: { es: 'Tupungato · Tunuyán · San Carlos', en: 'Tupungato · Tunuyán · San Carlos', pt: 'Tupungato · Tunuyán · San Carlos' },
-    duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
-    text: { es: 'Bodegas de altura con la cordillera de fondo y almuerzo con vista a los Andes.', en: 'High-altitude wineries against the Andes, with a lunch facing the peaks.', pt: 'Vinícolas de altitude com a cordilheira ao fundo e almoço com vista para os Andes.' }
-  },
-  {
-    slug: 'alta-montana', type: 'day', img: 'img/exp-snow.jpg',
+    slug: 'alta-montana', type: 'tour', img: 'img/exp-snow.jpg',
     name: { es: 'Alta Montaña', en: 'High Andes', pt: 'Alta Montanha' },
     place: { es: 'Potrerillos · Uspallata · Aconcagua', en: 'Potrerillos · Uspallata · Aconcagua', pt: 'Potrerillos · Uspallata · Aconcágua' },
     duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
-    text: { es: 'El dique de Potrerillos, Puente del Inca y el mirador del Aconcagua.', en: 'Potrerillos dam, Puente del Inca and the Aconcagua lookout.', pt: 'A represa de Potrerillos, a Puente del Inca e o mirante do Aconcágua.' }
+    text: { es: 'El dique de Potrerillos, Uspallata, Puente del Inca y el mirador del Aconcagua.', en: 'Potrerillos dam, Uspallata, Puente del Inca and the Aconcagua lookout.', pt: 'A represa de Potrerillos, Uspallata, a Puente del Inca e o mirante do Aconcágua.' }
   },
   {
-    slug: 'cabalgata-al-atardecer', type: 'half', img: 'img/exp-horse.jpg',
-    name: { es: 'Cabalgata al atardecer', en: 'Sunset horseback ride', pt: 'Cavalgada ao pôr do sol' },
-    place: { es: 'Pie de monte', en: 'Andean foothills', pt: 'Pé da montanha' },
-    duration: { es: 'Medio día', en: 'Half day', pt: 'Meio dia' },
-    text: { es: 'A caballo por la precordillera y asado criollo cuando cae el sol.', en: 'Ride through the foothills and share a traditional asado at sundown.', pt: 'A cavalo pela pré-cordilheira e churrasco crioulo quando o sol se põe.' }
+    slug: 'potrerillos-cabalgata', type: 'tour', img: 'img/exp-horse.jpg',
+    name: { es: 'Potrerillos + cabalgata', en: 'Potrerillos + horseback ride', pt: 'Potrerillos + cavalgada' },
+    place: { es: 'Potrerillos', en: 'Potrerillos', pt: 'Potrerillos' },
+    duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
+    text: { es: 'El dique de Potrerillos y una cabalgata guiada por la precordillera.', en: 'Potrerillos dam and a guided horseback ride through the Andean foothills.', pt: 'A represa de Potrerillos e uma cavalgada guiada pela pré-cordilheira.' }
   },
   {
-    slug: 'bodegas-en-bici', type: 'half', img: 'img/exp-vineglass.jpg',
-    name: { es: 'Bodegas en bici', en: 'Wineries by bike', pt: 'Vinícolas de bike' },
+    slug: 'termas-de-cacheuta', type: 'tour', img: 'img/exp-river.jpg',
+    name: { es: 'Termas de Cacheuta', en: 'Cacheuta hot springs', pt: 'Termas de Cacheuta' },
+    place: { es: 'Cacheuta · Luján de Cuyo', en: 'Cacheuta · Luján de Cuyo', pt: 'Cacheuta · Luján de Cuyo' },
+    duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
+    text: { es: 'Piletas de agua termal al pie de la montaña, junto al río Mendoza.', en: 'Thermal pools at the foot of the mountains, beside the Mendoza river.', pt: 'Piscinas de água termal ao pé da montanha, junto ao rio Mendoza.' }
+  },
+  {
+    slug: 'bodegas-maipu', type: 'wine', img: 'img/exp-vineglass.jpg',
+    name: { es: 'Bodegas de Maipú', en: 'Maipú wineries', pt: 'Vinícolas de Maipú' },
     place: { es: 'Maipú', en: 'Maipú', pt: 'Maipú' },
     duration: { es: 'Medio día', en: 'Half day', pt: 'Meio dia' },
-    text: { es: 'Pedaleá entre olivares y bodegas familiares a tu ritmo.', en: 'Pedal between olive groves and family wineries at your own pace.', pt: 'Pedale entre olivais e vinícolas familiares no seu ritmo.' }
+    text: { es: 'Bodegas tradicionales y familiares entre olivares, a minutos de la ciudad.', en: 'Traditional family wineries among olive groves, minutes from the city.', pt: 'Vinícolas tradicionais e familiares entre olivais, a minutos da cidade.' }
   },
   {
-    slug: 'mendoza-esencial', type: 'pack', img: 'img/exp-cellar.jpg',
-    name: { es: 'Paquete Mendoza Esencial', en: 'Essential Mendoza package', pt: 'Pacote Mendoza Essencial' },
-    place: { es: '3 noches · depto + 2 tours + traslados', en: '3 nights · apartment + 2 tours + transfers', pt: '3 noites · apê + 2 passeios + traslados' },
-    duration: { es: '4 días', en: '4 days', pt: '4 dias' },
-    text: { es: 'Alojamiento, Ruta del Malbec, Alta Montaña y traslado desde el aeropuerto.', en: 'Lodging, Malbec Route, High Andes and airport transfer.', pt: 'Hospedagem, Rota do Malbec, Alta Montanha e traslado do aeroporto.' }
+    slug: 'bodegas-lujan-de-cuyo', type: 'wine', img: 'img/exp-tasting.jpg',
+    name: { es: 'Bodegas de Luján de Cuyo', en: 'Luján de Cuyo wineries', pt: 'Vinícolas de Luján de Cuyo' },
+    place: { es: 'Luján de Cuyo', en: 'Luján de Cuyo', pt: 'Luján de Cuyo' },
+    duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
+    text: { es: 'La cuna del Malbec: bodegas de distintos estilos y degustaciones guiadas.', en: 'The cradle of Malbec: wineries of different styles and guided tastings.', pt: 'O berço do Malbec: vinícolas de estilos diferentes e degustações guiadas.' }
+  },
+  {
+    slug: 'valle-de-uco', type: 'wine', img: 'img/exp-andes.jpg',
+    name: { es: 'Valle de Uco', en: 'Uco Valley', pt: 'Vale de Uco' },
+    place: { es: 'Tupungato · Tunuyán · San Carlos', en: 'Tupungato · Tunuyán · San Carlos', pt: 'Tupungato · Tunuyán · San Carlos' },
+    duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
+    text: { es: 'Bodegas de altura con la cordillera de fondo.', en: 'High-altitude wineries against the Andes.', pt: 'Vinícolas de altitude com a cordilheira ao fundo.' }
+  },
+  {
+    slug: 'alquiler-de-autos', type: 'service', img: 'img/g7.jpg',
+    name: { es: 'Alquiler de autos', en: 'Car rental', pt: 'Aluguel de carros' },
+    place: { es: 'Mendoza', en: 'Mendoza', pt: 'Mendoza' },
+    duration: { es: 'Por día', en: 'Per day', pt: 'Por dia' },
+    text: { es: 'Recorré Mendoza a tu ritmo: bodegas, montaña y rutas escénicas.', en: 'Explore Mendoza at your own pace: wineries, mountains and scenic roads.', pt: 'Conheça Mendoza no seu ritmo: vinícolas, montanha e estradas cênicas.' }
+  },
+  {
+    slug: 'traslado-aeropuerto', type: 'service', img: 'img/g2.jpg',
+    name: { es: 'Traslado aeropuerto – alojamiento', en: 'Airport – lodging transfer', pt: 'Traslado aeroporto – hospedagem' },
+    place: { es: 'Aeropuerto El Plumerillo', en: 'El Plumerillo Airport', pt: 'Aeroporto El Plumerillo' },
+    duration: { es: 'Hasta 4 pasajeros', en: 'Up to 4 passengers', pt: 'Até 4 passageiros' },
+    text: { es: 'Te esperamos en el aeropuerto y te llevamos directo a tu alojamiento.', en: 'We meet you at the airport and take you straight to your lodging.', pt: 'Esperamos você no aeroporto e levamos direto à sua hospedagem.' }
   }
 ];
 

@@ -67,6 +67,9 @@ write('experiencias/index.html', full(xlist, '../'))
 
 # Fichas de experiencias
 exps = re.findall(r"slug: '([^']+)',[^\n]*img: '[^']+',\n\s+name: \{ es: '([^']+)'", data)
+for d in os.listdir(os.path.join(OUT, 'experiencias')):
+    if os.path.isdir(os.path.join(OUT, 'experiencias', d)) and d not in [x[0] for x in exps]:
+        shutil.rmtree(os.path.join(OUT, 'experiencias', d))   # fichas de experiencias que ya no existen
 for slug, name in exps:
     h = head.replace('<title>RGM Experiences</title>', '<title>%s · Experiencias en Mendoza · RGM Experiences</title>' % name)
     page = h + '<div class="rgm-page" data-page="exp" data-slug="%s">\n\n' % slug + subnav + rd('exp-main.html') + '\n' + faq_only + subtail
