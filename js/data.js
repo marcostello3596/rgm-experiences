@@ -48,6 +48,13 @@ window.RGM_APARTMENTS = [
     bedrooms: 2, baths: 1, sleeps: 4, parking: false
   },
   {
+    slug: 'espana-1057', name: 'España 1057', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-1057/01.jpg', img2: 'img/apts/espana-1057/03.jpg',
+    coords: [-32.89072, -68.84198],
+    badge: { es: 'Nuevo', en: 'New', pt: 'Novo' },
+    tag: { es: 'Dos dormitorios · Living y comedor luminosos · Junto a la peatonal', en: 'Two bedrooms · Bright living and dining · Next to the pedestrian street', pt: 'Dois quartos · Sala de estar e jantar iluminadas · Junto ao calçadão' },
+    bedrooms: 2, baths: 1.5, sleeps: 3, parking: false
+  },
+  {
     slug: 'belgrano-487', name: 'Belgrano 487', zone: 'Ciudad de Mendoza', img: 'img/apts/belgrano-487/01.jpg', img2: 'img/apts/belgrano-487/05.jpg',
     coords: [-32.89527, -68.85119],
     tag: { es: 'Luminoso · Cocina completa · Cerca de Arístides y del Parque', en: 'Bright · Full kitchen · Close to Arístides and the Park', pt: 'Iluminado · Cozinha completa · Perto da Arístides e do Parque' },
