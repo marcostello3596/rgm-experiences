@@ -40,7 +40,7 @@ def write(rel, txt):
     open(p, 'w', encoding='utf-8').write(txt)
 
 # Home
-home = head + re.sub(r'<div class="rgm-page"[^>]*>', '<div class="rgm-page" data-page="home">', c[HEAD_END:], count=1)
+home = head.replace('<title>RGM Experiences</title>', '<title>Alquiler temporario en Mendoza y experiencias | RGM Experiences</title>') + re.sub(r'<div class="rgm-page"[^>]*>', '<div class="rgm-page" data-page="home">', c[HEAD_END:], count=1)
 write('index.html', full(home))
 
 # Listado
