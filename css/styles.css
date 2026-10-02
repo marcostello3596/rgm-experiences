@@ -811,7 +811,7 @@ textarea.book__input { resize: vertical; }
 .pmap__pop a { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--text); text-decoration: none; border-bottom: 1px solid var(--line); }
 .pmap .leaflet-control-attribution { font-size: 10px; }
 .pmap .leaflet-container { background: #e9e6e1; }
-.pmap__map.is-off .leaflet-pane, .pmap__map.is-off .leaflet-control-container { visibility: hidden; }
+.pmap__map.is-off .leaflet-pane, .pmap__map.is-off .leaflet-control-container, .apts__map.is-off .leaflet-pane { visibility: hidden; }
 
 .apt-gal--single { grid-template-columns: 1fr; grid-template-rows: clamp(260px, 34vw, 480px); }
 .apt-gal--single .apt-gal__tile img { object-position: 50% 45%; }
@@ -825,3 +825,11 @@ textarea.book__input { resize: vertical; }
 .curtain { visibility: visible; }
 .wa-float { will-change: transform, opacity; }
 img { image-rendering: auto; }
+
+/* Mapa en el slider de departamentos (home) */
+.apts__map { position: absolute; inset: 0; z-index: 0; background: #e9e6e1; }
+.apts__main .apts__badge { z-index: 500; }
+.apts__map .leaflet-control-attribution { font-size: 9px; background: rgba(255, 255, 255, .6); }
+.apts__map .pmap__pin { width: 18px; height: 18px; font-size: 0; border-width: 2px; opacity: .55; box-shadow: none; transition: transform .4s var(--ease), opacity .4s; }
+.apts__map .pmap__pin.is-on { width: 34px; height: 34px; opacity: 1; font-size: 15px; box-shadow: 0 0 0 8px rgba(61, 26, 34, .16), 0 8px 18px rgba(31, 34, 38, .3); }
+.apts-pin { display: grid; place-items: center; }

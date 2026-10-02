@@ -91,11 +91,8 @@
     var main = $('[data-apts-main]'), second = $('[data-apts-second]'), cards = $('[data-apts-cards]');
     if (!main) return;
     var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
-    main.innerHTML = APTS.map(function (a, i) {
-      return '<div class="apts__slide" data-i="' + i + '">' +
-        (a.badge ? '<span class="apts__badge">' + L(a.badge) + '</span>' : '') +
-        '<img decoding="async" src="' + a.img + '" alt="' + a.name + '" ' + (i ? 'loading="lazy"' : '') + ' draggable="false"></div>';
-    }).join('');
+    // La columna izquierda es un mapa (se crea una sola vez; no se rehace al cambiar de idioma)
+    if (!$('[data-apts-map]', main)) main.innerHTML = '<div class="apts__map" data-apts-map></div><span class="apts__badge" data-apts-badge hidden></span>';
     second.innerHTML = APTS.map(function (a, i) {
       return '<div class="apts__second-img"><img decoding="async" src="' + sm(a.img2) + '" alt="" loading="lazy" draggable="false"></div>';
     }).join('');
@@ -671,11 +668,11 @@
       $('[data-apt-times]').innerHTML = (loc.times || []).map(function (x) {
         return '<li><span>' + (PL[x[0]] ? L(PL[x[0]]) : x[0]) + '</span><strong>' + t('apt.min', { n: x[1] }) + '</strong></li>';
       }).join('');
-      var q = encodeURIComponent(loc.map || (a.zone + ', Mendoza'));
+      var q = encodeURIComponent(a.coords ? a.coords.join(',') : (loc.map || (a.zone + ', Mendoza')));
       var map = $('[data-apt-map]');
       if (!map.firstChild) map.innerHTML = '<iframe title="Mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + q + '&output=embed"></iframe>';
       $('[data-apt-maplink]').href = 'https://www.google.com/maps/search/?api=1&query=' + q;
-      var revs = TES.filter(function (r) { return r.where && r.where.indexOf(aptLabel(a)) === 0; });
+      var revs = TES.filter(function (r) { return r.where && r.where.split(' · ')[0] === aptLabel(a); });
       $('[data-apt-reviews]').innerHTML = revs.length ? revs.map(function (r) {
         return '<article class="apt-rev"><div class="tes-card__stars"><span aria-label="5/5">★★★★★</span>' + (r.sample ? '<span class="tes-card__sample">' + t('tes.sample') + '</span>' : '') + '</div>' +
           '<p>' + L(r.text) + '</p><div class="tes-card__who"><span class="tes-card__avatar">' + r.name.charAt(0) + '</span><div><div class="tes-card__name">' + r.name + '</div></div></div></article>';
@@ -918,7 +915,47 @@
   var aptSlider = (function () {
     var stage = $('[data-apts]'); if (!stage) return null;
     var cur = 0, timer = null, AUTOPLAY = 6500;
-    function els() { return { s: $$('.apts__slide', stage), c: $$('.apts__card', stage), t: $$('.apts__second-img', stage) }; }
+    function els() { return { s: [], c: $$('.apts__card', stage), t: $$('.apts__second-img', stage) }; }
+    // Mapa con todos los alojamientos; se centra en el del slide activo
+    var mapEl = null, map = null, pins = [];
+    function pinIcon(a, on) {
+      return window.L.divIcon({ className: 'apts-pin', html: '<span class="pmap__pin' + (on ? ' is-on' : '') + '">' + (a.kind === 'house' ? '⌂' : '') + '</span>', iconSize: [34, 34], iconAnchor: [17, 17] });
+    }
+    function mapInit() {
+      mapEl = mapEl || $('[data-apts-map]', stage);
+      if (map || !window.L || !mapEl) return;
+      map = window.L.map(mapEl, { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, tap: false, attributionControl: true });
+      var esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
+      window.L.tileLayer(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: '&copy; Esri, &copy; OpenStreetMap' }).addTo(map);
+      window.L.tileLayer(esri + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
+      pins = APTS.map(function (a, i) {
+        if (!a.coords) return null;
+        var m = window.L.marker(a.coords, { icon: pinIcon(a, i === cur), keyboard: false, title: aptLabel(a) }).addTo(map);
+        m.on('click', function () { go(i, i > cur ? 1 : -1); play(); });
+        return m;
+      });
+      mapTo(cur, true);
+      if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { mapEl.classList.toggle('is-off', !e[0].isIntersecting); }, { rootMargin: '200px' }).observe(mapEl);
+    }
+    function mapTo(i, now) {
+      var a = APTS[i], badge = $('[data-apts-badge]', stage);
+      if (badge) { badge.hidden = !a.badge; badge.textContent = a.badge ? L(a.badge) : ''; }
+      if (!map || !a.coords) return;
+      pins.forEach(function (m, k) { if (m) { m.setIcon(pinIcon(APTS[k], k === i)); m.setZIndexOffset(k === i ? 1000 : 0); } });
+      var z = a.zone === 'Potrerillos' ? 13 : 16;
+      if (now || reduced || !gsap || !map._loaded) { map.setView(a.coords, z, { animate: false }); return; }
+      var far = map.getCenter().distanceTo(window.L.latLng(a.coords)) > 4000;
+      if (false) {}
+      else if (!far) map.flyTo(a.coords, z, { duration: 1.1, easeLinearity: .25 });
+      else {
+        // Saltos largos (ciudad ↔ Potrerillos): fundido en vez de alejar el mapa
+        gsap.to(mapEl, { opacity: 0, duration: .35, ease: 'power2.in', onComplete: function () {
+          map.setView(a.coords, z, { animate: false });
+          gsap.to(mapEl, { opacity: 1, duration: .7, ease: 'power2.out', delay: .15 });
+        } });
+      }
+    }
+    (function waitL(n) { if (window.L) { var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 300); }; idle(mapInit, { timeout: 2000 }); } else if (n < 60) setTimeout(function () { waitL(n + 1); }, 200); })(0);
     function mark(i) {
       var e = els();
       [e.s, e.c, e.t].forEach(function (list) { list.forEach(function (el, k) { el.classList.toggle('is-active', k === i); el.setAttribute('aria-hidden', k === i ? 'false' : 'true'); }); });
@@ -934,16 +971,17 @@
       dir = dir || (to > cur ? 1 : -1);
       var e = els(), from = cur; cur = to;
       if (gsap && !reduced) {
-        var outs = [e.s[from], e.t[from]], ins = [e.s[to], e.t[to]];
+        var outs = [e.t[from]].filter(Boolean), ins = [e.t[to]].filter(Boolean);
         gsap.killTweensOf(outs.concat(ins, [e.c[from], e.c[to]]));
         gsap.set(ins, { zIndex: 2 }); gsap.set(outs, { zIndex: 1 });
-        gsap.fromTo(ins, { clipPath: dir > 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)', opacity: 1 }, { clipPath: 'inset(0 0 0 0%)', duration: 1.1, ease: 'expo.inOut', stagger: .08 });
-        gsap.fromTo($$('img', ins[0]).concat($$('img', ins[1] || document.createElement('i'))), { scale: 1.18, xPercent: 6 * dir }, { scale: 1, xPercent: 0, duration: 1.5, ease: 'expo.out' });
+        gsap.fromTo(ins, { clipPath: dir > 0 ? 'inset(0 0 0 100%)' : 'inset(0 100% 0 0)', opacity: 1 }, { clipPath: 'inset(0 0 0 0%)', duration: 1.1, ease: 'expo.inOut' });
+        gsap.fromTo($$('img', ins[0] || document.createElement('i')), { scale: 1.18, xPercent: 6 * dir }, { scale: 1, xPercent: 0, duration: 1.5, ease: 'expo.out' });
         gsap.to(outs, { opacity: 0, duration: .01, delay: 1.1 });
         gsap.to(e.c[from], { autoAlpha: 0, y: -16, duration: .4, ease: 'power2.in' });
         gsap.fromTo(e.c[to], { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: .8, ease: 'power3.out', delay: .35 });
       }
       mark(to);
+      mapTo(to);
     }
     function play() { stop(); if (!reduced) timer = setInterval(function () { go(cur + 1, 1); }, AUTOPLAY); }
     function stop() { clearInterval(timer); }
@@ -963,20 +1001,22 @@
       if (!dragging) return;
       var dx = e.clientX - sx, dy = e.clientY - sy;
       if (locked === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) locked = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-      if (locked === 'x') { main.classList.add('is-dragging'); if (gsap) gsap.set($('.apts__slide.is-active img', main), { x: Math.max(-90, Math.min(90, dx * .35)) }); }
+      if (locked === 'x') main.classList.add('is-dragging');
     });
     window.addEventListener('pointerup', function (e) {
       if (!dragging) return; dragging = false; main.classList.remove('is-dragging');
       var dx = e.clientX - sx, v = Math.abs(dx) / Math.max(1, performance.now() - st);
-      if (gsap) gsap.to($('.apts__slide.is-active img', main), { x: 0, duration: .6, ease: 'power3.out' });
       if (locked === 'x' && (Math.abs(dx) > main.offsetWidth * .18 || v > .5)) go(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
       play();
     });
 
     function refresh() {
       var e = els();
-      if (gsap) { gsap.set(e.s.concat(e.t), { clearProps: 'all' }); gsap.set(e.c, { clearProps: 'all' }); }
+      if (gsap && e.t.length) gsap.set(e.t, { clearProps: 'all' });
+      if (gsap && e.c.length) gsap.set(e.c, { clearProps: 'all' });
+      if (!e.c.length) return;
       mark(Math.min(cur, APTS.length - 1));
+      mapTo(Math.min(cur, APTS.length - 1), true);
     }
     refresh(); play();
     if (ST && gsap && !reduced) {
