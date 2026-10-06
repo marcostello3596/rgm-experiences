@@ -124,21 +124,22 @@
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
   }
 
+  // Experiencias en la home: índice tipográfico (la foto aparece junto al mouse en escritorio)
   function renderExps() {
-    var track = $('[data-exp-track]'); if (!track) return;
-    track.innerHTML = EXPS.map(function (e, i) {
-      return '<article class="exp-card" data-i="' + i + '">' +
-        '<img decoding="async" src="' + sm(e.img) + '" alt="" loading="lazy" draggable="false">' +
-        '<a class="exp-card__cta" href="' + expURL(e) + '" aria-label="' + t('x.view') + ': ' + L(e.name) + '">' + arrowSvg + '</a>' +
-        '<div class="exp-card__body">' +
-        '<span class="exp-card__place">' + L(e.place) + '</span>' +
-        '<h3 class="exp-card__name"><a href="' + expURL(e) + '">' + L(e.name) + '</a></h3>' +
-        '<p class="exp-card__text">' + L(e.text) + '</p>' +
-        '<div class="exp-card__meta"><span>' + t(e.type === 'service' ? 'exp.modality' : 'exp.duration') + '<br>' + L(e.duration) + '</span>' +
-        '<button type="button" class="exp-card__add" data-book-exp-i="' + i + '">' + t('exp.book') + ' +</button></div>' +
-        '</div></article>';
+    var list = $('[data-exp-list]'); if (!list) return;
+    list.innerHTML = EXPS.map(function (e, i) {
+      return '<li class="xl__row" data-i="' + i + '" data-reveal>' +
+        '<span class="xl__n">' + pad(i + 1) + '</span>' +
+        '<span class="xl__thumb" aria-hidden="true"><img decoding="async" src="' + sm(e.img) + '" alt="" loading="lazy"></span>' +
+        '<a class="xl__name" href="' + expURL(e) + '">' + esc(L(e.name)) + '</a>' +
+        '<span class="xl__place">' + esc(L(e.place)) + '</span>' +
+        '<span class="xl__dur">' + esc(L(e.duration)) + '</span>' +
+        '<button type="button" class="xl__add" data-book-exp-i="' + i + '" aria-label="' + esc(t('exp.book') + ': ' + L(e.name)) + '">+</button>' +
+        '<span class="xl__go" aria-hidden="true">' + ARR + '</span>' +
+        '</li>';
     }).join('');
-    $('[data-exp-total]').textContent = '/ ' + pad(EXPS.length);
+    var fl = $('[data-exp-float]');
+    if (fl && !fl.children.length) fl.innerHTML = EXPS.map(function (e) { return '<img decoding="async" src="' + sm(e.img) + '" alt="">'; }).join('');
   }
 
   function renderTes() {
@@ -213,6 +214,7 @@
     if (fp) { fp.set('locale', lang === 'en' ? 'default' : lang); if (fp.altInput) fp.altInput.placeholder = fp.input.getAttribute('placeholder') || t('search.datesPh'); if (fp.selectedDates.length) fp.setDate(fp.selectedDates, false); }
     rollify(); cursorTargets();
     if (typeof hero2 !== 'undefined' && hero2) hero2.fit();
+    if (typeof introFx !== 'undefined' && introFx) introFx.split();
   }
 
   /* ================= Split headings ================= */
@@ -632,6 +634,28 @@
   })();
 
 
+  /* Teselas del mapa entonadas a la paleta: se tiñen una sola vez al cargar (canvas),
+     así no hay filtros CSS que repinten el mapa en cada frame del scroll */
+  function warmTiles(url, opts) {
+    var Warm = window.L.TileLayer.extend({
+      createTile: function (coords, done) {
+        var tile = document.createElement('canvas'), size = this.getTileSize(), img = new Image();
+        tile.width = size.x; tile.height = size.y;
+        img.crossOrigin = 'anonymous';
+        img.onload = function () {
+          var c = tile.getContext('2d');
+          c.drawImage(img, 0, 0, size.x, size.y);
+          c.globalCompositeOperation = 'multiply'; c.fillStyle = '#f7ecdf'; c.fillRect(0, 0, size.x, size.y);
+          done(null, tile);
+        };
+        img.onerror = function (e) { done(e, tile); };
+        img.src = this.getTileUrl(coords);
+        return tile;
+      }
+    });
+    return new Warm(url, opts);
+  }
+
   /* ================= Mapa de ubicaciones (/propiedades/) ================= */
   (function propsMap() {
     var el = $('[data-props-map]'); if (!el || PAGE !== 'props') return;
@@ -645,7 +669,7 @@
       map = window.L.map(el, { scrollWheelZoom: false, dragging: !touch, tap: false, zoomControl: true, attributionControl: true });
       // Mapa base gris claro (sin filtros CSS: los filtros sobre las teselas hacen pesado el scroll)
       var esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
-      window.L.tileLayer(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap' }).addTo(map);
+      warmTiles(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap' }).addTo(map);
       window.L.tileLayer(esri + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
       pts.forEach(function (a, i) {
         var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? HOUSE : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] });
@@ -972,7 +996,7 @@
       if (map || !window.L || !mapEl) return;
       map = window.L.map(mapEl, { zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false, boxZoom: false, keyboard: false, touchZoom: false, tap: false, attributionControl: true });
       var esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
-      window.L.tileLayer(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: '&copy; Esri, &copy; OpenStreetMap' }).addTo(map);
+      warmTiles(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: '&copy; Esri, &copy; OpenStreetMap' }).addTo(map);
       window.L.tileLayer(esri + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
       pins = APTS.map(function (a, i) {
         if (!a.coords) return null;
@@ -1190,7 +1214,11 @@
       tl.fromTo(frame, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut', clearProps: 'clipPath' }, .25)
         .from(zoom, { scale: 1.4, duration: 2, ease: 'expo.out' }, .55)
         .from(fig, { xPercent: -101, duration: 1, ease: 'expo.out' }, 1.3)
-        .from(['.hero__side', '.search--hero'], { y: 26, opacity: 0, duration: 1.1, ease: 'power3.out', stagger: .1 }, .9);
+        .from(['.hero__side', '.search--hero'], { y: 26, opacity: 0, duration: 1.1, ease: 'power3.out', stagger: .1 }, .9)
+        .add(function () {
+          var br = gsap.to(zoom, { scale: 1.07, duration: 14, ease: 'sine.inOut', repeat: -1, yoyo: true });
+          if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { e[0].isIntersecting ? br.resume() : br.pause(); }).observe(frame);
+        });
       return tl;
     }
 
@@ -1249,6 +1277,19 @@
     });
   })();
 
+  /* ================= Botones principales con "imán" (sólo mouse) ================= */
+  (function magnet() {
+    if (!gsap || reduced || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    $$('.btn--go, .nav__book').forEach(function (b) {
+      var xTo = gsap.quickTo(b, 'x', { duration: .6, ease: 'power3' }), yTo = gsap.quickTo(b, 'y', { duration: .6, ease: 'power3' });
+      b.addEventListener('pointermove', function (e) {
+        var r = b.getBoundingClientRect();
+        xTo((e.clientX - r.left - r.width / 2) * .18); yTo((e.clientY - r.top - r.height / 2) * .3);
+      });
+      b.addEventListener('pointerleave', function () { xTo(0); yTo(0); });
+    });
+  })();
+
   /* ================= Cursor con etiqueta (sólo mouse) ================= */
   function cursorTargets() {
     var set = function (sel, key) { $$(sel).forEach(function (el) { el.setAttribute('data-cursor', key); }); };
@@ -1275,12 +1316,70 @@
     document.addEventListener('pointerleave', function () { cur = ''; gsap.to(el, { scale: 0, duration: .3 }); });
   })();
 
+  /* ================= Manifiesto: las palabras se encienden con el scroll ================= */
+  var introFx = (function () {
+    var el = $('[data-words]'); if (!el) return null;
+    var words = [], prog = 0, last = -1;
+    function paint(p) {
+      var n = Math.round(p * words.length); if (n === last) return; last = n;
+      for (var i = 0; i < words.length; i++) words[i].classList.toggle('is-on', i < n);
+    }
+    function split() {
+      (function walk(node) {
+        Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+          if (n.nodeType === 3) {
+            var frag = document.createDocumentFragment();
+            n.textContent.split(/(\s+)/).forEach(function (p) {
+              if (!p) return;
+              if (/^\s+$/.test(p)) { frag.appendChild(document.createTextNode(p)); return; }
+              var w = document.createElement('span'); w.className = 'w'; w.textContent = p; frag.appendChild(w);
+            });
+            node.replaceChild(frag, n);
+          } else if (n.nodeType === 1) { if (n.classList.contains('ii')) n.classList.add('w'); else if (!n.classList.contains('w')) walk(n); }
+        });
+      })(el);
+      words = $$('.w', el); last = -1;
+      paint(!gsap || !ST || reduced ? 1 : prog);
+    }
+    if (gsap && ST && !reduced) ST.create({ trigger: el, start: 'top 82%', end: 'bottom 50%', onUpdate: function (st) { prog = st.progress; paint(prog); }, onRefresh: function (st) { prog = st.progress; paint(prog); } });
+    return { split: split };
+  })();
+
+  /* ================= Índice de experiencias: foto que sigue al mouse ================= */
+  (function xlHover() {
+    var list = $('[data-exp-list]'), fl = $('[data-exp-float]');
+    if (!list || !fl || !gsap || reduced || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    gsap.set(fl, { xPercent: 12, yPercent: -50, autoAlpha: 0, scale: .8 });
+    var xTo = gsap.quickTo(fl, 'x', { duration: .7, ease: 'power3' }), yTo = gsap.quickTo(fl, 'y', { duration: .7, ease: 'power3' });
+    var cur = -1, z = 1, shown = false;
+    list.addEventListener('pointermove', function (e) {
+      xTo(e.clientX); yTo(e.clientY);
+      var row = e.target.closest && e.target.closest('.xl__row'), i = row ? parseInt(row.getAttribute('data-i'), 10) : -1;
+      if (i === cur) return;
+      cur = i;
+      var im = $$('img', fl)[i];
+      if (im) {
+        im.style.zIndex = ++z;
+        gsap.fromTo(im, { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.2 }, { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: .8, ease: 'expo.out', overwrite: true });
+      }
+      if (!shown && i > -1) { shown = true; gsap.set(fl, { x: e.clientX, y: e.clientY }); gsap.to(fl, { autoAlpha: 1, scale: 1, duration: .6, ease: 'expo.out', overwrite: 'auto' }); }
+    }, { passive: true });
+    list.addEventListener('pointerleave', function () { cur = -1; shown = false; gsap.to(fl, { autoAlpha: 0, scale: .8, duration: .45, ease: 'power3.out', overwrite: 'auto' }); });
+  })();
+
   /* ================= Scroll: hero, galería, reveals, contadores ================= */
   function scrollFx() {
     if (!gsap || !ST || reduced) return;
 
     // Hero: la foto se expande con el scroll
     if (hero2) hero2.scroll();
+
+    // Imágenes que se descubren de abajo hacia arriba al entrar
+    $$('[data-reveal-img]').forEach(function (fig) {
+      var st = { trigger: fig, start: 'top 88%', once: true }, img = $('img', fig);
+      gsap.fromTo(fig, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut', scrollTrigger: st });
+      if (img) gsap.fromTo(img, { scale: 1.35 }, { scale: 1, duration: 2, ease: 'expo.out', scrollTrigger: st });
+    });
 
     // Reveals (arrancan visibles; sólo se animan al entrar)
     $$('[data-reveal]').forEach(function (el, i) {
@@ -1296,6 +1395,9 @@
         gsap.to(o, { v: target, duration: 1.8, ease: 'power3.out', onUpdate: function () { el.textContent = Math.round(o.v); } });
       } });
     });
+
+    // Footer: la marca RGM sube mientras aparece
+    if ($('.footer__mark svg')) gsap.fromTo('.footer__mark svg', { yPercent: 35 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.footer__mark', start: 'top bottom', end: 'bottom bottom', scrub: true } });
 
     // Galería: pin + scroll horizontal
     var gal = $('[data-gallery]'), gtrack = $('[data-gal-track]');

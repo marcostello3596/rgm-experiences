@@ -168,5 +168,5 @@ window.RGM_FAQ = [
 ];
 
 window.RGM_GALLERY = [
-  'img/g6.jpg', 'img/g1.jpg', 'img/exp-river.jpg', 'img/g3.jpg', 'img/g7.jpg', 'img/g2.jpg', 'img/g5.jpg', 'img/g4.jpg'
+  'img/g6.jpg', 'img/g1.jpg', 'img/exp-river.jpg', 'img/g3.jpg', 'img/g7.jpg', 'img/g2.jpg', 'img/g5.jpg'
 ];

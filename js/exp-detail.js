@@ -137,7 +137,7 @@ window.RGM_EXP_DETAILS = {
     ]
   },
   'traslado-aeropuerto': {
-    gallery: ['img/g2.jpg', 'img/g4.jpg', 'img/hero.jpg', 'img/g6.jpg', 'img/contact.jpg'],
+    gallery: ['img/g2.jpg', 'img/g7.jpg', 'img/g4.jpg', 'img/g6.jpg', 'img/g3.jpg'],
     facts: { group: { es: 'Privado', en: 'Private', pt: 'Privado' }, transfer: true, langs: 'ES · EN · PT' },
     title: { es: 'De la puerta del avión <em>a tu alojamiento.</em>', en: 'From the plane <em>to your door.</em>', pt: 'Do avião <em>até a sua porta.</em>' },
     intro: { es: 'Te esperamos en el aeropuerto El Plumerillo y te llevamos directo a tu alojamiento, sin taxis ni esperas. También te buscamos para el viaje de vuelta. Precio por traslado, hasta 4 pasajeros.', en: 'We meet you at El Plumerillo airport and take you straight to your lodging, no taxis or waiting. We also pick you up for your return flight. Price per transfer, up to 4 passengers.', pt: 'Esperamos você no aeroporto El Plumerillo e levamos direto à sua hospedagem, sem táxi nem espera. Também buscamos você para a volta. Preço por traslado, até 4 passageiros.' },
