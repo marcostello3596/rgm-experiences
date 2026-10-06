@@ -1,7 +1,5 @@
 /* RGM Experiences — estilos. Tema único (marca), colores explícitos. */
-/* Fuentes de marca (colocar los .woff2 con licencia en /fonts con estos nombres) */
-@font-face { font-family: "Bodonisvtytwoitctt Bookita"; src: url("../fonts/BodoniSvtyTwoITCTT-BookIta.woff") format("woff"); font-weight: 300 400; font-style: italic; font-display: swap; }
-@font-face { font-family: "Franklingothicurw Lig"; src: url("../fonts/FranklinGothicURW-Lig.woff2") format("woff2"), url("../fonts/FranklinGothicURW-Lig.woff") format("woff"); /* falta archivo completo: usa Libre Franklin */ font-weight: 300; font-style: normal; font-display: swap; }
+/* Las fuentes (Gambarino + Supreme) y el sistema visual nuevo están en css/v2.css */
 
 :root {
   --sand: #efe7dc;

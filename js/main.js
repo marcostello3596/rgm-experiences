@@ -57,6 +57,15 @@
     $$('[data-year]').forEach(function (el) { el.textContent = new Date().getFullYear(); });
     $$('[data-count-apts-num]').forEach(function (el) { el.textContent = APTS.length; el.dataset.target = APTS.length; });
     $$('[data-count-exp-num]').forEach(function (el) { el.textContent = EXPS.length; el.dataset.target = EXPS.length; });
+    $$('[data-hero-count]').forEach(function (el) { el.textContent = t('hero.count', { n: APTS.length, m: EXPS.length }); });
+    rollify();
+  }
+  // Links y botones de texto: el texto "rueda" al pasar el mouse (ver .roll en v2.css)
+  function rollify() {
+    $$('.nav__links a, .footer__list a, .drawer__link, .btn:not(.btn--wa), .props__clear').forEach(function (el) {
+      if (el.children.length || !el.textContent.trim()) return;
+      el.innerHTML = '<span class="roll"><span>' + esc(el.textContent) + '</span></span>';
+    });
   }
 
   function setLang(next) {
@@ -77,6 +86,11 @@
   });
 
   /* ================= Render de datos ================= */
+  // Las fuentes no traen flechas ni ⌂: van como SVG
+  var ARR = '<svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg>';
+  var HOUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 7.5L8 3l5.5 4.5V13h-11z"/></svg>';
+  var PEAKS = '<svg viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13"/></svg>';
+  var esc = function (x) { return String(x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var arrowSvg = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>';
 
   function renderZones() {
@@ -104,7 +118,7 @@
         '<dl class="facts"><div><dt>' + t('apts.bedrooms') + '</dt><dd>' + fmtRooms(a.bedrooms) + '</dd></div>' +
         '<div><dt>' + t('apts.baths') + '</dt><dd>' + fmtNum(a.baths) + '</dd></div>' +
         '<div><dt>' + t('apts.sleeps') + '</dt><dd>' + fmtNum(a.sleeps) + '</dd></div></dl>' +
-        '<a class="link-cta" href="' + aptURL(a) + '">' + t('apts.cta') + ' <span>→</span></a>' +
+        '<a class="link-cta" href="' + aptURL(a) + '">' + t('apts.cta') + ' ' + ARR + '</a>' +
         '</article>';
     }).join('');
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
@@ -129,7 +143,10 @@
 
   function renderTes() {
     var track = $('[data-tes-track]'); if (!track) return;
-    var one = TES.map(function (r) {
+    var real = TES.filter(function (r) { return !r.sample; }), sec = $('#testimonios');
+    if (sec) sec.hidden = !real.length;
+    if (!real.length) { track.innerHTML = ''; return; }
+    var one = real.map(function (r) {
       return '<article class="tes-card">' +
         '<div class="tes-card__stars"><span aria-label="5/5">★★★★★</span>' + (r.sample ? '<span class="tes-card__sample">' + t('tes.sample') + '</span>' : '') + '</div>' +
         '<p class="tes-card__quote">' + L(r.text) + '</p>' +
@@ -168,13 +185,21 @@
     });
   }
 
+  function renderTicker() {
+    var track = $('[data-ticker]'); if (!track) return;
+    var one = EXPS.map(function (e) { return '<span class="ticker__item">' + esc(L(e.name)) + PEAKS + '</span>'; }).join('');
+    track.innerHTML = '<div class="ticker__run">' + one + '</div><div class="ticker__run">' + one + '</div>';
+  }
+
   function renderGallery() {
     var track = $('[data-gal-track]'); if (!track || track.children.length) return;
-    track.innerHTML = GAL.map(function (src) { return '<figure class="gal__item" style="margin:0"><img decoding="async" src="' + src + '" alt="" loading="lazy"></figure>'; }).join('');
+    track.innerHTML = '<div class="gal__intro"><h2 class="h2" data-i18n-html="gal.title">' + t('gal.title') + '</h2>' +
+      '<p class="gal__hint"><span data-i18n="gal.hint">' + t('gal.hint') + '</span> ' + ARR + '</p></div>' +
+      GAL.map(function (src, i) { return '<figure class="gal__item" style="margin:0"><img decoding="async" src="' + src + '" alt="" loading="lazy"><figcaption>' + pad(i + 1) + ' / ' + pad(GAL.length) + '</figcaption></figure>'; }).join('');
   }
 
   function renderAll() {
-    applyStatic(); renderZones(); renderApts(); renderExps(); renderTes(); renderFaq(); renderGallery();
+    applyStatic(); renderZones(); renderApts(); renderExps(); renderTes(); renderFaq(); renderGallery(); renderTicker();
     updateGuestsLabel(); updateContactPh();
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
@@ -185,11 +210,13 @@
     if (aptSlider) aptSlider.refresh();
     if (expSlider) expSlider.refresh();
     if (marquee) marquee.refresh();
-    if (fp) { fp.set('locale', lang === 'en' ? 'default' : lang); if (fp.altInput) fp.altInput.placeholder = t('search.datesPh'); if (fp.selectedDates.length) fp.setDate(fp.selectedDates, false); }
+    if (fp) { fp.set('locale', lang === 'en' ? 'default' : lang); if (fp.altInput) fp.altInput.placeholder = fp.input.getAttribute('placeholder') || t('search.datesPh'); if (fp.selectedDates.length) fp.setDate(fp.selectedDates, false); }
+    rollify(); cursorTargets();
+    if (typeof hero2 !== 'undefined' && hero2) hero2.fit();
   }
 
   /* ================= Split headings ================= */
-  var splits = [];
+  var splits = [], wordSplit = null;
   function splitAll(animate) {
     splits.forEach(function (s) { s.revert(); });
     splits = [];
@@ -198,15 +225,14 @@
       if (!window.SplitText || reduced) return;
       var hero = el.getAttribute('data-split') === 'hero';
       var s = hero
-        ? new SplitText(el, { type: 'words,chars', charsClass: 'split-char', wordsClass: 'split-word' })
+        ? new SplitText(el, { type: 'chars', charsClass: 'split-char' })
         : new SplitText(el, { type: 'lines', linesClass: 'split-line-inner', mask: 'lines' });
       splits.push(s);
+      if (hero) { wordSplit = s; return; }
       if (!animate) return;
-      if (hero) {
-        gsap.from(s.chars, { yPercent: 110, opacity: 0, rotate: 4, duration: 1.1, ease: 'expo.out', stagger: .025, delay: .55 });
-      } else {
+      {
         gsap.from(s.lines, {
-          yPercent: 105, duration: 1.1, ease: 'expo.out', stagger: .09,
+          yPercent: 125, duration: 1.2, ease: 'expo.out', stagger: .09,
           scrollTrigger: { trigger: el, start: 'top 88%', once: true }
         });
       }
@@ -254,10 +280,28 @@
     for (var i = 0; i < n; i++) { var b = document.createElement('span'); b.className = 'curtain__bar'; curtain.appendChild(b); }
     bars = $$('.curtain__bar', curtain);
   }
-  function curtainIn() {
-    if (!gsap || !bars.length || reduced) { if (curtain) curtain.style.display = 'none'; return; }
-    gsap.set(bars, { scaleY: 1, transformOrigin: '50% 0%' });
-    gsap.to(bars, { scaleY: 0, duration: .9, ease: 'power4.inOut', stagger: { each: .035, from: 'center' }, delay: .1, onComplete: curtainOff });
+  // Primera visita de la sesión: contador de carga sobre la cortina
+  var loader = (function () {
+    var first = false;
+    try { first = !sessionStorage.getItem('rgm-seen'); sessionStorage.setItem('rgm-seen', '1'); } catch (e) { first = false; }
+    if (!first || !curtain || !gsap || reduced) return null;
+    var box = document.createElement('div'); box.className = 'curtain__load';
+    box.innerHTML = '<span class="curtain__brand">RGM Experiences — <span data-i18n="load.label">' + t('load.label') + '</span></span><span class="curtain__num">0</span>';
+    curtain.appendChild(box);
+    var num = $('.curtain__num', box), o = { v: 0 }, waiting = null, done = false;
+    gsap.to(o, { v: 100, duration: 1.5, ease: 'power2.inOut', onUpdate: function () { num.textContent = Math.round(o.v); },
+      onComplete: function () { done = true; if (waiting) finish(waiting); } });
+    function finish(cb) { gsap.to(box, { opacity: 0, y: -20, duration: .45, ease: 'power2.in', onComplete: function () { box.remove(); cb(); } }); }
+    return { then: function (cb) { if (done) finish(cb); else waiting = cb; } };
+  })();
+  function curtainIn(onLift) {
+    if (!gsap || !bars.length || reduced) { if (curtain) curtain.style.display = 'none'; if (onLift) onLift(); return; }
+    var lift = function () {
+      gsap.set(bars, { scaleY: 1, transformOrigin: '50% 0%' });
+      gsap.to(bars, { scaleY: 0, duration: 1, ease: 'power4.inOut', stagger: { each: .03, from: 'center' }, delay: .05, onComplete: curtainOff });
+      if (onLift) gsap.delayedCall(.35, onLift);
+    };
+    if (loader) loader.then(lift); else lift();
   }
   function curtainOn() { if (curtain) curtain.style.visibility = 'visible'; }
   function curtainOff() { if (curtain) curtain.style.visibility = 'hidden'; }
@@ -328,7 +372,7 @@
   var guests = 2, fp = null;
   function updateGuestsLabel() {
     var l = $('[data-guests-label]'); if (!l) return;
-    l.textContent = guests === 1 ? t('search.guest1') : t('search.guestN', { n: guests });
+    l.textContent = l.hasAttribute('data-short') ? guests : guests === 1 ? t('search.guest1') : t('search.guestN', { n: guests });
     $('[data-guests-count]').textContent = guests;
   }
   var pop = $('[data-guests-pop]'), tog = $('[data-guests-toggle]');
@@ -445,6 +489,7 @@
     if (guestsFiltered) chips.push('<button type="button" class="chip" data-chip="guests" aria-label="' + t('props.removeChip') + '">' + (guests === 1 ? t('search.guest1') : t('search.guestN', { n: guests })) + ' <span aria-hidden="true">×</span></button>');
     $('[data-props-chips]').innerHTML = chips.join('');
     $$('.props__meta [data-props-clear]').forEach(function (b) { b.hidden = !chips.length; });
+    rollify(); cursorTargets();
     // URL compartible
     try {
       var qs = [];
@@ -603,7 +648,7 @@
       window.L.tileLayer(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap' }).addTo(map);
       window.L.tileLayer(esri + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
       pts.forEach(function (a, i) {
-        var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? '⌂' : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] });
+        var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? HOUSE : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] });
         var m = window.L.marker(a.coords, { icon: icon, title: aptLabel(a), alt: aptLabel(a) }).addTo(map);
         m._apt = a; markers.push(m);
       });
@@ -672,7 +717,7 @@
       var map = $('[data-apt-map]');
       if (!map.firstChild) map.innerHTML = '<iframe title="Mapa" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=' + q + '&output=embed"></iframe>';
       $('[data-apt-maplink]').href = 'https://www.google.com/maps/search/?api=1&query=' + q;
-      var revs = TES.filter(function (r) { return r.where && r.where.split(' · ')[0] === aptLabel(a); });
+      var revs = TES.filter(function (r) { return !r.sample && r.where && r.where.split(' · ')[0] === aptLabel(a); });
       $('[data-apt-reviews]').innerHTML = revs.length ? revs.map(function (r) {
         return '<article class="apt-rev"><div class="tes-card__stars"><span aria-label="5/5">★★★★★</span>' + (r.sample ? '<span class="tes-card__sample">' + t('tes.sample') + '</span>' : '') + '</div>' +
           '<p>' + L(r.text) + '</p><div class="tes-card__who"><span class="tes-card__avatar">' + r.name.charAt(0) + '</span><div><div class="tes-card__name">' + r.name + '</div></div></div></article>';
@@ -852,6 +897,7 @@
       }).join('');
       $('[data-xs-count]').textContent = list.length === 1 ? t('xs.count1') : t('xs.countN', { n: list.length });
       $$('[data-xs-type]').forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-xs-type') === type ? 'true' : 'false'); });
+      rollify(); cursorTargets();
       if (gsap && !reduced && !first) gsap.from($$('.xs-card', grid), { y: 30, opacity: 0, duration: .7, stagger: .06, ease: 'power3.out' });
       first = false;
       if (ST) ST.refresh();
@@ -919,7 +965,7 @@
     // Mapa con todos los alojamientos; se centra en el del slide activo
     var mapEl = null, map = null, pins = [];
     function pinIcon(a, on) {
-      return window.L.divIcon({ className: 'apts-pin', html: '<span class="pmap__pin' + (on ? ' is-on' : '') + '">' + (a.kind === 'house' ? '⌂' : '') + '</span>', iconSize: [34, 34], iconAnchor: [17, 17] });
+      return window.L.divIcon({ className: 'apts-pin', html: '<span class="pmap__pin' + (on ? ' is-on' : '') + '">' + (a.kind === 'house' ? HOUSE : '') + '</span>', iconSize: [34, 34], iconAnchor: [17, 17] });
     }
     function mapInit() {
       mapEl = mapEl || $('[data-apts-map]', stage);
@@ -1096,14 +1142,145 @@
     return { refresh: refresh };
   })();
 
+  /* ================= Hero editorial ================= */
+  var hero2 = (function () {
+    var sec = $('#hero'), word = $('[data-hero-word]'), frame = $('[data-hero-frame]');
+    if (!sec || !word || !frame) return null;
+    var zoom = $('.hero__zoom', frame), pic = $('.hero__pic', frame), fig = $('.hero__fig', frame);
+
+    // "Mendoza" ocupa exactamente el ancho de la grilla (medido sobre el trazo real de las letras)
+    var cv = document.createElement('canvas').getContext('2d');
+    function fit() {
+      var avail = word.parentNode.clientWidth; if (!avail) return;
+      var txt = word.textContent.trim(), ls = -.05, px, ml;
+      cv.font = '400 100px Gambarino';
+      var m = cv.measureText(txt);
+      if (m.actualBoundingBoxRight && document.fonts && document.fonts.check('100px Gambarino')) {
+        // ancho de tinta a 100px, descontando el tracking negativo entre letras
+        var ink = m.actualBoundingBoxLeft + m.actualBoundingBoxRight + ls * 100 * (txt.length - 1);
+        px = 100 * avail / ink;
+        ml = m.actualBoundingBoxLeft * px / 100;   // corrimiento para que la tinta arranque en el borde
+      } else {
+        word.style.fontSize = '100px'; word.style.marginLeft = '0px';
+        px = 100 * avail / (word.getBoundingClientRect().width || avail); ml = 0;
+      }
+      word.style.fontSize = px + 'px';
+      word.style.marginLeft = ml + 'px';
+      sec.style.setProperty('--ws', px + 'px');
+    }
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(); if (ST) ST.refresh(); });
+    window.addEventListener('resize', function () { clearTimeout(fit._t); fit._t = setTimeout(fit, 120); });
+
+    // Hora local de Mendoza
+    var clk = $('[data-clock]');
+    if (clk && window.Intl) {
+      var f = new Intl.DateTimeFormat('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Argentina/Mendoza' });
+      var tick = function () { clk.textContent = f.format(new Date()); };
+      tick(); setInterval(tick, 20000);
+    }
+
+    // Entrada: se arma en pausa (fija los estados iniciales bajo la cortina) y corre cuando la cortina sube
+    function intro() {
+      if (!gsap || reduced) return null;
+      var tl = gsap.timeline({ paused: true });
+      tl.from('.hero__meta > div', { y: 14, opacity: 0, duration: .9, ease: 'power3.out', stagger: .07 }, 0)
+        .from('.hero__kick', { y: 24, opacity: 0, duration: 1, ease: 'power3.out', stagger: .25 }, .1);
+      if (wordSplit) tl.from(wordSplit.chars, { yPercent: 102, duration: 1.4, ease: 'expo.out', stagger: .05 }, .05);
+      tl.fromTo(frame, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut', clearProps: 'clipPath' }, .25)
+        .from(zoom, { scale: 1.4, duration: 2, ease: 'expo.out' }, .55)
+        .from(fig, { xPercent: -101, duration: 1, ease: 'expo.out' }, 1.3)
+        .from(['.hero__side', '.search--hero'], { y: 26, opacity: 0, duration: 1.1, ease: 'power3.out', stagger: .1 }, .9);
+      return tl;
+    }
+
+    // Scroll: la foto enmarcada se expande hasta ocupar toda la pantalla (sólo escritorio)
+    function scroll() {
+      if (!gsap || !ST || reduced) return;
+      var mm = gsap.matchMedia();
+      mm.add('(min-width: 901px) and (min-height: 600px)', function () {
+        var g = {}, st = { p: 0 };
+        function geo() {
+          var W = frame.offsetWidth, H = frame.offsetHeight, VW = sec.offsetWidth, VH = window.innerHeight;
+          g.sx = VW / W; g.sy = VH / H;
+          g.dx = VW / 2 - (frame.offsetLeft + W / 2); g.dy = VH / 2 - (frame.offsetTop + H / 2);
+        }
+        function apply() {
+          var p = st.p, sx = 1 + (g.sx - 1) * p, sy = 1 + (g.sy - 1) * p, k = Math.max(sx, sy);
+          gsap.set(frame, { x: g.dx * p, y: g.dy * p, scaleX: sx, scaleY: sy });
+          gsap.set(pic, { scaleX: k / sx, scaleY: k / sy });
+          if (fig) fig.style.opacity = Math.max(0, 1 - p * 8);
+        }
+        geo();
+        var tw = gsap.to(st, {
+          p: 1, ease: 'power2.inOut', onUpdate: apply,
+          // refreshPriority: los pines se calculan antes que el resto (si no, lo de abajo queda desfasado)
+          scrollTrigger: { trigger: sec, start: 'top top', end: '+=85%', pin: true, scrub: true, anticipatePin: 1, refreshPriority: 2,
+            onRefreshInit: function () { gsap.set(frame, { x: 0, y: 0, scaleX: 1, scaleY: 1 }); gsap.set(pic, { scaleX: 1, scaleY: 1 }); },
+            onRefresh: function () { geo(); apply(); } }
+        });
+        return function () { tw.kill(); gsap.set([frame, pic], { clearProps: 'transform' }); if (fig) fig.style.opacity = ''; };
+      });
+      mm.add('(max-width: 900px)', function () {
+        var tw = gsap.fromTo(pic, { yPercent: -5, scale: 1.1 }, { yPercent: 5, scale: 1.1, ease: 'none', scrollTrigger: { trigger: frame, start: 'top bottom', end: 'bottom top', scrub: true } });
+        return function () { tw.kill(); };
+      });
+    }
+    return { fit: fit, intro: intro, scroll: scroll };
+  })();
+
+  /* ================= Cinta de experiencias (sigue la dirección del scroll) ================= */
+  (function ticker() {
+    var track = $('[data-ticker]'); if (!track || !gsap || reduced) return;
+    var x = 0, dir = 1, on = true, w = 0;
+    function measure() { var r = $('.ticker__run', track); w = r ? r.offsetWidth : 0; }
+    measure();
+    document.addEventListener('rgm:lang', measure);
+    window.addEventListener('resize', function () { clearTimeout(measure._t); measure._t = setTimeout(measure, 150); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { on = e[0].isIntersecting; }, { rootMargin: '80px' }).observe(track);
+    gsap.ticker.add(function (time, dt) {
+      if (!on || !w) return;
+      var v = lenis ? lenis.velocity : 0;
+      if (v > .5) dir = 1; else if (v < -.5) dir = -1;
+      x -= dir * (dt / 16.67) * (1.1 + Math.min(Math.abs(v), 60) * .22);
+      if (x <= -w) x += w; else if (x > 0) x -= w;
+      track.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
+    });
+  })();
+
+  /* ================= Cursor con etiqueta (sólo mouse) ================= */
+  function cursorTargets() {
+    var set = function (sel, key) { $$(sel).forEach(function (el) { el.setAttribute('data-cursor', key); }); };
+    set('.exp__viewport, .apts__main', 'cur.drag');
+    set('.prop__media', 'cur.view');
+    set('.apt-gal__tile', 'cur.zoom');
+  }
+  (function cursor() {
+    if (!gsap || reduced || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    var el = document.createElement('div'); el.className = 'cursor'; el.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(el);
+    var xTo = gsap.quickTo(el, 'x', { duration: .5, ease: 'power3' }), yTo = gsap.quickTo(el, 'y', { duration: .5, ease: 'power3' });
+    var cur = '', first = true;
+    window.addEventListener('pointermove', function (e) {
+      if (first) { gsap.set(el, { x: e.clientX, y: e.clientY }); first = false; }
+      xTo(e.clientX); yTo(e.clientY);
+      var tg = e.target.closest && e.target.closest('[data-cursor]');
+      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile')) ? t(tg.getAttribute('data-cursor')) : '';
+      if (want === cur) return;
+      cur = want;
+      if (want) { el.textContent = want; gsap.to(el, { scale: 1, duration: .5, ease: 'expo.out', overwrite: 'auto' }); }
+      else gsap.to(el, { scale: 0, duration: .35, ease: 'power3.out', overwrite: 'auto' });
+    }, { passive: true });
+    document.addEventListener('pointerleave', function () { cur = ''; gsap.to(el, { scale: 0, duration: .3 }); });
+  })();
+
   /* ================= Scroll: hero, galería, reveals, contadores ================= */
   function scrollFx() {
     if (!gsap || !ST || reduced) return;
 
-    // Hero: ken burns + parallax de salida
-    if ($('.hero__img')) gsap.fromTo('.hero__img', { scale: 1.18 }, { scale: 1.04, duration: 2.6, ease: 'expo.out' });
-    if ($('.hero')) gsap.to('.hero__media', { yPercent: 18, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
-    if ($('.hero')) gsap.from(['.hero__stats > div', '.search'], { y: 30, opacity: 0, duration: 1, ease: 'power3.out', stagger: .12, delay: 1.1 });
+    // Hero: la foto se expande con el scroll
+    if (hero2) hero2.scroll();
 
     // Reveals (arrancan visibles; sólo se animan al entrar)
     $$('[data-reveal]').forEach(function (el, i) {
@@ -1128,7 +1305,7 @@
         x: function () { return -dist(); }, ease: 'none',
         scrollTrigger: {
           trigger: gal, start: 'top top', end: function () { return '+=' + dist(); },
-          pin: true, scrub: .6, invalidateOnRefresh: true, anticipatePin: 1,
+          pin: true, scrub: .6, invalidateOnRefresh: true, anticipatePin: 1, refreshPriority: 1,
           onUpdate: function (self) { gsap.set('[data-gal-progress]', { scaleX: self.progress }); }
         }
       });
@@ -1141,9 +1318,11 @@
   /* ================= Init ================= */
   renderAll();
   var start = function () {
+    if (hero2) hero2.fit();
     splitAll(true);
+    var heroTl = hero2 ? hero2.intro() : null;
     scrollFx();
-    curtainIn();
+    curtainIn(function () { if (heroTl) heroTl.play(); });
     onScroll();
     if (ST) ST.refresh();
   };

@@ -14,7 +14,8 @@ Las consultas no tienen precios: el panel "Consultar" arma un mensaje y lo enví
 ## Editar contenido
 - `js/data.js`: número de WhatsApp del administrador, departamentos (capacidad, cochera, fechas ocupadas), extras, experiencias, testimonios, FAQ y galería.
 - `js/i18n.js`: todos los textos en ES / EN / PT.
-- `css/styles.css`: estilos.
+- `css/styles.css`: estilos base y componentes.
+- `css/v2.css`: sistema visual editorial (tipografías, botones, hero, secciones). Va después de styles.css.
 
 ## Estructura de fuentes (HTML)
 Las páginas (`index.html`, `propiedades/` y `propiedades/<slug>/` de cada departamento) se generan desde `src/`:
@@ -24,7 +25,8 @@ python3 src/build.py
 Editá `src/content.html` (home y partes compartidas) o `src/props-main.html` (listado) y volvé a correr el script.
 
 ## Fuentes tipográficas
-El sitio usa "Bodonisvtytwoitctt Bookita" (incluida en `fonts/`) y "Franklingothicurw Lig". Para la Franklin falta un archivo completo (con acentos y todos los números): copiarlo como `fonts/FranklinGothicURW-Lig.woff2`. Mientras tanto se usa Libre Franklin.
+- Titulares: **Gambarino** · textos y etiquetas: **Supreme** (Fontshare, licencia ITF Free Font: uso comercial gratuito). Archivos en `fonts/`.
+- El logo "RGM" del menú y del pie es el trazo vectorial del logo original (símbolo `#rgm-word` en `src/content.html`), no depende de ninguna fuente.
 
 ## Librerías (CDN)
 GSAP 3.13 (ScrollTrigger, SplitText, Draggable, Inertia), Lenis, flatpickr.

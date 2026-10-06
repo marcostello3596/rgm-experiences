@@ -7,11 +7,12 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%233d1a22%22/%3E%3Cpath d=%22M4 22 L12 12 L16 16 L21 9 L28 22%22 fill=%22none%22 stroke=%22%23d9b98a%22 stroke-width=%222%22/%3E%3C/svg%3E">
 <title>Depto Amigorena en Ciudad de Mendoza · RGM Experiences</title>
 <meta name="description" content="Departamentos de alquiler temporario en Mendoza y experiencias a medida: bodegas, alta montaña, termas, cabalgatas, traslados y alquiler de autos.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@1,400;1,500&family=Libre+Franklin:wght@300;400;500;600&display=swap">
-<link rel="stylesheet" href="css/flatpickr.css?v=6b5b285a">
-<link rel="stylesheet" href="css/styles.css?v=6b5b285a">
+<link rel="preload" href="fonts/gambarino-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/supreme-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/flatpickr.css?v=95ad0afe">
+<link rel="stylesheet" href="css/styles.css?v=95ad0afe">
+<link rel="stylesheet" href="css/v2.css?v=95ad0afe">
 <script>
   /* Pre-paint: idioma inicial + ocultar titulares hasta que SplitText los prepare */
   (function () {
@@ -34,6 +35,7 @@
 <div class="rgm-page" data-page="apt" data-slug="amigorena">
 
   <!-- ============ NAV ============ -->
+  <svg class="sr-only" aria-hidden="true" focusable="false"><defs><symbol id="rgm-word" viewBox="80.6 73.3 284.8 86.1"><path transform="translate(85.55 158.23)" d="M76.6 -66.7Q76.6 -60.5 72.1 -55.1Q67.6 -49.8 59.8 -46.9Q53.6 -44.6 41.4 -44.2L45.2 -43.1Q52.9 -40.9 55.3 -37.6Q57.7 -34.3 57.7 -25.9Q57.7 -24 57.6 -22.4L56.8 -11.9Q56.4 -7.3 56.4 -5Q56.4 -0.5 59.3 -0.5Q60.2 -0.5 61.1 -1.2Q61.3 -1.4 61.3 -2.8Q61.3 -4.1 62.3 -5.2Q63.2 -6.2 64.6 -6.2Q66.2 -6.2 66.2 -4.4Q66.2 -2 63.6 -0.3Q61 1.4 57.2 1.4Q45.2 1.4 45.2 -10.8Q45.2 -13.9 45.7 -18L46.8 -27.2Q47.3 -31.3 47.3 -34Q47.3 -40 42.1 -41.9Q40.3 -42.5 32.8 -43L17.8 -5Q17.4 -4.2 17.4 -4Q17.4 -2.2 21.6 -1.7Q23.4 -1.4 23.8 -1.4L26.5 -1.6Q27.2 -1.6 27.2 -1Q27.2 0.2 24.6 0.2Q20.4 0.2 10.4 0Q5.4 -0.1 4.9 -0.1Q3.5 -0.1 0.6 0.1Q-2.3 0.2 -3.7 0.2Q-5.3 0.2 -5.3 -0.7Q-5.3 -1.4 -1.9 -1.6Q2.8 -1.7 4.4 -2.8Q5.9 -3.5 8.3 -9.5L34.8 -77.2Q35.3 -78.1 35.3 -78.8Q35.3 -81.1 28 -81.1Q26.8 -81.4 26.8 -82Q26.8 -82.8 27.8 -82.9Q28.9 -83 35 -83Q35 -83 36.8 -82.9Q38.6 -82.8 40.6 -82.8L46.4 -82.7Q58.8 -82.4 61 -82.2Q64.4 -82 67.7 -80.4Q76.6 -76.2 76.6 -66.7ZM65 -66.7Q65 -77.2 58.8 -79.9Q56.6 -80.9 50.2 -80.9Q48.2 -80.9 47.4 -79.4Q46.2 -77.4 45.5 -75.6L33.7 -45.2Q35.2 -45.1 37.1 -45.1Q49.3 -45.1 57.2 -51.2Q65 -57.2 65 -66.7Z M169 -80Q169 -79.7 167.5 -76.9Q166.8 -75.5 165.4 -72L163.3 -67Q160.7 -60.4 160.2 -59.4Q159.7 -58.4 159 -58.4Q158 -58.4 158 -59.3Q158 -59.8 158.6 -62.2Q160 -67.4 160 -70.6Q160 -75.5 156 -78.9Q152 -82.3 146.2 -82.3Q138.1 -82.3 129.4 -76.5Q120.6 -70.7 113.9 -60.7Q106.8 -50.3 102.5 -37Q99.5 -27.6 99.5 -19.1Q99.5 -10.1 103.9 -5.2Q108.4 -0.2 116.4 -0.2Q128.8 -0.2 133.7 -10.6Q137 -17.5 137 -22Q137 -24.2 133.2 -24.2H131.6Q130.4 -24.2 128.8 -24.1Q126.7 -24.1 126.7 -25.2Q126.7 -26.4 128.2 -26.4Q129.2 -26.4 130 -26.3L143.3 -26L158.8 -26.3Q160.8 -26.3 160.8 -25.1Q160.8 -23.9 157 -23.9H153Q150.2 -23.9 149.3 -23.2Q148.4 -22.4 147.6 -19.4L145.7 -12.8Q144.7 -9.7 138.1 -5.3Q127.8 1.6 114.2 1.6Q101 1.6 94.2 -4.2Q86.5 -10.6 86.5 -21.7Q86.5 -33 92.4 -45.1Q98.3 -57.2 108.5 -67.2Q126.6 -84.7 145.8 -84.7Q154 -84.7 159.1 -80.3Q162.2 -77.6 163.8 -77.6Q166 -77.6 167.5 -80.4Q167.8 -80.6 168.4 -80.6Q169 -80.6 169 -80Z M280.1 -82.3Q280.1 -80.6 278.6 -80.6Q278.2 -80.8 277.1 -81Q276.6 -81.1 275.9 -81.1Q275.2 -81.1 274.7 -81H272.2Q271.7 -81.1 270.8 -81.1Q269.4 -81.1 268.6 -79.4Q266.3 -74.8 264.1 -69.1L241.7 -10.7Q241.4 -9.8 240.7 -8Q240.7 -7.8 240.4 -6.9Q240.1 -6 239.4 -4.2Q238.9 -3.7 238.9 -3.4Q238.9 -1.9 242 -1.9H243.7L246.6 -1.8L249 -1.9Q249.4 -1.8 249.4 -1.3Q249.4 0.2 247.6 0.1L244.2 -0.1L218.5 0.1Q217.3 0.1 217.3 -0.6Q217.3 -1.9 220.6 -1.9Q223.9 -1.9 226 -2.5Q226.9 -2.9 228 -5.3Q231 -12.8 234 -20.4L257.5 -79.8Q257.4 -79.7 245.6 -62.3L205.9 -3.8Q203.6 -0.7 202.9 -0.7Q202 -0.7 202 -2.6L202.1 -4L202.2 -7.7L205.4 -68.6Q205.7 -73.2 205.7 -74.5Q205.7 -77.3 205.2 -77.3Q205 -77 204.6 -76.1Q203.9 -73.7 202.6 -70.2L178.6 -4.8Q178.3 -4.1 178.3 -3.7Q178.3 -2.3 179.5 -1.9Q180.7 -1.6 185.4 -1.8L187.6 -1.9Q188.4 -1.9 188.4 -1.2Q188.4 0.1 186.8 0.1Q185.5 0.1 184.7 0L177 -0.1Q168.5 -0.2 164.4 0Q163.7 0.1 162.7 0.1Q161.5 0.1 161.5 -0.7Q161.5 -2 163.3 -2Q163.9 -2 164.6 -1.9Q165.4 -1.8 168.5 -1.8Q172.6 -1.8 173.6 -2.9Q174.6 -4.1 177.2 -11L201.5 -75.8Q201.8 -77 202.4 -78.6Q202.8 -79.1 203 -79.6Q203 -80 201.7 -80.6Q200.3 -81.1 199 -81.1Q197 -81 192.1 -80.9H191.6Q190.8 -80.9 190.8 -82.2Q190.8 -83.4 192.1 -83.4Q193 -83.4 193.7 -83.3Q195.2 -83 205.8 -83Q215 -83 215.6 -83.2H216.2Q217 -83.2 217 -82.1Q217 -80.3 216.7 -75.5L214 -21Q214.4 -21.8 216.7 -25L219.6 -28.9L255.8 -83H264.8L278.6 -83.2Q280.1 -83.2 280.1 -82.3Z"/></symbol></defs></svg>
   <header class="nav" data-nav>
     <div class="nav__inner gutter">
       <nav class="nav__links" aria-label="Principal">
@@ -44,7 +46,7 @@
 
       <a href="./" class="logo" aria-label="RGM Experiences">
         <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-        <span class="logo__word">RGM</span>
+        <svg class="logo__rgm" viewBox="0 0 285 86" fill="currentColor" aria-hidden="true"><use href="#rgm-word"/></svg>
         <span class="logo__sub">Experiences</span>
       </a>
 
@@ -92,7 +94,7 @@
         </div>
         <div class="apt-head__rule"></div>
         <div class="apt-gal" data-apt-gallery></div>
-        <div class="apt-gal__all"><button type="button" class="link-cta" data-lightbox-open="0"><span data-i18n="apt.viewAll">Ver todas las fotos</span> <span aria-hidden="true">→</span></button></div>
+        <div class="apt-gal__all"><button type="button" class="link-cta" data-lightbox-open="0"><span data-i18n="apt.viewAll">Ver todas las fotos</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></button></div>
       </div>
     </section>
 
@@ -119,7 +121,7 @@
                 <p class="apt-loc__text" data-apt-loc-text></p>
                 <ul class="apt-loc__times" data-apt-times></ul>
                 <div class="apt-loc__map" data-apt-map></div>
-                <a class="link-cta" target="_blank" rel="noopener" data-apt-maplink><span data-i18n="apt.openMap">Abrir en Google Maps</span> <span aria-hidden="true">→</span></a>
+                <a class="link-cta" target="_blank" rel="noopener" data-apt-maplink><span data-i18n="apt.openMap">Abrir en Google Maps</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a>
               </div>
               <div class="tabs__pane" role="tabpanel" id="pane-re" aria-labelledby="tab-re" hidden data-apt-reviews></div>
             </div>
@@ -155,7 +157,7 @@
       <div class="gutter wrap">
         <header class="apts__head">
           <h2 class="h2" data-split="lines" data-i18n-html="apt.others">Otros <em>departamentos</em></h2>
-          <a class="link-cta" href="propiedades/"><span data-i18n="apts.all">Ver todos</span> <span aria-hidden="true">→</span></a>
+          <a class="link-cta" href="propiedades/"><span data-i18n="apts.all">Ver todos</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a>
         </header>
         <div class="props__grid" data-apt-more></div>
       </div>
@@ -189,13 +191,12 @@
   <!-- ============ FOOTER ============ -->
   <footer class="footer band band--ink">
     <div class="gutter wrap">
+      <div class="footer__cta">
+        <p class="footer__cta-t" data-i18n-html="ft.ctaT">¿Planeamos <em>tu viaje?</em></p>
+        <a class="btn btn--gold btn--go" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="ft.ctaB">Escribinos por WhatsApp</a>
+      </div>
       <div class="footer__grid">
         <div class="footer__brand">
-          <a href="./" class="logo logo--footer" aria-label="RGM Experiences">
-            <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-            <span class="logo__word">RGM</span>
-            <span class="logo__sub">Experiences</span>
-          </a>
           <p class="footer__tag" data-i18n-html="ft.tag">Descansá bien. <em>Viví Mendoza.</em></p>
         </div>
         <ul class="footer__list">
@@ -215,6 +216,7 @@
           </li>
         </ul>
       </div>
+      <a href="./" class="footer__mark" aria-label="RGM Experiences"><svg viewBox="0 0 285 86" fill="currentColor" aria-hidden="true"><use href="#rgm-word"/></svg></a>
       <div class="footer__legal">
         <span>© <span data-year>2026</span> RGM Experiences · <span data-i18n="ft.rights">Todos los derechos reservados</span></span>
         <span data-i18n="ft.photos">Imágenes de experiencias ilustrativas</span>
@@ -309,10 +311,10 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
-<script src="js/i18n.js?v=6b5b285a"></script>
-<script src="js/data.js?v=6b5b285a"></script>
-<script src="js/detail.js?v=6b5b285a"></script>
-<script src="js/exp-detail.js?v=6b5b285a"></script>
-<script src="js/main.js?v=6b5b285a"></script>
+<script src="js/i18n.js?v=95ad0afe"></script>
+<script src="js/data.js?v=95ad0afe"></script>
+<script src="js/detail.js?v=95ad0afe"></script>
+<script src="js/exp-detail.js?v=95ad0afe"></script>
+<script src="js/main.js?v=95ad0afe"></script>
 </body>
 </html>

@@ -1,4 +1,7 @@
-Fuentes de marca:
-- BodoniSvtyTwoITCTT-BookIta.woff  (incluida)
-- FranklinGothicURW-Lig.woff2 / .woff  (FALTA: el archivo recibido estaba incompleto, sin acentos ni todos los números).
-  Mientras tanto se usa Libre Franklin (Google Fonts).
+Fuentes del sitio (Fontshare, ITF Free Font License: uso personal y comercial gratuito)
+- Gambarino 400 ............ titulares (gambarino-400.woff2)
+- Supreme 300/400/500/700 .. textos, etiquetas y botones (supreme-*.woff2)
+- Supreme 400 itálica ...... (supreme-400-italic.woff2)
+
+El logo "RGM" del menú y del pie no usa una fuente: es el trazo del logo original
+convertido a vector (símbolo #rgm-word en src/content.html).
