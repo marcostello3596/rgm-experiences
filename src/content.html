@@ -71,12 +71,6 @@
 
     <!-- ============ HERO ============ -->
     <section class="hero" id="hero">
-      <div class="hero__meta">
-        <div><span data-i18n="hero.place">Mendoza, Argentina</span><small>32°53'S — 68°50'O</small></div>
-        <div><span data-i18n="hero.time">Hora local</span><small><span data-clock>--:--</span> GMT-3</small></div>
-        <div><span data-hero-count>8 alojamientos · 8 experiencias</span><small data-i18n="hero.tags">Bodegas, Andes, traslados</small></div>
-      </div>
-
       <h1 class="hero__title">
         <span class="hero__kick" data-i18n="hero.kick1">Alquiler temporario en</span>
         <span class="hero__word" data-split="hero" data-hero-word data-i18n="hero.word">Mendoza</span>
@@ -122,86 +116,30 @@
 
     <!-- ============ MANIFIESTO ============ -->
     <section class="intro" id="nosotros">
-      <div class="gutter wrap intro__grid">
-        <p class="eyebrow intro__label" data-n="(02)" data-i18n="intro.label">Quiénes somos</p>
+      <div class="gutter wrap intro__wrap">
+        <svg class="intro__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13"/></svg>
         <p class="intro__text" data-words data-i18n-html="intro.text"></p>
-        <dl class="intro__facts">
-          <div><dt data-count-apts-num>8</dt><dd data-i18n="num.1">Alojamientos equipados</dd></div>
-          <div><dt data-count-exp-num>8</dt><dd data-i18n="num.2">Experiencias para elegir</dd></div>
-          <div><dt>24/7</dt><dd data-i18n="num.3">Atención por WhatsApp</dd></div>
-        </dl>
       </div>
     </section>
 
-    <!-- ============ DEPARTAMENTOS ============ -->
-    <section class="stays band band--ink" id="departamentos">
-      <div class="gutter wrap">
-        <header class="stays__head">
-          <div>
-            <p class="eyebrow eyebrow--gold" data-n="(03)" data-i18n="apts.eyebrow">Nuestros departamentos</p>
-            <h2 class="h2" data-split="lines" data-i18n-html="apts.title">Espacios que <em>elegiríamos</em> para nosotros.</h2>
-          </div>
-          <p class="stays__lead" data-i18n="apts.lead"></p>
-        </header>
-        <div class="stays__body">
-          <a class="stays__media" href="propiedades/" tabindex="-1" aria-hidden="true" data-stays-media data-cursor="cur.view">
-            <span class="stays__frame" data-stays-frame></span>
-            <span class="stays__badge" data-stays-badge hidden></span>
-            <span class="stays__count"><span data-stays-curr>01</span> / <span data-stays-total>08</span></span>
-          </a>
-          <ol class="stays__list" data-stays-list></ol>
-        </div>
-        <div class="stays__all"><a href="propiedades/" class="link-cta"><span data-i18n="apts.all">Ver todos los departamentos</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a></div>
-      </div>
-    </section>
-
-    <!-- ============ EXPERIENCIAS ============ -->
-    <section class="exp band band--wine" id="experiencias">
-      <div class="gutter wrap">
-        <header class="exp__head">
-          <div>
-            <p class="eyebrow eyebrow--gold" data-n="(04)" data-i18n="exp.eyebrow">Nuestras experiencias</p>
-            <h2 class="h2" data-split="lines" data-i18n-html="exp.title">Mendoza, <em>a tu medida.</em></h2>
-          </div>
-          <p class="exp__lead" data-i18n="exp.lead"></p>
-        </header>
-        <ol class="xl" data-exp-list></ol>
-        <div class="exp__all"><a href="experiencias/" class="link-cta"><span data-i18n="x.all">Ver todas</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a></div>
-      </div>
-      <div class="xl__float" aria-hidden="true" data-exp-float></div>
-    </section>
-
-    <!-- ============ SERVICIOS ============ -->
-    <section class="svc band band--sand" id="concierge">
-      <div class="gutter wrap">
-        <header class="svc__head">
-          <p class="eyebrow" data-n="(05)" data-i18n="con.eyebrow">Todo resuelto</p>
-          <h2 class="h2" data-split="lines" data-i18n-html="con.title">Nos ocupamos <em>de todo.</em></h2>
-        </header>
-        <div class="panels">
-          <article class="panel" tabindex="0">
-            <img class="panel__img" src="img/g7.jpg" alt="" loading="lazy" decoding="async">
-            <div class="panel__body"><span class="panel__n">01</span><h3 class="panel__t" data-i18n="con.c1.t"></h3><p class="panel__p" data-i18n="con.c1.p"></p></div>
-          </article>
-          <article class="panel" tabindex="0">
-            <img class="panel__img" src="img/g5.jpg" alt="" loading="lazy" decoding="async">
-            <div class="panel__body"><span class="panel__n">02</span><h3 class="panel__t" data-i18n="con.c2.t"></h3><p class="panel__p" data-i18n="con.c2.p"></p></div>
-          </article>
-          <article class="panel" tabindex="0">
-            <img class="panel__img" src="img/exp-horse.jpg" alt="" loading="lazy" decoding="async">
-            <div class="panel__body"><span class="panel__n">03</span><h3 class="panel__t" data-i18n="con.c3.t"></h3><p class="panel__p" data-i18n="con.c3.p"></p></div>
-          </article>
-        </div>
-        <div class="incl">
-          <p class="eyebrow incl__label" data-i18n="svc.inc">En cada departamento</p>
-          <ul class="incl__list">
-            <li><h3 data-i18n="inc.1.t"></h3><p data-i18n="inc.1.p"></p></li>
-            <li><h3 data-i18n="inc.2.t"></h3><p data-i18n="inc.2.p"></p></li>
-            <li><h3 data-i18n="inc.3.t"></h3><p data-i18n="inc.3.p"></p></li>
-            <li><h3 data-i18n="inc.4.t"></h3><p data-i18n="inc.4.p"></p></li>
-          </ul>
-        </div>
-      </div>
+    <!-- ============ ELEGÍ: DEPARTAMENTOS O EXPERIENCIAS ============ -->
+    <section class="doors" id="elegi" aria-label="Departamentos o experiencias">
+        <a class="door door--stay" href="propiedades/" data-door="a" data-cursor="cur.view">
+          <span class="door__media" aria-hidden="true"><span class="door__stack" data-door-stack></span></span>
+          <span class="door__top"><span class="door__k"><span>01</span> — <span data-i18n="door.a.k"></span></span><span class="door__count" data-door-count></span></span>
+          <span class="door__w" data-door-word></span>
+          <span class="door__bot"><span class="door__d" data-i18n="door.a.d"></span><span class="door__go"><span data-i18n="door.a.c"></span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></span></span>
+        </a>
+        <a class="door door--exp" href="experiencias/" data-door="b" data-cursor="cur.view">
+          <span class="door__media" aria-hidden="true"><span class="door__stack" data-door-stack></span></span>
+          <span class="door__top"><span class="door__k"><span>02</span> — <span data-i18n="door.b.k"></span></span><span class="door__count" data-door-count></span></span>
+          <span class="door__w" data-door-word></span>
+          <span class="door__bot"><span class="door__d" data-i18n="door.b.d"></span><span class="door__go"><span data-i18n="door.b.c"></span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></span></span>
+        </a>
+      <span class="doors__or" aria-hidden="true">
+        <svg class="doors__ring" viewBox="0 0 120 120"><defs><path id="or-ring" d="M60 60 m-47 0 a47 47 0 1 1 94 0 a47 47 0 1 1 -94 0"/></defs><text><textPath href="#or-ring" data-door-ring></textPath></text></svg>
+        <span class="doors__o" data-i18n="door.or">o</span>
+      </span>
     </section>
 
     <!-- ============ TESTIMONIOS ============ -->
@@ -223,7 +161,7 @@
         <div class="contact__layout">
           <div class="contact__img" data-reveal-img><img src="img/contact.jpg" alt="" loading="lazy" decoding="async"></div>
           <div class="contact__body">
-            <p class="eyebrow eyebrow--gold" data-n="(06)" data-i18n="ct.eyebrow">Empezá tu viaje</p>
+            <p class="eyebrow eyebrow--gold" data-n="(02)" data-i18n="ct.eyebrow">Empezá tu viaje</p>
             <h2 class="h2" data-split="lines" data-i18n-html="ct.title">Dejanos armar <em>algo inolvidable.</em></h2>
             <p class="contact__text" data-i18n="ct.text"></p>
             <form class="form" data-contact novalidate>

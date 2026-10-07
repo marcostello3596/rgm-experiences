@@ -124,46 +124,39 @@
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
   }
 
-  // Departamentos en la home: lista que se recorre con el scroll y foto fija que cambia a la par
-  function renderStays() {
-    var list = $('[data-stays-list]'); if (!list) return;
-    var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
-    list.innerHTML = APTS.map(function (a, i) {
-      var facts = [['apts.bedrooms', fmtRooms(a.bedrooms)], ['apts.baths', fmtNum(a.baths)], ['apts.sleeps', fmtNum(a.sleeps)]]
-        .filter(function (f) { return f[1] !== '—'; });
-      return '<li class="stay" data-i="' + i + '">' +
-        '<a class="stay__img" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true"><img decoding="async" src="' + sm(a.img) + '" alt="" loading="lazy">' +
-          (a.badge ? '<span class="stays__badge">' + esc(L(a.badge)) + '</span>' : '') + '</a>' +
-        '<p class="stay__zone"><span>' + pad(i + 1) + '</span>' + esc(zoneName(a.zone)) + '</p>' +
-        '<h3 class="stay__name"><a href="' + aptURL(a) + '">' + aptPrefix(a) + ' <em>' + esc(a.name) + '</em></a></h3>' +
-        '<p class="stay__tag">' + esc(L(a.tag)) + '</p>' +
-        (facts.length ? '<dl class="stay__facts">' + facts.map(function (f) { return '<div><dt>' + t(f[0]) + '</dt><dd>' + f[1] + '</dd></div>'; }).join('') + '</dl>' : '') +
-        '<a class="link-cta stay__cta" href="' + aptURL(a) + '">' + t(a.kind === 'house' ? 'apt.viewHouse' : 'apts.cta') + ' ' + ARR + '</a>' +
-        '</li>';
-    }).join('');
-    var fr = $('[data-stays-frame]');
-    // La foto grande se carga recién cuando hace falta (y la siguiente se precarga)
-    if (fr && !fr.children.length) fr.innerHTML = APTS.map(function (a) { return '<span class="stays__slide"><img decoding="async" data-src="' + a.img + '" alt=""></span>'; }).join('');
-    var tot = $('[data-stays-total]'); if (tot) tot.textContent = pad(APTS.length);
-    if (typeof stays !== 'undefined' && stays) stays.sync();
-  }
-
-  // Experiencias en la home: índice tipográfico (la foto aparece junto al mouse en escritorio)
-  function renderExps() {
-    var list = $('[data-exp-list]'); if (!list) return;
-    list.innerHTML = EXPS.map(function (e, i) {
-      return '<li class="xl__row" data-i="' + i + '" data-reveal>' +
-        '<span class="xl__n">' + pad(i + 1) + '</span>' +
-        '<span class="xl__thumb" aria-hidden="true"><img decoding="async" src="' + sm(e.img) + '" alt="" loading="lazy"></span>' +
-        '<a class="xl__name" href="' + expURL(e) + '">' + esc(L(e.name)) + '</a>' +
-        '<span class="xl__place">' + esc(L(e.place)) + '</span>' +
-        '<span class="xl__dur">' + esc(L(e.duration)) + '</span>' +
-        '<button type="button" class="xl__add" data-book-exp-i="' + i + '" aria-label="' + esc(t('exp.book') + ': ' + L(e.name)) + '">+</button>' +
-        '<span class="xl__go" aria-hidden="true">' + ARR + '</span>' +
-        '</li>';
-    }).join('');
-    var fl = $('[data-exp-float]');
-    if (fl && !fl.children.length) fl.innerHTML = EXPS.map(function (e) { return '<img decoding="async" src="' + sm(e.img) + '" alt="">'; }).join('');
+  // Selector de la home: dos "puertas" (departamentos / experiencias)
+  var DOOR_IMGS = {
+    a: ['img/apts/espana-ii/01.jpg', 'img/apts/casa-potrerillos/01.jpg', 'img/apts/mitre-i/01.jpg', 'img/apts/amigorena/01.jpg', 'img/apts/espana-i/02.jpg'],
+    b: ['img/exp-snow.jpg', 'img/exp-horse.jpg', 'img/exp-river.jpg', 'img/exp-vineglass.jpg', 'img/g6.jpg']
+  };
+  function renderDoors() {
+    $$('[data-door]').forEach(function (d) {
+      var k = d.getAttribute('data-door'), w = $('[data-door-word]', d), st = $('[data-door-stack]', d);
+      // palabra gigante partida en letras (cada letra "rueda" al pasar el mouse)
+      w.innerHTML = '<span class="door__line">' + Array.prototype.map.call(t('door.' + k + '.w'), function (ch, i) {
+        return '<span class="door__c" style="--i:' + i + '">' + esc(ch) + '</span>';
+      }).join('') + '</span>';
+      w.setAttribute('aria-label', t('door.' + k + '.w'));
+      $('[data-door-count]', d).textContent = pad(k === 'a' ? APTS.length : EXPS.length);
+      if (!st.children.length) st.innerHTML = DOOR_IMGS[k].map(function (src, i) {
+        return '<img decoding="async" ' + (i ? 'data-src' : 'src') + '="' + src + '" alt=""' + (i ? '' : ' loading="lazy"') + (i ? '' : ' class="is-on"') + '>';
+      }).join('');
+    });
+    // el texto del sello da justo una vuelta, en cualquier idioma
+    var ring = $('[data-door-ring]');
+    if (ring) {
+      ring.textContent = t('door.ring');
+      // se mide en un <text> recto (sobre el círculo el texto que sobra no se cuenta)
+      var txt = ring.parentNode, svg = txt.ownerSVGElement, C = 2 * Math.PI * 47 - 3;
+      var probe = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      probe.textContent = ring.textContent; probe.setAttribute('x', '-9999'); probe.style.fontSize = '10px';
+      svg.appendChild(probe);
+      var len = probe.getComputedTextLength ? probe.getComputedTextLength() : 0;
+      svg.removeChild(probe);
+      ring.removeAttribute('textLength');
+      if (len) { txt.style.fontSize = Math.min(11, 10 * C / len).toFixed(2) + 'px'; ring.setAttribute('textLength', C.toFixed(1)); }
+    }
+    if (typeof doors !== 'undefined' && doors) doors.fit();
   }
 
   function renderTes() {
@@ -224,7 +217,7 @@
   }
 
   function renderAll() {
-    applyStatic(); renderZones(); renderApts(); renderStays(); renderExps(); renderTes(); renderFaq(); renderGallery(); renderTicker();
+    applyStatic(); renderZones(); renderApts(); renderDoors(); renderTes(); renderFaq(); renderGallery(); renderTicker();
     updateGuestsLabel(); updateContactPh();
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
@@ -1232,8 +1225,7 @@
     function intro() {
       if (!gsap || reduced) return null;
       var tl = gsap.timeline({ paused: true });
-      tl.from('.hero__meta > div', { y: 14, opacity: 0, duration: .9, ease: 'power3.out', stagger: .07 }, 0)
-        .from('.hero__kick', { y: 24, opacity: 0, duration: 1, ease: 'power3.out', stagger: .25 }, .1);
+      tl.from('.hero__kick', { y: 24, opacity: 0, duration: 1, ease: 'power3.out', stagger: .25 }, .1);
       if (wordSplit) tl.from(wordSplit.chars, { yPercent: 102, duration: 1.4, ease: 'expo.out', stagger: .05 }, .05);
       tl.fromTo(frame, { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.5, ease: 'expo.inOut', clearProps: 'clipPath' }, .25)
         .from(zoom, { scale: 1.4, duration: 2, ease: 'expo.out' }, .55)
@@ -1331,7 +1323,7 @@
       if (first) { gsap.set(el, { x: e.clientX, y: e.clientY }); first = false; }
       xTo(e.clientX); yTo(e.clientY);
       var tg = e.target.closest && e.target.closest('[data-cursor]');
-      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .stays__media')) ? t(tg.getAttribute('data-cursor')) : '';
+      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .door')) ? t(tg.getAttribute('data-cursor')) : '';
       if (want === cur) return;
       cur = want;
       if (want) { el.textContent = want; gsap.to(el, { scale: 1, duration: .5, ease: 'expo.out', overwrite: 'auto' }); }
@@ -1369,70 +1361,70 @@
     return { split: split };
   })();
 
-  /* ================= Departamentos: la foto fija acompaña al departamento que está en foco ================= */
-  var stays = (function () {
-    var list = $('[data-stays-list]'), media = $('[data-stays-media]');
-    if (!list || !media) return null;
-    var cur = -1, prev = -1, z = 1;
-    function load(i) {
-      var sl = $$('[data-stays-frame] .stays__slide')[i], im = sl && $('img', sl);
-      if (im && !im.src && im.getAttribute('data-src')) im.src = im.getAttribute('data-src');
-      return sl;
-    }
-    // Sólo quedan visibles la foto actual y la anterior (menos capas que componer al scrollear)
-    function only(keep) { $$('[data-stays-frame] .stays__slide').forEach(function (el, k) { el.style.visibility = keep.indexOf(k) > -1 ? 'visible' : 'hidden'; }); }
-    function set(i, instant) {
-      if (i === cur || i < 0 || i >= APTS.length) return;
-      var a = APTS[i], sl = load(i);
-      load(i + 1); load(i - 1);
-      $$('.stay', list).forEach(function (el, k) { el.classList.toggle('is-on', k === i); });
-      media.setAttribute('href', fixUrl(aptURL(a)));
-      var c = $('[data-stays-curr]'); if (c) c.textContent = pad(i + 1);
-      var bd = $('[data-stays-badge]'); if (bd) { bd.hidden = !a.badge; bd.textContent = a.badge ? L(a.badge) : ''; }
-      prev = cur; cur = i;
-      if (!sl) return;
-      sl.style.zIndex = ++z;
-      var img = $('img', sl);
-      if (gsap && !reduced && !instant && prev > -1) {
-        only([prev, i]);
-        var d = i > prev ? 1 : -1;
-        gsap.fromTo(sl, { yPercent: 100 * d }, { yPercent: 0, duration: 1.05, ease: 'expo.inOut', overwrite: true, onComplete: function () { if (cur === i) only([i]); } });
-        gsap.fromTo(img, { yPercent: -100 * d, scale: 1.15 }, { yPercent: 0, scale: 1, duration: 1.05, ease: 'expo.inOut', overwrite: true });
-      } else {
-        only([i]);
-        if (gsap) { gsap.set(sl, { yPercent: 0 }); gsap.set(img, { yPercent: 0, scale: 1 }); }
-      }
-    }
-    function sync() { var k = cur < 0 ? 0 : cur; cur = -1; set(k, true); }
-    function scroll() {
-      if (!ST) { set(0, true); return; }
-      $$('.stay', list).forEach(function (el, i) {
-        ST.create({ trigger: el, start: 'top 60%', end: 'bottom 60%', onToggle: function (st) { if (st.isActive) set(i); } });
+  /* ================= Selector departamentos / experiencias ================= */
+  var doors = (function () {
+    var sec = $('.doors'); if (!sec) return null;
+    var list = $$('[data-door]', sec), cv = document.createElement('canvas').getContext('2d');
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    // Las dos palabras gigantes con el mismo tamaño, el máximo que entra en cada puerta
+    function fit() {
+      var px = Infinity;
+      list.forEach(function (d) {
+        var w = $('[data-door-word]', d), txt = t('door.' + d.getAttribute('data-door') + '.w');
+        // en escritorio la palabra deja lugar al sello "o" de la unión (se lee "Departamentos o Experiencias")
+        var cs = getComputedStyle(w), avail = w.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+        if (!avail || !w) return;
+        cv.font = '400 100px Gambarino';
+        var m = cv.measureText(txt), ink = (m.actualBoundingBoxRight ? m.actualBoundingBoxLeft + m.actualBoundingBoxRight : m.width) - 4 * (txt.length - 1);
+        px = Math.min(px, 100 * avail / ink * .97);
       });
+      if (isFinite(px)) sec.style.setProperty('--dw', px.toFixed(1) + 'px');
     }
-    return { set: set, sync: sync, scroll: scroll };
-  })();
+    fit();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+    window.addEventListener('resize', function () { clearTimeout(fit._t); fit._t = setTimeout(fit, 120); });
 
-  /* ================= Índice de experiencias: foto que sigue al mouse ================= */
-  (function xlHover() {
-    var list = $('[data-exp-list]'), fl = $('[data-exp-float]');
-    if (!list || !fl || !gsap || reduced || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    gsap.set(fl, { xPercent: 12, yPercent: -50, autoAlpha: 0, scale: .8 });
-    var xTo = gsap.quickTo(fl, 'x', { duration: .7, ease: 'power3' }), yTo = gsap.quickTo(fl, 'y', { duration: .7, ease: 'power3' });
-    var cur = -1, z = 1, shown = false;
-    list.addEventListener('pointermove', function (e) {
-      xTo(e.clientX); yTo(e.clientY);
-      var row = e.target.closest && e.target.closest('.xl__row'), i = row ? parseInt(row.getAttribute('data-i'), 10) : -1;
-      if (i === cur) return;
-      cur = i;
-      var im = $$('img', fl)[i];
-      if (im) {
-        im.style.zIndex = ++z;
-        gsap.fromTo(im, { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.2 }, { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: .8, ease: 'expo.out', overwrite: true });
-      }
-      if (!shown && i > -1) { shown = true; gsap.set(fl, { x: e.clientX, y: e.clientY }); gsap.to(fl, { autoAlpha: 1, scale: 1, duration: .6, ease: 'expo.out', overwrite: 'auto' }); }
-    }, { passive: true });
-    list.addEventListener('pointerleave', function () { cur = -1; shown = false; gsap.to(fl, { autoAlpha: 0, scale: .8, duration: .45, ease: 'power3.out', overwrite: 'auto' }); });
+    // Fotos que se van turnando mientras la puerta está abierta
+    function loadAll(d) { $$('img[data-src]', d).forEach(function (im) { im.src = im.getAttribute('data-src'); im.removeAttribute('data-src'); }); }
+    function cycle(d, on) {
+      clearInterval(d._cyc);
+      if (!on || reduced) return;
+      loadAll(d);
+      // cortes secos (sin fundido) con un leve zoom de asentamiento
+      d._cyc = setInterval(function () {
+        var imgs = $$('[data-door-stack] img', d), i = imgs.findIndex(function (im) { return im.classList.contains('is-on'); });
+        var nx = imgs[(i + 1) % imgs.length];
+        nx.style.zIndex = (d._z = (d._z || 1) + 1);
+        nx.classList.add('is-on');
+        setTimeout(function () { if (imgs[i] !== nx) imgs[i].classList.remove('is-on'); }, 60);
+      }, 1100);
+    }
+    function open(d, on) { d.classList.toggle('is-open', on); sec.classList.toggle('has-open', on || $$('.is-open', sec).length > 0); cycle(d, on); }
+    list.forEach(function (d) {
+      d.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') open(d, true); });
+      d.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') open(d, false); });
+      d.addEventListener('focus', function () { open(d, true); });
+      d.addEventListener('blur', function () { open(d, false); });
+    });
+    // En pantallas táctiles cada puerta se abre sola al llegar al centro de la pantalla
+    if (!fine.matches && 'IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { open(e.target, e.isIntersecting); }); }, { rootMargin: '-38% 0px -38% 0px' });
+      list.forEach(function (d) { io.observe(d); });
+    }
+    // El sello sólo gira mientras la sección está en pantalla
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { sec.classList.toggle('is-vis', es[0].isIntersecting); }).observe(sec);
+    else sec.classList.add('is-vis');
+    // Precarga y decodificación de las fotos en un momento libre (no mientras se scrollea)
+    window.addEventListener('load', function () {
+      var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 1200); };
+      idle(function () {
+        list.forEach(function (d) {
+          loadAll(d);
+          $$('[data-door-stack] img', d).forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
+        });
+      }, { timeout: 4000 });
+    });
+    return { fit: fit };
   })();
 
   /* ================= Scroll: hero, galería, reveals, contadores ================= */
@@ -1441,7 +1433,11 @@
 
     // Hero: la foto se expande con el scroll
     if (hero2) hero2.scroll();
-    if (stays) stays.scroll();
+
+    // Selector: las palabras suben letra por letra al entrar
+    $$('.door').forEach(function (d) {
+      gsap.from($$('.door__c', d), { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: .03, clearProps: 'transform', scrollTrigger: { trigger: d, start: 'top 75%', once: true } });
+    });
 
     // Imágenes que se descubren de abajo hacia arriba al entrar
     $$('[data-reveal-img]').forEach(function (fig) {
