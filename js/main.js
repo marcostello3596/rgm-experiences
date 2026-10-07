@@ -124,21 +124,69 @@
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
   }
 
-  // Selector de la home: dos palabras gigantes; al elegir una, las letras se rellenan con una foto
-  var PICK_IMG = { a: 'img/apts/mitre-i/01.jpg', b: 'img/exp-horse.jpg' };
-  function renderPick() {
-    $$('[data-pick]').forEach(function (r) {
-      var k = r.getAttribute('data-pick'), w = $('[data-pick-word]', r);
-      // en celular la palabra se parte en dos líneas (con guion) para que sea más grande
-      // dos capas con el mismo texto: tinta y foto. Al elegir, la de foto aparece encima (sólo cambia su opacidad: barato al scrollear)
-      var lines = t('door.' + k + '.ws').split('|').map(function (p) { return '<span class="pick__l">' + esc(p) + '</span>'; }).join('');
-      w.innerHTML = '<span class="pick__ink">' + lines + '</span><span class="pick__fill" aria-hidden="true">' + lines + '</span>';
-      w.setAttribute('aria-label', t('door.' + k + '.w'));
-      // leve velo oscuro sobre la foto para que las letras se sigan leyendo
-      $('.pick__fill', w).style.backgroundImage = 'linear-gradient(rgba(28, 24, 25, .18), rgba(28, 24, 25, .18)), url("' + PICK_IMG[k] + '")';
-      $('[data-pick-count]', r).textContent = pad(k === 'a' ? APTS.length : EXPS.length);
-    });
-    if (typeof pick !== 'undefined' && pick) pick.fit();
+  /* ---------- Home: departamentos de la ciudad sobre el mapa ilustrado ---------- */
+  var MAPD = window.RGM_MAP || null;
+  function mapXY(lat, lon) { return [(lon - MAPD.box[2]) * MAPD.kx, (MAPD.box[0] - lat) * MAPD.ky]; }
+  function cityApts() { return APTS.map(function (a, i) { return { a: a, i: i }; }).filter(function (o) { return o.a.kind !== 'house' && o.a.coords; }); }
+  // minutos caminando (distancia en línea recta × 1,3 por la cuadrícula, a 75 m/min)
+  function walkMin(m) { return Math.max(1, Math.round(m * 1.3 / 75)); }
+  function distToLine(p, line) {
+    var best = Infinity;
+    for (var k = 0; k < line.length - 1; k++) {
+      var a = mapXY(line[k][0], line[k][1]), b = mapXY(line[k + 1][0], line[k + 1][1]);
+      var dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy || 1;
+      var u = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L));
+      var x = a[0] + u * dx - p[0], y = a[1] + u * dy - p[1];
+      best = Math.min(best, Math.sqrt(x * x + y * y));
+    }
+    return best;
+  }
+  function walks(a) {
+    var p = mapXY(a.coords[0], a.coords[1]), pi = mapXY(MAPD.plazas.Independencia[0], MAPD.plazas.Independencia[1]);
+    return [
+      ['where.indep', walkMin(Math.hypot(p[0] - pi[0], p[1] - pi[1]))],
+      ['where.peat', walkMin(distToLine(p, MAPD.peatonal))],
+      ['where.arist', walkMin(distToLine(p, MAPD.aristides))]
+    ];
+  }
+  function renderWhere() {
+    var list = $('[data-wlist]'); if (!list || !MAPD) return;
+    var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
+    list.innerHTML = cityApts().map(function (o, k) {
+      var a = o.a, facts = [
+        a.bedrooms === 0 ? t('apts.studio') : a.bedrooms != null ? a.bedrooms + ' ' + t(a.bedrooms === 1 ? 'apts.bedroom1' : 'apts.bedrooms').toLowerCase() : '',
+        a.sleeps ? t('props.upTo', { n: a.sleeps }) : ''
+      ].filter(Boolean).join(' · ');
+      return '<li class="wcard" data-k="' + k + '">' +
+        '<a class="wcard__img" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true" data-cursor="cur.view"><img decoding="async" src="' + sm(a.img) + '" alt="" loading="lazy">' +
+          (a.badge ? '<span class="wcard__badge">' + esc(L(a.badge)) + '</span>' : '') + '</a>' +
+        '<div class="wcard__body">' +
+          '<p class="wcard__n"><span>' + pad(k + 1) + '</span>' + esc(zoneName(a.zone)) + '</p>' +
+          '<h3 class="wcard__name"><a href="' + aptURL(a) + '">' + aptPrefix(a) + ' <em>' + esc(a.name) + '</em></a></h3>' +
+          '<p class="wcard__tag">' + esc(L(a.tag)) + '</p>' +
+          '<ul class="wcard__walk" aria-label="' + esc(t('where.walk')) + '">' + walks(a).map(function (w) { return '<li><b>' + w[1] + ' min</b>' + esc(t(w[0])) + '</li>'; }).join('') + '</ul>' +
+          (facts ? '<p class="wcard__facts">' + esc(facts) + '</p>' : '') +
+        '</div></li>';
+    }).join('');
+    if (typeof wmap !== 'undefined' && wmap) wmap.labels();
+  }
+  function renderCasa() {
+    var dl = $('[data-casa-facts]'); if (!dl) return;
+    var h = APTS.filter(function (a) { return a.kind === 'house'; })[0]; if (!h) return;
+    dl.innerHTML = [['apts.bedrooms', fmtRooms(h.bedrooms)], ['apts.baths', fmtNum(h.baths)], ['apts.sleeps', fmtNum(h.sleeps)]]
+      .map(function (f) { return '<div><dt>' + t(f[0]) + '</dt><dd>' + f[1] + '</dd></div>'; }).join('');
+  }
+  // Experiencias en la home: tarjetas (carrusel en celular, grilla en escritorio)
+  function renderXgrid() {
+    var g = $('[data-xgrid]'); if (!g) return;
+    g.innerHTML = EXPS.map(function (e, i) {
+      return '<li class="xcard">' +
+        '<a class="xcard__img" href="' + expURL(e) + '" tabindex="-1" aria-hidden="true" data-cursor="cur.view"><img decoding="async" src="' + sm(e.img) + '" alt="" loading="lazy"><span class="xcard__n">' + pad(i + 1) + '</span></a>' +
+        '<div class="xcard__body"><h3 class="xcard__name"><a href="' + expURL(e) + '">' + esc(L(e.name)) + '</a></h3>' +
+        '<p class="xcard__meta">' + esc(L(e.place)) + '<br>' + esc(L(e.duration)) + '</p>' +
+        '<button type="button" class="xcard__add" data-book-exp-i="' + i + '" aria-label="' + esc(t('exp.book') + ': ' + L(e.name)) + '">+</button></div>' +
+        '</li>';
+    }).join('');
   }
 
   function renderTes() {
@@ -199,7 +247,7 @@
   }
 
   function renderAll() {
-    applyStatic(); renderZones(); renderApts(); renderPick(); renderTes(); renderFaq(); renderGallery(); renderTicker();
+    applyStatic(); renderZones(); renderApts(); renderWhere(); renderXgrid(); renderCasa(); renderTes(); renderFaq(); renderGallery(); renderTicker();
     updateGuestsLabel(); updateContactPh();
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
@@ -1306,7 +1354,7 @@
       if (first) { gsap.set(el, { x: e.clientX, y: e.clientY }); first = false; }
       xTo(e.clientX); yTo(e.clientY);
       var tg = e.target.closest && e.target.closest('[data-cursor]');
-      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .pick__row')) ? t(tg.getAttribute('data-cursor')) : '';
+      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .wcard__img, .xcard__img')) ? t(tg.getAttribute('data-cursor')) : '';
       if (want === cur) return;
       cur = want;
       if (want) { el.textContent = want; gsap.to(el, { scale: 1, duration: .5, ease: 'expo.out', overwrite: 'auto' }); }
@@ -1344,56 +1392,127 @@
     return { split: split };
   })();
 
-  /* ================= Selector tipográfico departamentos / experiencias ================= */
-  var pick = (function () {
-    var list = $('.pick__list'); if (!list) return null;
-    var rows = $$('[data-pick]', list), cv = document.createElement('canvas').getContext('2d');
-    // Las dos palabras con el mismo tamaño: el máximo que entra en el ancho
-    function fit() {
-      var px = Infinity;
-      var two = window.innerWidth <= 600;
-      cv.font = '400 100px Gambarino';
-      var ink = function (txt) { var m = cv.measureText(txt); return (m.actualBoundingBoxRight ? m.actualBoundingBoxLeft + m.actualBoundingBoxRight : m.width) - 4.5 * (txt.length - 1); };
-      rows.forEach(function (r) {
-        var w = $('[data-pick-word]', r), avail = w.clientWidth; if (!avail) return;
-        var parts = $$('.pick__ink .pick__l', w).map(function (l) { return l.textContent; });
-        var need = two ? Math.max(ink(parts[0] + '-'), ink(parts[1] || '')) : ink(parts.join(''));
-        px = Math.min(px, 100 * avail / need * .985);
+  /* ================= Mapa ilustrado del centro ================= */
+  var wmap = (function () {
+    var root = $('[data-wmap]'), list = $('[data-wlist]');
+    if (!root || !list || !MAPD) return null;
+    var W = MAPD.size[0], H = MAPD.size[1];
+    // Encuadre: casi cuadrado en celular (los deptos y la Peatonal), más amplio en escritorio (hasta el Parque)
+    var VB = { s: [960, 330, 1600, 1380], l: [110, 330, 2620, 1560] };
+    var vb = null, cur = -1, pins = [], items = cityApts();
+    function line(pts) { return 'M' + pts.map(function (p) { var q = mapXY(p[0], p[1]); return q[0].toFixed(0) + ' ' + q[1].toFixed(0); }).join(' L'); }
+    // base y calles resaltadas en capas separadas: el dibujo de las calles no vuelve a pintar el mapa entero
+    root.innerHTML = '<svg class="wmap__svg" preserveAspectRatio="none" aria-hidden="true">' +
+      '<image href="img/map-centro.svg" x="0" y="0" width="' + W + '" height="' + H + '"/></svg>' +
+      '<svg class="wmap__svg wmap__svg--hl" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path class="wmap__hl" pathLength="1" d="' + line(MAPD.aristides) + '"/>' +
+      '<path class="wmap__hl" pathLength="1" d="' + line(MAPD.peatonal) + '"/></svg>' +
+      '<div class="wmap__layer" data-wmap-layer></div>';
+    var svgs = $$('svg', root), layer = $('[data-wmap-layer]', root);
+    function pct(x, y) { return 'left:' + ((x - vb[0]) / vb[2] * 100).toFixed(3) + '%;top:' + ((y - vb[1]) / vb[3] * 100).toFixed(3) + '%'; }
+    function inView(x, y, m) { return x > vb[0] + m && x < vb[0] + vb[2] - m && y > vb[1] + m && y < vb[1] + vb[3] - m; }
+    // nombres de plazas y calles + pines (se rehacen al cambiar idioma o encuadre)
+    function labels() {
+      if (!vb) return;
+      var h = '';
+      Object.keys(MAPD.plazas).forEach(function (k) {
+        var q = mapXY(MAPD.plazas[k][0], MAPD.plazas[k][1]);
+        if (inView(q[0], q[1], 60)) h += '<span class="wmap__lbl wmap__lbl--plaza' + (k === 'Independencia' ? ' is-main' : '') + '" style="' + pct(q[0], q[1]) + '">Plaza<br>' + k + '</span>';
       });
-      // en escritorio las dos palabras (y la "o") entran juntas en la pantalla
-      if (window.innerWidth > 900) px = Math.min(px, (window.innerHeight - 420) / 2.2);
-      if (isFinite(px)) list.style.setProperty('--pw', Math.max(48, px).toFixed(1) + 'px');
-    }
-    fit();
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
-    window.addEventListener('resize', function () { clearTimeout(fit._t); fit._t = setTimeout(fit, 120); });
-    function on(r, v) { r.classList.toggle('is-on', v); list.classList.toggle('has-on', $$('.is-on', list).length > 0); }
-    var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    rows.forEach(function (r) {
-      var w = $('[data-pick-word]', r), raf = 0, fill = function () { return $('.pick__fill', r); };
-      r.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') on(r, true); });
-      r.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') on(r, false); });
-      r.addEventListener('focus', function () { on(r, true); });
-      r.addEventListener('blur', function () { on(r, false); });
-      // la foto dentro de las letras se corre apenas con el mouse
-      if (fine && !reduced) r.addEventListener('pointermove', function (e) {
-        if (raf) return;
-        raf = requestAnimationFrame(function () {
-          raf = 0; var b = r.getBoundingClientRect();
-          var f = fill(); if (f) f.style.backgroundPosition = ((e.clientX - b.left) / b.width * 100).toFixed(1) + '% 70%';
-        });
+      var small = vb === VB.s;
+      var streets = [['aristides', small ? 'Arístides' : 'Arístides Villanueva', small ? .82 : .62], ['peatonal', small ? 'Peatonal' : 'Peatonal Sarmiento', .5]];
+      streets.forEach(function (s) {
+        var pts = MAPD[s[0]], a = mapXY(pts[0][0], pts[0][1]), b = mapXY(pts[pts.length - 1][0], pts[pts.length - 1][1]);
+        var ang = Math.atan2(a[1] - b[1], a[0] - b[0]) * 180 / Math.PI; if (ang > 90 || ang < -90) ang += 180;
+        var x = b[0] + (a[0] - b[0]) * s[2], y = b[1] + (a[1] - b[1]) * s[2];
+        if (!inView(x, y, 40)) { x = Math.max(x, vb[0] + vb[2] * .2); y = b[1] + (a[1] - b[1]) * ((x - b[0]) / ((a[0] - b[0]) || 1)); }
+        h += '<span class="wmap__lbl wmap__lbl--street" style="' + pct(x, y) + ';--a:' + ang.toFixed(1) + 'deg">' + s[1] + '</span>';
       });
-    });
-    // En pantallas táctiles: la palabra que llega al centro de la pantalla se rellena sola
-    if (!fine && 'IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { on(e.target, e.isIntersecting); }); }, { rootMargin: '-40% 0px -40% 0px' });
-      rows.forEach(function (r) { io.observe(r); });
+      var pk = mapXY(MAPD.parque[0], MAPD.parque[1]);
+      h += inView(pk[0], pk[1], 40)
+        ? '<span class="wmap__lbl wmap__lbl--park" style="' + pct(pk[0] + 60, pk[1]) + '">' + esc(t('where.park')) + '</span>'
+        : '<span class="wmap__lbl wmap__lbl--park is-edge" style="' + pct(vb[0], vb[1] + vb[3] * .06) + '">← ' + esc(t('where.park')) + '</span>';
+      h += items.map(function (o, k) {
+        var q = mapXY(o.a.coords[0], o.a.coords[1]);
+        return '<button type="button" class="wmap__pin" data-k="' + k + '" style="' + pct(q[0], q[1]) + '" aria-label="' + esc(aptLabel(o.a)) + '">' +
+          '<span class="wmap__num">' + pad(k + 1) + '</span><span class="wmap__name">' + esc(o.a.name) + '</span></button>';
+      }).join('');
+      layer.innerHTML = h;
+      pins = $$('.wmap__pin', layer);
+      spread(); place(); mark(cur < 0 ? 0 : cur, true);
     }
-    // fotos precargadas en un momento libre
-    window.addEventListener('load', function () {
-      (window.requestIdleCallback || setTimeout)(function () { Object.keys(PICK_IMG).forEach(function (k) { var im = new Image(); im.src = PICK_IMG[k]; }); });
+    // etiquetas: si tapan un pin u otra etiqueta, se corren un poco
+    function place() {
+      var boxes = pins.map(function (p) { var r = $('.wmap__num', p).getBoundingClientRect(); return [r.left - 3, r.top - 3, r.right + 3, r.bottom + 3]; });
+      var hit = function (r) { return boxes.some(function (b) { return r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]; }); };
+      $$('.wmap__lbl:not(.is-edge)', layer).forEach(function (l) {
+        var tries = [[0, 0], [0, 15], [0, -15], [18, 0], [-18, 0], [0, 26], [0, -26], [26, 14], [-26, 14], [0, 38], [0, -38]];
+        for (var i = 0; i < tries.length; i++) {
+          l.style.setProperty('--ox', tries[i][0] + 'px'); l.style.setProperty('--oy', tries[i][1] + 'px');
+          var r = l.getBoundingClientRect(), box = [r.left, r.top, r.right, r.bottom];
+          if (!hit(box) || i === tries.length - 1) { boxes.push(box); break; }
+        }
+      });
+    }
+    // pines muy cercanos (España I y II están a media cuadra): se separan en pantalla
+    function spread() {
+      var R = root.getBoundingClientRect(); if (!R.width) return;
+      var pos = pins.map(function (p) { return [parseFloat(p.style.left) / 100 * R.width, parseFloat(p.style.top) / 100 * R.height]; });
+      pins.forEach(function (p) { p.style.removeProperty('--dx'); });
+      for (var i = 0; i < pos.length; i++) for (var j = i + 1; j < pos.length; j++) {
+        var d = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]);
+        if (d < 30) { var o = (30 - d) / 2 + 2; pins[i].style.setProperty('--dx', -o + 'px'); pins[j].style.setProperty('--dx', o + 'px'); }
+      }
+    }
+    function frame() {
+      var small = window.innerWidth < 640, v = small ? VB.s : VB.l;
+      if (vb && vb.join() === v.join()) { spread(); place(); return; }
+      vb = v;
+      svgs.forEach(function (s) { s.setAttribute('viewBox', v.join(' ')); });
+      root.style.aspectRatio = v[2] + ' / ' + v[3];
+      labels();
+    }
+    // departamento activo: pin + tarjeta
+    function mark(k, quiet) {
+      if (k < 0 || k >= items.length) return;
+      cur = k;
+      pins.forEach(function (p, i) { p.classList.toggle('is-on', i === k); });
+      $$('.wcard', list).forEach(function (c, i) { c.classList.toggle('is-on', i === k); });
+    }
+    function scrollCard(k) {
+      var c = $$('.wcard', list)[k]; if (!c) return;
+      if (list.scrollWidth > list.clientWidth + 4) list.scrollTo({ left: c.offsetLeft - list.offsetLeft - (list.clientWidth - c.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
+    }
+    layer.addEventListener('click', function (e) {
+      var p = e.target.closest('.wmap__pin'); if (!p) return;
+      var k = parseInt(p.getAttribute('data-k'), 10); mark(k); scrollCard(k);
     });
-    return { fit: fit };
+    layer.addEventListener('pointerover', function (e) { var p = e.target.closest && e.target.closest('.wmap__pin'); if (p && e.pointerType === 'mouse') mark(parseInt(p.getAttribute('data-k'), 10)); });
+    list.addEventListener('pointerover', function (e) { var c = e.target.closest && e.target.closest('.wcard'); if (c && e.pointerType === 'mouse') mark(parseInt(c.getAttribute('data-k'), 10)); });
+    list.addEventListener('focusin', function (e) { var c = e.target.closest('.wcard'); if (c) mark(parseInt(c.getAttribute('data-k'), 10)); });
+    // carrusel (celular): la tarjeta centrada marca su pin
+    var sx = 0;
+    list.addEventListener('scroll', function () {
+      if (sx) return;
+      sx = requestAnimationFrame(function () {
+        sx = 0;
+        if (list.scrollWidth <= list.clientWidth + 4) return;
+        var mid = list.scrollLeft + list.clientWidth / 2, best = 0, bd = Infinity;
+        $$('.wcard', list).forEach(function (c, i) { var d = Math.abs(c.offsetLeft - list.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = i; } });
+        if (best !== cur) mark(best);
+      });
+    }, { passive: true });
+    frame();
+    window.addEventListener('resize', function () { clearTimeout(frame._t); frame._t = setTimeout(frame, 120); });
+    // entrada: las calles se dibujan y los pines aparecen
+    function intro() {
+      if (!gsap || !ST || reduced) return;
+      ST.create({ trigger: root, start: 'top 75%', once: true, onEnter: function () {
+        root.classList.add('is-in');
+        gsap.fromTo(pins, { scale: 0 }, { scale: 1, duration: .7, ease: 'back.out(2)', stagger: .07, delay: .35, clearProps: 'transform' });
+      } });
+    }
+    return { labels: labels, intro: intro };
   })();
 
   /* ================= Scroll: hero, galería, reveals, contadores ================= */
@@ -1402,11 +1521,7 @@
 
     // Hero: la foto se expande con el scroll
     if (hero2) hero2.scroll();
-
-    // Selector: las palabras suben desde su línea al entrar
-    $$('.pick__word').forEach(function (w) {
-      gsap.from(w, { yPercent: 105, duration: 1.4, ease: 'expo.out', clearProps: 'transform', scrollTrigger: { trigger: w.parentNode, start: 'top 90%', once: true } });
-    });
+    if (wmap) wmap.intro();
 
     // Imágenes que se descubren de abajo hacia arriba al entrar
     $$('[data-reveal-img]').forEach(function (fig) {

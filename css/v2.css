@@ -476,31 +476,6 @@ a:hover .roll > span, button:hover .roll > span, a:focus-visible .roll > span { 
 .intro__text .w { color: #d6ccc0; }
 .intro__text .w.is-on { color: var(--ink); }
 
-/* ---------- Selector: "Departamentos o Experiencias" ----------
-   Dos palabras gigantes; la elegida se rellena con una foto (background-clip: text). */
-.pick { background: var(--sand); background-image: var(--noise); padding-block: clamp(16px, 2vw, 32px) clamp(72px, 8vw, 130px); }
-.pick__row { display: block; padding: 18px 0 20px; border-top: 1px solid var(--line-2); color: var(--ink); text-decoration: none; outline-offset: 6px; }
-.pick__meta, .pick__foot { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; font-size: .72rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; transition: opacity .6s var(--ease); }
-.pick__count { font-family: var(--f-display); font-size: 1.5rem; letter-spacing: -.02em; text-transform: none; }
-.pick__mask { display: block; overflow: hidden; margin: clamp(6px, 1vw, 14px) 0 clamp(6px, 1vw, 12px); }
-.pick__word { position: relative; display: block; will-change: transform; font-family: var(--f-display); font-weight: 400; font-size: var(--pw, 15vw); line-height: .9; letter-spacing: -.045em; white-space: nowrap; color: var(--ink); }
-.pick__ink, .pick__fill { display: block; padding: .04em 0 .16em; }
-.pick__ink { transition: color .7s var(--ease); }
-.pick__fill { position: absolute; inset: 0; color: transparent; background-position: 50% 70%; background-size: cover; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; opacity: 0; visibility: hidden; transition: opacity .7s var(--ease), visibility 0s linear .7s; will-change: opacity; pointer-events: none; }
-.pick__row--b .pick__word { text-align: right; }
-.pick__l { display: inline; }
-.pick__row.is-on .pick__fill { opacity: 1; visibility: visible; transition: opacity .7s var(--ease), visibility 0s; }
-.pick__d { max-width: 44ch; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: .95rem; line-height: 1.5; color: var(--muted); }
-.pick__go { display: inline-flex; align-items: center; gap: 14px; flex: none; padding-bottom: 6px; border-bottom: 1px solid currentColor; white-space: nowrap; }
-.pick__row.is-on .pick__go .arr { transform: translateX(6px); }
-.pick__list.has-on .pick__row:not(.is-on) .pick__ink { color: #d6ccc0; }
-.pick__list.has-on .pick__row:not(.is-on) .pick__meta, .pick__list.has-on .pick__row:not(.is-on) .pick__foot { opacity: .4; }
-/* la "o" entre las dos: se lee "Departamentos o Experiencias" */
-.pick__or { display: flex; align-items: center; gap: 22px; padding: clamp(4px, .8vw, 12px) 0; }
-.pick__or::before, .pick__or::after { content: ""; flex: 1; height: 1px; background: var(--line-2); }
-.pick__or span { font-family: var(--f-display); font-size: clamp(2.4rem, 3.6vw, 3.8rem); line-height: .8; letter-spacing: -.03em; padding-bottom: .12em; }
-.pick__or + .pick__row { border-top: 0; }
-
 /* ---------- Mapa y WhatsApp en la paleta de la marca ---------- */
 .apts__map, .pmap .leaflet-container { background: #e7dfd3; }
 .wa-float { width: 54px; height: 54px; background: var(--wine); color: var(--cream); box-shadow: 0 0 0 1px rgba(244, 238, 229, .32), 0 14px 30px -12px rgba(0, 0, 0, .45); }
@@ -514,17 +489,136 @@ a:hover .roll > span, button:hover .roll > span, a:focus-visible .roll > span { 
 
 @media (max-width: 900px) {
   .intro__text { max-width: 16ch; }
-  .pick__foot { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .pick__row--b .pick__word { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) {
   .intro__text .w { color: var(--ink); }
-  .pick__ink, .pick__fill { transition: none; }
 }
 
-@media (max-width: 600px) {
-  .pick__l { display: block; }
-  .pick__l:first-child::after { content: "-"; }
-  .pick__word { line-height: .86; }
-  .pick__ink, .pick__fill { padding-bottom: .2em; }
+
+/* =====================================================================
+   v2.5 — home: mapa del centro con los departamentos, casa en Potrerillos, experiencias
+   (mobile-first: primero el celular, después se agregan las variantes para pantallas grandes)
+   ===================================================================== */
+.where, .xp { background: var(--sand); background-image: var(--noise); padding-block: clamp(72px, 10vw, 150px); }
+.where__head { display: grid; gap: 18px; margin-bottom: clamp(28px, 4vw, 64px); }
+.where__head .h2 { max-width: 11ch; }
+.where__lead { margin: 0; max-width: 46ch; font-size: .95rem; line-height: 1.55; color: var(--muted); }
+.where__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.where__mapcol, .where__listcol { min-width: 0; }
+.where__all { margin-top: 26px; color: var(--ink); }
+
+/* Mapa */
+.wmap { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; background: #e6ddd0; isolation: isolate; }
+.wmap__svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.wmap__svg--hl, .wmap__layer { will-change: transform; }
+.wmap__hl { fill: none; stroke: var(--wine); stroke-width: 4; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
+html.js .wmap:not(.is-in) .wmap__hl { stroke-dashoffset: 1; }
+.wmap.is-in .wmap__hl { transition: stroke-dashoffset 2.2s var(--ease-io) .2s; }
+.wmap__layer { position: absolute; inset: 0; }
+.wmap__lbl { --ox: 0px; --oy: 0px; position: absolute; transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))); font-size: .56rem; font-weight: 500; letter-spacing: .06em; line-height: 1.15; text-transform: uppercase; text-align: center; white-space: nowrap; color: rgba(28, 24, 25, .62); pointer-events: none; }
+.wmap__lbl--plaza.is-main { color: var(--ink); font-size: .62rem; }
+.wmap__lbl--street { transform: translate(calc(-50% + var(--ox)), calc(-50% + var(--oy))) rotate(var(--a)) translateY(-11px); color: var(--wine); font-weight: 500; }
+.wmap__lbl--park { color: #6c6a52; }
+.wmap__lbl--park.is-edge { transform: translate(8px, -50%); text-align: left; }
+.wmap__pin { --dx: 0px; position: absolute; z-index: 2; display: flex; align-items: center; padding: 0; border: 0; background: none; color: var(--cream); transform: translate(calc(-50% + var(--dx)), -50%); cursor: pointer; }
+.wmap__num { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--wine); font-size: .62rem; font-weight: 500; letter-spacing: .02em; box-shadow: 0 0 0 2px var(--cream), 0 6px 14px -6px rgba(28, 24, 25, .6); transition: transform .5s var(--ease), background .4s var(--ease); }
+.wmap__name { position: absolute; left: calc(100% + 8px); top: 50%; padding: 6px 10px; background: var(--ink); color: var(--cream); font-size: .66rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; opacity: 0; transform: translate(-6px, -50%); transition: opacity .35s var(--ease), transform .5s var(--ease); pointer-events: none; }
+.wmap__pin.is-on { z-index: 3; }
+.wmap__pin.is-on .wmap__num { background: var(--ink); transform: scale(1.22); }
+.wmap__pin.is-on .wmap__name { opacity: 1; transform: translate(0, -50%); }
+.wmap__note { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; margin: 12px 0 0; font-size: .64rem; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.wmap__key { display: inline-flex; align-items: center; gap: 8px; }
+.wmap__dot { width: 10px; height: 10px; border-radius: 50%; background: var(--wine); }
+.wmap__line { width: 18px; height: 3px; background: var(--wine); }
+.wmap__osm { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; opacity: .7; }
+
+/* Tarjetas de los departamentos: carrusel en celular */
+.wlist { list-style: none; margin: 0 calc(-1 * var(--gut)); padding: 2px var(--gut) 6px; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); scrollbar-width: none; overscroll-behavior-x: contain; }
+.wlist::-webkit-scrollbar { display: none; }
+.wcard { flex: 0 0 82%; scroll-snap-align: center; background: var(--paper); border: 1px solid transparent; transition: border-color .4s var(--ease); }
+.wcard.is-on { border-color: var(--line-2); }
+.wcard__img { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; background: var(--sand-2); }
+.wcard__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.wcard__badge { position: absolute; top: 0; left: 0; background: var(--sand); color: var(--ink); padding: 7px 10px; font-size: .6rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; }
+.wcard__body { padding: 16px 16px 18px; }
+.wcard__n { display: flex; gap: 12px; margin: 0 0 8px; font-size: .64rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.wcard__n span { color: var(--wine); }
+.wcard__name { margin: 0 0 8px; font-family: var(--f-display); font-weight: 400; font-size: 1.9rem; line-height: .98; letter-spacing: -.03em; color: var(--soft); }
+.wcard__name a { color: inherit; text-decoration: none; }
+.wcard__name em { font-style: normal; color: var(--ink); }
+.wcard__tag { margin: 0 0 14px; font-size: .85rem; line-height: 1.45; color: var(--muted); }
+.wcard__walk { list-style: none; margin: 0; padding: 12px 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.wcard__walk li { display: grid; gap: 2px; font-size: .62rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.wcard__walk b { font-family: var(--f-display); font-weight: 400; font-size: 1.25rem; letter-spacing: -.02em; text-transform: none; color: var(--ink); }
+.wcard__facts { margin: 12px 0 0; font-size: .8rem; color: var(--muted); }
+.wlist__hint { margin: 10px 0 0; font-size: .64rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+
+/* Casa en Potrerillos */
+.casa__grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 40px; }
+.casa__text .h2 { max-width: 10ch; }
+.casa__lead { margin: 22px 0 0; max-width: 42ch; font-size: .98rem; line-height: 1.6; color: rgba(244, 238, 229, .76); }
+.casa__facts { display: flex; gap: 30px; margin: 30px 0 34px; padding: 18px 0; border-top: 1px solid var(--line-light); border-bottom: 1px solid var(--line-light); }
+.casa__facts dt { font-size: .62rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; color: var(--cream-soft); }
+.casa__facts dd { margin: 8px 0 0; font-family: var(--f-display); font-size: 2.1rem; line-height: 1; letter-spacing: -.02em; }
+.casa__pics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.casa__pic { margin: 0; overflow: hidden; background: #2a2425; }
+.casa__pic img { width: 100%; height: 100%; object-fit: cover; }
+.casa__pic--a { grid-column: 1 / -1; aspect-ratio: 4 / 5; }
+.casa__pic--b, .casa__pic--c { aspect-ratio: 4 / 5; }
+
+/* Experiencias: carrusel en celular */
+.xgrid { list-style: none; margin: 0 calc(-1 * var(--gut)); padding: 0 var(--gut) 4px; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); scrollbar-width: none; overscroll-behavior-x: contain; counter-reset: x; }
+.xgrid::-webkit-scrollbar { display: none; }
+.xcard { flex: 0 0 72%; scroll-snap-align: start; }
+.xcard__img { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; background: var(--sand-2); }
+.xcard__img img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+.xcard__n { position: absolute; top: 0; left: 0; background: var(--sand); padding: 7px 10px; font-size: .62rem; font-weight: 500; letter-spacing: .07em; }
+.xcard__body { position: relative; padding: 14px 52px 0 0; }
+.xcard__name { margin: 0 0 6px; font-family: var(--f-display); font-weight: 400; font-size: 1.55rem; line-height: 1; letter-spacing: -.025em; }
+.xcard__name a { color: inherit; text-decoration: none; }
+.xcard__meta { margin: 0; font-size: .74rem; line-height: 1.45; color: var(--muted); }
+.xcard__add { position: absolute; top: 14px; right: 0; width: 40px; height: 40px; padding: 0; border: 1px solid var(--line-2); background: transparent; color: var(--ink); font-size: 1.1rem; line-height: 1; transition: background .4s var(--ease), color .4s var(--ease); }
+.xcard__add:hover { background: var(--ink); color: var(--cream); }
+.ticker { border-top: 1px solid var(--line); }
+
+/* ---------- Tablet y escritorio ---------- */
+@media (min-width: 700px) {
+  .wcard { flex-basis: 46%; }
+  .xcard { flex-basis: 38%; }
+  .wmap__lbl { font-size: .62rem; }
+  .wmap__lbl--plaza.is-main { font-size: .7rem; }
+  .wmap__num { width: 30px; height: 30px; font-size: .68rem; }
+  .casa__pics { grid-template-columns: 1.7fr 1fr; gap: 12px; }
+  .casa__pic--a { grid-column: 1; grid-row: 1 / span 2; aspect-ratio: auto; }
+  .casa__pic--b, .casa__pic--c { aspect-ratio: 1; }
+}
+@media (min-width: 901px) {
+  .where__head { grid-template-columns: minmax(0, 1fr) minmax(0, 400px); align-items: end; gap: 40px; }
+  .where__body { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(28px, 3vw, 48px); align-items: start; }
+  .where__mapcol { position: sticky; top: calc(var(--nav-h) + 24px); }
+  .wlist { display: block; margin: 0; padding: 0; overflow: visible; border-top: 1px solid var(--line-2); }
+  .wlist__hint { display: none; }
+  .wcard { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 18px; padding: 16px 0; background: none; border: 0; border-bottom: 1px solid var(--line); transition: opacity .4s var(--ease); }
+  .wlist:hover .wcard:not(:hover) { opacity: .45; }
+  .wcard__img { aspect-ratio: 1; }
+  .wcard:hover .wcard__img img { transform: scale(1.06); }
+  .wcard__body { padding: 0; }
+  .wcard__n { margin-bottom: 4px; }
+  .wcard__name { font-size: 1.65rem; margin-bottom: 4px; }
+  .wcard__tag { display: none; }
+  .wcard__walk { border: 0; padding: 4px 0 0; display: flex; gap: 16px; }
+  .wcard__walk li { display: block; font-size: .62rem; }
+  .wcard__walk b { font-family: var(--f-body); font-size: .74rem; font-weight: 500; margin-right: 4px; }
+  .wcard__facts { display: none; }
+  .wcard.is-on .wcard__name { color: var(--soft); }
+  .casa__grid { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(40px, 6vw, 110px); align-items: center; }
+  .casa__pics { grid-template-columns: 1.25fr 1fr; grid-template-rows: auto auto; gap: 14px; }
+  .casa__pic--a { grid-column: 1; grid-row: 1 / span 2; aspect-ratio: auto; height: 100%; min-height: 560px; }
+  .casa__pic--b, .casa__pic--c { aspect-ratio: 4 / 4.4; }
+  .xgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 40px 20px; margin: 0; padding: 0; overflow: visible; }
+  .xcard:hover .xcard__img img { transform: scale(1.06); }
+  .xcard__name { font-size: 1.7rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js .wmap:not(.is-in) .wmap__hl { stroke-dashoffset: 0; }
 }
