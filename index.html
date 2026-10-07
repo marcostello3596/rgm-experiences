@@ -9,9 +9,9 @@
 <link rel="preload" href="fonts/gambarino-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/supreme-500.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/flatpickr.css?v=2e1da9a6">
-<link rel="stylesheet" href="css/styles.css?v=2e1da9a6">
-<link rel="stylesheet" href="css/v2.css?v=2e1da9a6">
+<link rel="stylesheet" href="css/flatpickr.css?v=b2d3c241">
+<link rel="stylesheet" href="css/styles.css?v=b2d3c241">
+<link rel="stylesheet" href="css/v2.css?v=b2d3c241">
 <script>
   /* Pre-paint: idioma inicial + ocultar titulares hasta que SplitText los prepare */
   (function () {
@@ -55,7 +55,7 @@
           <button type="button" class="lang__btn" data-lang="en">EN</button>
           <button type="button" class="lang__btn" data-lang="pt">PT</button>
         </div>
-        <a href="#contacto" class="btn btn--light nav__book" data-i18n="nav.book">Reservar</a>
+        <a href="#" data-book-open class="btn btn--light nav__book" data-i18n="nav.book">Reservar</a>
       </div>
     </div>
   </header>
@@ -65,13 +65,13 @@
     <div class="drawer__inner">
       <a href="propiedades/" class="drawer__link" data-i18n="nav.apartments">Departamentos</a>
       <a href="experiencias/" class="drawer__link" data-i18n="nav.experiences">Experiencias</a>
-      <a href="#contacto" class="drawer__link" data-i18n="nav.contact">Contacto</a>
+      <a href="#" data-book-open class="drawer__link" data-i18n="nav.contact">Contacto</a>
       <div class="lang lang--drawer" role="group" data-i18n-attr="aria-label:lang.label">
         <button type="button" class="lang__btn" data-lang="es">ES</button>
         <button type="button" class="lang__btn" data-lang="en">EN</button>
         <button type="button" class="lang__btn" data-lang="pt">PT</button>
       </div>
-      <a href="#contacto" class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a>
+      <a href="#" data-book-open class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a>
     </div>
   </dialog>
 
@@ -131,23 +131,20 @@
     </section>
 
     <!-- ============ ELEGÍ: DEPARTAMENTOS O EXPERIENCIAS ============ -->
-    <section class="doors" id="elegi" aria-label="Departamentos o experiencias">
-        <a class="door door--stay" href="propiedades/" data-door="a" data-cursor="cur.view">
-          <span class="door__media" aria-hidden="true"><span class="door__stack" data-door-stack></span></span>
-          <span class="door__top"><span class="door__k"><span>01</span> — <span data-i18n="door.a.k"></span></span><span class="door__count" data-door-count></span></span>
-          <span class="door__w" data-door-word></span>
-          <span class="door__bot"><span class="door__d" data-i18n="door.a.d"></span><span class="door__go"><span data-i18n="door.a.c"></span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></span></span>
+    <section class="pick" id="elegi">
+      <div class="gutter wrap pick__list">
+        <a class="pick__row pick__row--a" href="propiedades/" data-pick="a" data-cursor="cur.view">
+          <span class="pick__meta"><span>01 — <span data-i18n="door.a.k"></span></span><span class="pick__count" data-pick-count></span></span>
+          <span class="pick__mask"><span class="pick__word" data-pick-word></span></span>
+          <span class="pick__foot"><span class="pick__d" data-i18n="door.a.d"></span><span class="pick__go"><span data-i18n="door.a.c"></span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></span></span>
         </a>
-        <a class="door door--exp" href="experiencias/" data-door="b" data-cursor="cur.view">
-          <span class="door__media" aria-hidden="true"><span class="door__stack" data-door-stack></span></span>
-          <span class="door__top"><span class="door__k"><span>02</span> — <span data-i18n="door.b.k"></span></span><span class="door__count" data-door-count></span></span>
-          <span class="door__w" data-door-word></span>
-          <span class="door__bot"><span class="door__d" data-i18n="door.b.d"></span><span class="door__go"><span data-i18n="door.b.c"></span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></span></span>
+        <div class="pick__or" aria-hidden="true"><span data-i18n="door.or">o</span></div>
+        <a class="pick__row pick__row--b" href="experiencias/" data-pick="b" data-cursor="cur.view">
+          <span class="pick__meta"><span>02 — <span data-i18n="door.b.k"></span></span><span class="pick__count" data-pick-count></span></span>
+          <span class="pick__mask"><span class="pick__word" data-pick-word></span></span>
+          <span class="pick__foot"><span class="pick__d" data-i18n="door.b.d"></span><span class="pick__go"><span data-i18n="door.b.c"></span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></span></span>
         </a>
-      <span class="doors__or" aria-hidden="true">
-        <svg class="doors__ring" viewBox="0 0 120 120"><defs><path id="or-ring" d="M60 60 m-47 0 a47 47 0 1 1 94 0 a47 47 0 1 1 -94 0"/></defs><text><textPath href="#or-ring" data-door-ring></textPath></text></svg>
-        <span class="doors__o" data-i18n="door.or">o</span>
-      </span>
+      </div>
     </section>
 
     <!-- ============ TESTIMONIOS ============ -->
@@ -160,30 +157,6 @@
       </div>
       <div class="tes__marquee" data-marquee>
         <div class="tes__track" data-tes-track></div>
-      </div>
-    </section>
-
-    <!-- ============ CONTACTO ============ -->
-    <section class="contact band band--wine" id="contacto">
-      <div class="gutter wrap">
-        <div class="contact__layout">
-          <div class="contact__img" data-reveal-img><img src="img/contact.jpg" alt="" loading="lazy" decoding="async"></div>
-          <div class="contact__body">
-            <p class="eyebrow eyebrow--gold" data-n="(02)" data-i18n="ct.eyebrow">Empezá tu viaje</p>
-            <h2 class="h2" data-split="lines" data-i18n-html="ct.title">Dejanos armar <em>algo inolvidable.</em></h2>
-            <p class="contact__text" data-i18n="ct.text"></p>
-            <form class="form" data-contact novalidate>
-              <div class="form__row">
-                <div class="form__field"><label for="c-first" class="eyebrow" data-i18n="ct.first">Nombre</label><input id="c-first" name="first" autocomplete="given-name" required></div>
-                <div class="form__field"><label for="c-last" class="eyebrow" data-i18n="ct.last">Apellido</label><input id="c-last" name="last" autocomplete="family-name"></div>
-              </div>
-              <div class="form__field"><label for="c-email" class="eyebrow" data-i18n="ct.email">Email</label><input id="c-email" name="email" type="email" autocomplete="email"></div>
-              <div class="form__field"><label for="c-msg" class="eyebrow" data-i18n="ct.msg">Contanos sobre tu viaje</label><textarea id="c-msg" name="msg" rows="4" required data-i18n-attr="placeholder:ct.msgPh"></textarea></div>
-              <button type="submit" class="btn btn--gold" data-i18n="ct.send">Enviar por WhatsApp</button>
-              <p class="form__msg" role="status" data-contact-msg></p>
-            </form>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -220,7 +193,7 @@
           <li><a href="propiedades/" data-i18n="nav.apartments"></a></li>
           <li><a href="experiencias/" data-i18n="nav.experiences"></a></li>
           <li><a href="#faq" data-i18n="nav.faq"></a></li>
-          <li><a href="#contacto" data-i18n="nav.bookStay"></a></li>
+          <li><a href="#" data-book-open data-i18n="nav.bookStay"></a></li>
         </ul>
         <ul class="footer__list">
           <li class="eyebrow eyebrow--gold" data-i18n="ft.contact">Contacto</li>
@@ -311,7 +284,7 @@
   <a class="wa-float" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n-attr="aria-label:wa.aria" data-wa-float>
     <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm0 23.6a10.6 10.6 0 01-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1116 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
   </a>
-  <div class="mobile-cta"><a href="#contacto" class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a></div>
+  <div class="mobile-cta"><a href="#" data-book-open class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a></div>
 
   <div class="grain" aria-hidden="true"></div>
   <!-- Transición de página -->
@@ -328,10 +301,10 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
-<script src="js/i18n.js?v=2e1da9a6"></script>
-<script src="js/data.js?v=2e1da9a6"></script>
-<script src="js/detail.js?v=2e1da9a6"></script>
-<script src="js/exp-detail.js?v=2e1da9a6"></script>
-<script src="js/main.js?v=2e1da9a6"></script>
+<script src="js/i18n.js?v=b2d3c241"></script>
+<script src="js/data.js?v=b2d3c241"></script>
+<script src="js/detail.js?v=b2d3c241"></script>
+<script src="js/exp-detail.js?v=b2d3c241"></script>
+<script src="js/main.js?v=b2d3c241"></script>
 </body>
 </html>

@@ -468,7 +468,7 @@ a:hover .roll > span, button:hover .roll > span, a:focus-visible .roll > span { 
 [data-split="lines"] > div { padding: 0 .06em .24em 0; margin: 0 -.06em -.24em 0; }
 
 /* ---------- Manifiesto ---------- */
-.intro { background: var(--sand); padding-block: clamp(120px, 15vw, 240px); }
+.intro { background: var(--sand); padding-block: clamp(120px, 15vw, 240px) clamp(80px, 9vw, 150px); }
 .intro__wrap { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .intro__peaks { width: 64px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; margin-bottom: clamp(36px, 4.5vw, 64px); }
 .intro__text { margin: 0; max-width: 21ch; font-family: var(--f-display); font-size: clamp(2.5rem, 6.1vw, 7.2rem); line-height: .98; letter-spacing: -.04em; text-wrap: balance; }
@@ -476,43 +476,30 @@ a:hover .roll > span, button:hover .roll > span, a:focus-visible .roll > span { 
 .intro__text .w { color: #d6ccc0; }
 .intro__text .w.is-on { color: var(--ink); }
 
-/* ---------- Selector: dos puertas ---------- */
-.doors { position: relative; display: flex; height: max(640px, 100svh); background: var(--ink); color: var(--cream); overflow: hidden; }
-.door { --pad: clamp(22px, 3vw, 48px); position: relative; isolation: isolate; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 24px; padding: clamp(28px, 4vw, 56px) var(--pad) var(--pad); color: var(--cream); text-decoration: none; overflow: hidden; outline-offset: -6px; }
-.door--stay { background: var(--ink); }
-.door--exp { background: var(--wine); }
-.door + .door { box-shadow: inset 1px 0 0 rgba(244, 238, 229, .14); }
-/* foto: una ventana chica detrás de la palabra que se abre a pantalla completa */
-.door__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; transform: scale(.4); transition: transform 1.2s var(--ease); will-change: transform; }
-.door__stack img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; visibility: hidden; transform: scale(1.12); transition: transform 1.6s var(--ease); }
-.door__stack img.is-on { visibility: visible; transform: scale(1); }
-.door::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(18, 13, 14, .62) 0%, rgba(18, 13, 14, .12) 38%, rgba(18, 13, 14, .12) 58%, rgba(18, 13, 14, .7) 100%); opacity: 0; transition: opacity .9s var(--ease); }
-.door.is-open .door__media { transform: none; }
-.door.is-open::after { opacity: 1; }
-.doors.has-open .door:not(.is-open) .door__media { transform: scale(.3); }
-.door__top, .door__w, .door__bot { transition: opacity .7s var(--ease); }
-.doors.has-open .door:not(.is-open) .door__top, .doors.has-open .door:not(.is-open) .door__w, .doors.has-open .door:not(.is-open) .door__bot { opacity: .4; }
-.door__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
-.door__k { font-size: .72rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; }
-.door__count { font-family: var(--f-display); font-size: clamp(2.6rem, 4.4vw, 4.8rem); line-height: .8; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-/* palabra gigante: cada letra rueda y aparece su copia (sombra) desde abajo */
-.door__w { display: block; --gap: calc(clamp(104px, 9.5vw, 140px) / 2 + 18px - var(--pad)); font-family: var(--f-display); font-weight: 400; font-size: var(--dw, 8vw); line-height: 1; letter-spacing: -.04em; white-space: nowrap; }
-.door--stay .door__w { text-align: right; padding-right: var(--gap); }
-.door--exp .door__w { text-align: left; padding-left: var(--gap); }
-.door__line { display: block; overflow: hidden; padding: .04em 0 .14em; margin-bottom: -.14em; }
-.door__c { display: inline-block; white-space: pre; text-shadow: 0 1.2em currentColor; transition: transform .95s var(--ease); transition-delay: calc(var(--i) * 24ms); }
-.door.is-open .door__c { transform: translateY(-1.2em); }
-.door__bot { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
-.door__d { max-width: 32ch; font-size: .95rem; line-height: 1.5; color: rgba(244, 238, 229, .8); }
-.door__go { display: inline-flex; align-items: center; gap: 14px; flex: none; padding-bottom: 7px; border-bottom: 1px solid currentColor; font-size: .72rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; white-space: nowrap; }
-.door.is-open .door__go .arr { transform: translateX(5px); }
-/* sello giratorio en la unión: "o" */
-.doors__or { position: absolute; left: 50%; top: 50%; z-index: 5; will-change: transform; width: clamp(104px, 9.5vw, 140px); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; background: var(--sand); color: var(--ink); display: grid; place-items: center; pointer-events: none; }
-.doors__ring { position: absolute; inset: 7%; width: 86%; height: 86%; animation: doors-spin 22s linear infinite paused; will-change: transform; }
-.doors.is-vis .doors__ring { animation-play-state: running; }
-.doors__ring text { font-family: var(--f-body); font-size: 10px; font-weight: 500; letter-spacing: .12em; word-spacing: .3em; text-transform: uppercase; fill: currentColor; }
-.doors__o { font-family: var(--f-display); font-size: clamp(2.2rem, 3.2vw, 3rem); line-height: 1; margin-top: -.18em; }
-@keyframes doors-spin { to { transform: rotate(360deg); } }
+/* ---------- Selector: "Departamentos o Experiencias" ----------
+   Dos palabras gigantes; la elegida se rellena con una foto (background-clip: text). */
+.pick { background: var(--sand); background-image: var(--noise); padding-block: clamp(16px, 2vw, 32px) clamp(72px, 8vw, 130px); }
+.pick__row { display: block; padding: 18px 0 20px; border-top: 1px solid var(--line-2); color: var(--ink); text-decoration: none; outline-offset: 6px; }
+.pick__meta, .pick__foot { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; font-size: .72rem; font-weight: 500; letter-spacing: .07em; text-transform: uppercase; transition: opacity .6s var(--ease); }
+.pick__count { font-family: var(--f-display); font-size: 1.5rem; letter-spacing: -.02em; text-transform: none; }
+.pick__mask { display: block; overflow: hidden; margin: clamp(6px, 1vw, 14px) 0 clamp(6px, 1vw, 12px); }
+.pick__word { position: relative; display: block; will-change: transform; font-family: var(--f-display); font-weight: 400; font-size: var(--pw, 15vw); line-height: .9; letter-spacing: -.045em; white-space: nowrap; color: var(--ink); }
+.pick__ink, .pick__fill { display: block; padding: .04em 0 .16em; }
+.pick__ink { transition: color .7s var(--ease); }
+.pick__fill { position: absolute; inset: 0; color: transparent; background-position: 50% 70%; background-size: cover; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; opacity: 0; visibility: hidden; transition: opacity .7s var(--ease), visibility 0s linear .7s; will-change: opacity; pointer-events: none; }
+.pick__row--b .pick__word { text-align: right; }
+.pick__l { display: inline; }
+.pick__row.is-on .pick__fill { opacity: 1; visibility: visible; transition: opacity .7s var(--ease), visibility 0s; }
+.pick__d { max-width: 44ch; text-transform: none; letter-spacing: 0; font-weight: 400; font-size: .95rem; line-height: 1.5; color: var(--muted); }
+.pick__go { display: inline-flex; align-items: center; gap: 14px; flex: none; padding-bottom: 6px; border-bottom: 1px solid currentColor; white-space: nowrap; }
+.pick__row.is-on .pick__go .arr { transform: translateX(6px); }
+.pick__list.has-on .pick__row:not(.is-on) .pick__ink { color: #d6ccc0; }
+.pick__list.has-on .pick__row:not(.is-on) .pick__meta, .pick__list.has-on .pick__row:not(.is-on) .pick__foot { opacity: .4; }
+/* la "o" entre las dos: se lee "Departamentos o Experiencias" */
+.pick__or { display: flex; align-items: center; gap: 22px; padding: clamp(4px, .8vw, 12px) 0; }
+.pick__or::before, .pick__or::after { content: ""; flex: 1; height: 1px; background: var(--line-2); }
+.pick__or span { font-family: var(--f-display); font-size: clamp(2.4rem, 3.6vw, 3.8rem); line-height: .8; letter-spacing: -.03em; padding-bottom: .12em; }
+.pick__or + .pick__row { border-top: 0; }
 
 /* ---------- Mapa y WhatsApp en la paleta de la marca ---------- */
 .apts__map, .pmap .leaflet-container { background: #e7dfd3; }
@@ -527,20 +514,17 @@ a:hover .roll > span, button:hover .roll > span, a:focus-visible .roll > span { 
 
 @media (max-width: 900px) {
   .intro__text { max-width: 16ch; }
-  .doors { flex-direction: column; height: auto; }
-  .door { flex: none; min-height: min(88svh, 760px); }
-  .door + .door { box-shadow: inset 0 1px 0 rgba(244, 238, 229, .14); }
-  .door__media { transform: scale(.56); }
-  .door--stay .door__w, .door--exp .door__w { text-align: center; padding: 0; }
-  .doors.has-open .door:not(.is-open) .door__media { transform: scale(.56); }
-  .doors.has-open .door:not(.is-open) .door__top, .doors.has-open .door:not(.is-open) .door__w, .doors.has-open .door:not(.is-open) .door__bot { opacity: 1; }
-  .door__bot { flex-direction: column; align-items: flex-start; gap: 20px; }
-  .doors__or { width: 96px; }
-  .door--stay { padding-bottom: calc(var(--pad) + 58px); }
-  .door--exp { padding-top: calc(clamp(28px, 4vw, 56px) + 50px); }
+  .pick__foot { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .pick__row--b .pick__word { text-align: left; }
 }
 @media (prefers-reduced-motion: reduce) {
   .intro__text .w { color: var(--ink); }
-  .doors__ring { animation: none; }
-  .door__c { transition: none; }
+  .pick__ink, .pick__fill { transition: none; }
+}
+
+@media (max-width: 600px) {
+  .pick__l { display: block; }
+  .pick__l:first-child::after { content: "-"; }
+  .pick__word { line-height: .86; }
+  .pick__ink, .pick__fill { padding-bottom: .2em; }
 }

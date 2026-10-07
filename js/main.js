@@ -124,39 +124,21 @@
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
   }
 
-  // Selector de la home: dos "puertas" (departamentos / experiencias)
-  var DOOR_IMGS = {
-    a: ['img/apts/espana-ii/01.jpg', 'img/apts/casa-potrerillos/01.jpg', 'img/apts/mitre-i/01.jpg', 'img/apts/amigorena/01.jpg', 'img/apts/espana-i/02.jpg'],
-    b: ['img/exp-snow.jpg', 'img/exp-horse.jpg', 'img/exp-river.jpg', 'img/exp-vineglass.jpg', 'img/g6.jpg']
-  };
-  function renderDoors() {
-    $$('[data-door]').forEach(function (d) {
-      var k = d.getAttribute('data-door'), w = $('[data-door-word]', d), st = $('[data-door-stack]', d);
-      // palabra gigante partida en letras (cada letra "rueda" al pasar el mouse)
-      w.innerHTML = '<span class="door__line">' + Array.prototype.map.call(t('door.' + k + '.w'), function (ch, i) {
-        return '<span class="door__c" style="--i:' + i + '">' + esc(ch) + '</span>';
-      }).join('') + '</span>';
+  // Selector de la home: dos palabras gigantes; al elegir una, las letras se rellenan con una foto
+  var PICK_IMG = { a: 'img/apts/mitre-i/01.jpg', b: 'img/exp-horse.jpg' };
+  function renderPick() {
+    $$('[data-pick]').forEach(function (r) {
+      var k = r.getAttribute('data-pick'), w = $('[data-pick-word]', r);
+      // en celular la palabra se parte en dos líneas (con guion) para que sea más grande
+      // dos capas con el mismo texto: tinta y foto. Al elegir, la de foto aparece encima (sólo cambia su opacidad: barato al scrollear)
+      var lines = t('door.' + k + '.ws').split('|').map(function (p) { return '<span class="pick__l">' + esc(p) + '</span>'; }).join('');
+      w.innerHTML = '<span class="pick__ink">' + lines + '</span><span class="pick__fill" aria-hidden="true">' + lines + '</span>';
       w.setAttribute('aria-label', t('door.' + k + '.w'));
-      $('[data-door-count]', d).textContent = pad(k === 'a' ? APTS.length : EXPS.length);
-      if (!st.children.length) st.innerHTML = DOOR_IMGS[k].map(function (src, i) {
-        return '<img decoding="async" ' + (i ? 'data-src' : 'src') + '="' + src + '" alt=""' + (i ? '' : ' loading="lazy"') + (i ? '' : ' class="is-on"') + '>';
-      }).join('');
+      // leve velo oscuro sobre la foto para que las letras se sigan leyendo
+      $('.pick__fill', w).style.backgroundImage = 'linear-gradient(rgba(28, 24, 25, .18), rgba(28, 24, 25, .18)), url("' + PICK_IMG[k] + '")';
+      $('[data-pick-count]', r).textContent = pad(k === 'a' ? APTS.length : EXPS.length);
     });
-    // el texto del sello da justo una vuelta, en cualquier idioma
-    var ring = $('[data-door-ring]');
-    if (ring) {
-      ring.textContent = t('door.ring');
-      // se mide en un <text> recto (sobre el círculo el texto que sobra no se cuenta)
-      var txt = ring.parentNode, svg = txt.ownerSVGElement, C = 2 * Math.PI * 47 - 3;
-      var probe = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      probe.textContent = ring.textContent; probe.setAttribute('x', '-9999'); probe.style.fontSize = '10px';
-      svg.appendChild(probe);
-      var len = probe.getComputedTextLength ? probe.getComputedTextLength() : 0;
-      svg.removeChild(probe);
-      ring.removeAttribute('textLength');
-      if (len) { txt.style.fontSize = Math.min(11, 10 * C / len).toFixed(2) + 'px'; ring.setAttribute('textLength', C.toFixed(1)); }
-    }
-    if (typeof doors !== 'undefined' && doors) doors.fit();
+    if (typeof pick !== 'undefined' && pick) pick.fit();
   }
 
   function renderTes() {
@@ -217,7 +199,7 @@
   }
 
   function renderAll() {
-    applyStatic(); renderZones(); renderApts(); renderDoors(); renderTes(); renderFaq(); renderGallery(); renderTicker();
+    applyStatic(); renderZones(); renderApts(); renderPick(); renderTes(); renderFaq(); renderGallery(); renderTicker();
     updateGuestsLabel(); updateContactPh();
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
@@ -643,6 +625,7 @@
       var b = e.target.closest && e.target.closest('[data-book-apt-i], [data-book-exp-i], [data-book-open]');
       if (!b) return;
       e.preventDefault();
+      closeDrawer();
       if (b.hasAttribute('data-book-apt-i')) open({ apt: parseInt(b.getAttribute('data-book-apt-i'), 10) });
       else if (b.hasAttribute('data-book-exp-i')) open({ exp: parseInt(b.getAttribute('data-book-exp-i'), 10) });
       else open({});
@@ -1323,7 +1306,7 @@
       if (first) { gsap.set(el, { x: e.clientX, y: e.clientY }); first = false; }
       xTo(e.clientX); yTo(e.clientY);
       var tg = e.target.closest && e.target.closest('[data-cursor]');
-      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .door')) ? t(tg.getAttribute('data-cursor')) : '';
+      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .pick__row')) ? t(tg.getAttribute('data-cursor')) : '';
       if (want === cur) return;
       cur = want;
       if (want) { el.textContent = want; gsap.to(el, { scale: 1, duration: .5, ease: 'expo.out', overwrite: 'auto' }); }
@@ -1361,68 +1344,54 @@
     return { split: split };
   })();
 
-  /* ================= Selector departamentos / experiencias ================= */
-  var doors = (function () {
-    var sec = $('.doors'); if (!sec) return null;
-    var list = $$('[data-door]', sec), cv = document.createElement('canvas').getContext('2d');
-    var fine = window.matchMedia('(hover: hover) and (pointer: fine)');
-    // Las dos palabras gigantes con el mismo tamaño, el máximo que entra en cada puerta
+  /* ================= Selector tipográfico departamentos / experiencias ================= */
+  var pick = (function () {
+    var list = $('.pick__list'); if (!list) return null;
+    var rows = $$('[data-pick]', list), cv = document.createElement('canvas').getContext('2d');
+    // Las dos palabras con el mismo tamaño: el máximo que entra en el ancho
     function fit() {
       var px = Infinity;
-      list.forEach(function (d) {
-        var w = $('[data-door-word]', d), txt = t('door.' + d.getAttribute('data-door') + '.w');
-        // en escritorio la palabra deja lugar al sello "o" de la unión (se lee "Departamentos o Experiencias")
-        var cs = getComputedStyle(w), avail = w.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-        if (!avail || !w) return;
-        cv.font = '400 100px Gambarino';
-        var m = cv.measureText(txt), ink = (m.actualBoundingBoxRight ? m.actualBoundingBoxLeft + m.actualBoundingBoxRight : m.width) - 4 * (txt.length - 1);
-        px = Math.min(px, 100 * avail / ink * .97);
+      var two = window.innerWidth <= 600;
+      cv.font = '400 100px Gambarino';
+      var ink = function (txt) { var m = cv.measureText(txt); return (m.actualBoundingBoxRight ? m.actualBoundingBoxLeft + m.actualBoundingBoxRight : m.width) - 4.5 * (txt.length - 1); };
+      rows.forEach(function (r) {
+        var w = $('[data-pick-word]', r), avail = w.clientWidth; if (!avail) return;
+        var parts = $$('.pick__ink .pick__l', w).map(function (l) { return l.textContent; });
+        var need = two ? Math.max(ink(parts[0] + '-'), ink(parts[1] || '')) : ink(parts.join(''));
+        px = Math.min(px, 100 * avail / need * .985);
       });
-      if (isFinite(px)) sec.style.setProperty('--dw', px.toFixed(1) + 'px');
+      // en escritorio las dos palabras (y la "o") entran juntas en la pantalla
+      if (window.innerWidth > 900) px = Math.min(px, (window.innerHeight - 420) / 2.2);
+      if (isFinite(px)) list.style.setProperty('--pw', Math.max(48, px).toFixed(1) + 'px');
     }
     fit();
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
     window.addEventListener('resize', function () { clearTimeout(fit._t); fit._t = setTimeout(fit, 120); });
-
-    // Fotos que se van turnando mientras la puerta está abierta
-    function loadAll(d) { $$('img[data-src]', d).forEach(function (im) { im.src = im.getAttribute('data-src'); im.removeAttribute('data-src'); }); }
-    function cycle(d, on) {
-      clearInterval(d._cyc);
-      if (!on || reduced) return;
-      loadAll(d);
-      // cortes secos (sin fundido) con un leve zoom de asentamiento
-      d._cyc = setInterval(function () {
-        var imgs = $$('[data-door-stack] img', d), i = imgs.findIndex(function (im) { return im.classList.contains('is-on'); });
-        var nx = imgs[(i + 1) % imgs.length];
-        nx.style.zIndex = (d._z = (d._z || 1) + 1);
-        nx.classList.add('is-on');
-        setTimeout(function () { if (imgs[i] !== nx) imgs[i].classList.remove('is-on'); }, 60);
-      }, 1100);
-    }
-    function open(d, on) { d.classList.toggle('is-open', on); sec.classList.toggle('has-open', on || $$('.is-open', sec).length > 0); cycle(d, on); }
-    list.forEach(function (d) {
-      d.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') open(d, true); });
-      d.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') open(d, false); });
-      d.addEventListener('focus', function () { open(d, true); });
-      d.addEventListener('blur', function () { open(d, false); });
-    });
-    // En pantallas táctiles cada puerta se abre sola al llegar al centro de la pantalla
-    if (!fine.matches && 'IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { open(e.target, e.isIntersecting); }); }, { rootMargin: '-38% 0px -38% 0px' });
-      list.forEach(function (d) { io.observe(d); });
-    }
-    // El sello sólo gira mientras la sección está en pantalla
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { sec.classList.toggle('is-vis', es[0].isIntersecting); }).observe(sec);
-    else sec.classList.add('is-vis');
-    // Precarga y decodificación de las fotos en un momento libre (no mientras se scrollea)
-    window.addEventListener('load', function () {
-      var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 1200); };
-      idle(function () {
-        list.forEach(function (d) {
-          loadAll(d);
-          $$('[data-door-stack] img', d).forEach(function (im) { if (im.decode) im.decode().catch(function () {}); });
+    function on(r, v) { r.classList.toggle('is-on', v); list.classList.toggle('has-on', $$('.is-on', list).length > 0); }
+    var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    rows.forEach(function (r) {
+      var w = $('[data-pick-word]', r), raf = 0, fill = function () { return $('.pick__fill', r); };
+      r.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') on(r, true); });
+      r.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') on(r, false); });
+      r.addEventListener('focus', function () { on(r, true); });
+      r.addEventListener('blur', function () { on(r, false); });
+      // la foto dentro de las letras se corre apenas con el mouse
+      if (fine && !reduced) r.addEventListener('pointermove', function (e) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          raf = 0; var b = r.getBoundingClientRect();
+          var f = fill(); if (f) f.style.backgroundPosition = ((e.clientX - b.left) / b.width * 100).toFixed(1) + '% 70%';
         });
-      }, { timeout: 4000 });
+      });
+    });
+    // En pantallas táctiles: la palabra que llega al centro de la pantalla se rellena sola
+    if (!fine && 'IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { on(e.target, e.isIntersecting); }); }, { rootMargin: '-40% 0px -40% 0px' });
+      rows.forEach(function (r) { io.observe(r); });
+    }
+    // fotos precargadas en un momento libre
+    window.addEventListener('load', function () {
+      (window.requestIdleCallback || setTimeout)(function () { Object.keys(PICK_IMG).forEach(function (k) { var im = new Image(); im.src = PICK_IMG[k]; }); });
     });
     return { fit: fit };
   })();
@@ -1434,9 +1403,9 @@
     // Hero: la foto se expande con el scroll
     if (hero2) hero2.scroll();
 
-    // Selector: las palabras suben letra por letra al entrar
-    $$('.door').forEach(function (d) {
-      gsap.from($$('.door__c', d), { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: .03, clearProps: 'transform', scrollTrigger: { trigger: d, start: 'top 75%', once: true } });
+    // Selector: las palabras suben desde su línea al entrar
+    $$('.pick__word').forEach(function (w) {
+      gsap.from(w, { yPercent: 105, duration: 1.4, ease: 'expo.out', clearProps: 'transform', scrollTrigger: { trigger: w.parentNode, start: 'top 90%', once: true } });
     });
 
     // Imágenes que se descubren de abajo hacia arriba al entrar
@@ -1451,7 +1420,7 @@
       gsap.from(el, { y: 50, opacity: 0, duration: 1.1, ease: 'power3.out', delay: (i % 3) * .08, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
     });
     if ($('.exp-card')) gsap.from('.exp-card', { x: 120, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: .08, scrollTrigger: { trigger: '.exp__viewport', start: 'top 85%', once: true } });
-    gsap.fromTo('.contact__img img', { yPercent: -10 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top bottom', end: 'bottom top', scrub: true } });
+    if ($('.contact__img img')) gsap.fromTo('.contact__img img', { yPercent: -10 }, { yPercent: 0, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top bottom', end: 'bottom top', scrub: true } });
 
     // Contadores
     $$('[data-countup]').forEach(function (el) {

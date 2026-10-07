@@ -40,7 +40,9 @@ def write(rel, txt):
     open(p, 'w', encoding='utf-8').write(txt)
 
 # Home
-home = head.replace('<title>RGM Experiences</title>', '<title>Alquiler temporario en Mendoza y experiencias | RGM Experiences</title>') + re.sub(r'<div class="rgm-page"[^>]*>', '<div class="rgm-page" data-page="home">', c[HEAD_END:], count=1)
+# la home no lleva el formulario de contacto (las consultas van por el panel "Reservar")
+home_body = c[HEAD_END:].replace(contact_faq, faq_only)
+home = head.replace('<title>RGM Experiences</title>', '<title>Alquiler temporario en Mendoza y experiencias | RGM Experiences</title>') + re.sub(r'<div class="rgm-page"[^>]*>', '<div class="rgm-page" data-page="home">', home_body, count=1)
 write('index.html', full(home))
 
 # Listado
