@@ -124,6 +124,30 @@
     $('[data-apts-total]').textContent = '/ ' + pad(APTS.length);
   }
 
+  // Departamentos en la home: lista que se recorre con el scroll y foto fija que cambia a la par
+  function renderStays() {
+    var list = $('[data-stays-list]'); if (!list) return;
+    var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
+    list.innerHTML = APTS.map(function (a, i) {
+      var facts = [['apts.bedrooms', fmtRooms(a.bedrooms)], ['apts.baths', fmtNum(a.baths)], ['apts.sleeps', fmtNum(a.sleeps)]]
+        .filter(function (f) { return f[1] !== '—'; });
+      return '<li class="stay" data-i="' + i + '">' +
+        '<a class="stay__img" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true"><img decoding="async" src="' + sm(a.img) + '" alt="" loading="lazy">' +
+          (a.badge ? '<span class="stays__badge">' + esc(L(a.badge)) + '</span>' : '') + '</a>' +
+        '<p class="stay__zone"><span>' + pad(i + 1) + '</span>' + esc(zoneName(a.zone)) + '</p>' +
+        '<h3 class="stay__name"><a href="' + aptURL(a) + '">' + aptPrefix(a) + ' <em>' + esc(a.name) + '</em></a></h3>' +
+        '<p class="stay__tag">' + esc(L(a.tag)) + '</p>' +
+        (facts.length ? '<dl class="stay__facts">' + facts.map(function (f) { return '<div><dt>' + t(f[0]) + '</dt><dd>' + f[1] + '</dd></div>'; }).join('') + '</dl>' : '') +
+        '<a class="link-cta stay__cta" href="' + aptURL(a) + '">' + t(a.kind === 'house' ? 'apt.viewHouse' : 'apts.cta') + ' ' + ARR + '</a>' +
+        '</li>';
+    }).join('');
+    var fr = $('[data-stays-frame]');
+    // La foto grande se carga recién cuando hace falta (y la siguiente se precarga)
+    if (fr && !fr.children.length) fr.innerHTML = APTS.map(function (a) { return '<span class="stays__slide"><img decoding="async" data-src="' + a.img + '" alt=""></span>'; }).join('');
+    var tot = $('[data-stays-total]'); if (tot) tot.textContent = pad(APTS.length);
+    if (typeof stays !== 'undefined' && stays) stays.sync();
+  }
+
   // Experiencias en la home: índice tipográfico (la foto aparece junto al mouse en escritorio)
   function renderExps() {
     var list = $('[data-exp-list]'); if (!list) return;
@@ -200,7 +224,7 @@
   }
 
   function renderAll() {
-    applyStatic(); renderZones(); renderApts(); renderExps(); renderTes(); renderFaq(); renderGallery(); renderTicker();
+    applyStatic(); renderZones(); renderApts(); renderStays(); renderExps(); renderTes(); renderFaq(); renderGallery(); renderTicker();
     updateGuestsLabel(); updateContactPh();
     if (PAGE === 'props') applyFilters();
     if (typeof booking !== 'undefined' && booking) booking.render();
@@ -1271,7 +1295,7 @@
       if (!on || !w) return;
       var v = lenis ? lenis.velocity : 0;
       if (v > .5) dir = 1; else if (v < -.5) dir = -1;
-      x -= dir * (dt / 16.67) * (1.1 + Math.min(Math.abs(v), 60) * .22);
+      x -= dir * (dt / 16.67) * (2.6 + Math.min(Math.abs(v), 60) * .3);
       if (x <= -w) x += w; else if (x > 0) x -= w;
       track.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0)';
     });
@@ -1307,7 +1331,7 @@
       if (first) { gsap.set(el, { x: e.clientX, y: e.clientY }); first = false; }
       xTo(e.clientX); yTo(e.clientY);
       var tg = e.target.closest && e.target.closest('[data-cursor]');
-      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile')) ? t(tg.getAttribute('data-cursor')) : '';
+      var want = tg && !(e.target.closest('a, button') && !tg.matches('.prop__media, .apt-gal__tile, .stays__media')) ? t(tg.getAttribute('data-cursor')) : '';
       if (want === cur) return;
       cur = want;
       if (want) { el.textContent = want; gsap.to(el, { scale: 1, duration: .5, ease: 'expo.out', overwrite: 'auto' }); }
@@ -1345,6 +1369,50 @@
     return { split: split };
   })();
 
+  /* ================= Departamentos: la foto fija acompaña al departamento que está en foco ================= */
+  var stays = (function () {
+    var list = $('[data-stays-list]'), media = $('[data-stays-media]');
+    if (!list || !media) return null;
+    var cur = -1, prev = -1, z = 1;
+    function load(i) {
+      var sl = $$('[data-stays-frame] .stays__slide')[i], im = sl && $('img', sl);
+      if (im && !im.src && im.getAttribute('data-src')) im.src = im.getAttribute('data-src');
+      return sl;
+    }
+    // Sólo quedan visibles la foto actual y la anterior (menos capas que componer al scrollear)
+    function only(keep) { $$('[data-stays-frame] .stays__slide').forEach(function (el, k) { el.style.visibility = keep.indexOf(k) > -1 ? 'visible' : 'hidden'; }); }
+    function set(i, instant) {
+      if (i === cur || i < 0 || i >= APTS.length) return;
+      var a = APTS[i], sl = load(i);
+      load(i + 1); load(i - 1);
+      $$('.stay', list).forEach(function (el, k) { el.classList.toggle('is-on', k === i); });
+      media.setAttribute('href', fixUrl(aptURL(a)));
+      var c = $('[data-stays-curr]'); if (c) c.textContent = pad(i + 1);
+      var bd = $('[data-stays-badge]'); if (bd) { bd.hidden = !a.badge; bd.textContent = a.badge ? L(a.badge) : ''; }
+      prev = cur; cur = i;
+      if (!sl) return;
+      sl.style.zIndex = ++z;
+      var img = $('img', sl);
+      if (gsap && !reduced && !instant && prev > -1) {
+        only([prev, i]);
+        var d = i > prev ? 1 : -1;
+        gsap.fromTo(sl, { yPercent: 100 * d }, { yPercent: 0, duration: 1.05, ease: 'expo.inOut', overwrite: true, onComplete: function () { if (cur === i) only([i]); } });
+        gsap.fromTo(img, { yPercent: -100 * d, scale: 1.15 }, { yPercent: 0, scale: 1, duration: 1.05, ease: 'expo.inOut', overwrite: true });
+      } else {
+        only([i]);
+        if (gsap) { gsap.set(sl, { yPercent: 0 }); gsap.set(img, { yPercent: 0, scale: 1 }); }
+      }
+    }
+    function sync() { var k = cur < 0 ? 0 : cur; cur = -1; set(k, true); }
+    function scroll() {
+      if (!ST) { set(0, true); return; }
+      $$('.stay', list).forEach(function (el, i) {
+        ST.create({ trigger: el, start: 'top 60%', end: 'bottom 60%', onToggle: function (st) { if (st.isActive) set(i); } });
+      });
+    }
+    return { set: set, sync: sync, scroll: scroll };
+  })();
+
   /* ================= Índice de experiencias: foto que sigue al mouse ================= */
   (function xlHover() {
     var list = $('[data-exp-list]'), fl = $('[data-exp-float]');
@@ -1373,6 +1441,7 @@
 
     // Hero: la foto se expande con el scroll
     if (hero2) hero2.scroll();
+    if (stays) stays.scroll();
 
     // Imágenes que se descubren de abajo hacia arriba al entrar
     $$('[data-reveal-img]').forEach(function (fig) {
