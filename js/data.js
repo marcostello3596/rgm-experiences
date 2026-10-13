@@ -87,7 +87,7 @@ window.RGM_EXTRAS = [
 /* type: 'tour' (excursiones) · 'wine' (bodegas) · 'service' (servicios) → filtros de /experiencias/ */
 window.RGM_EXPERIENCES = [
   {
-    slug: 'alta-montana', type: 'tour', img: 'img/exp-snow.jpg',
+    slug: 'alta-montana', type: 'tour', img: 'img/exp-alta-montana.jpg',
     name: { es: 'Alta Montaña', en: 'High Andes', pt: 'Alta Montanha' },
     place: { es: 'Potrerillos · Uspallata · Aconcagua', en: 'Potrerillos · Uspallata · Aconcagua', pt: 'Potrerillos · Uspallata · Aconcágua' },
     duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
@@ -101,14 +101,14 @@ window.RGM_EXPERIENCES = [
     text: { es: 'El dique de Potrerillos y una cabalgata guiada por la precordillera.', en: 'Potrerillos dam and a guided horseback ride through the Andean foothills.', pt: 'A represa de Potrerillos e uma cavalgada guiada pela pré-cordilheira.' }
   },
   {
-    slug: 'termas-de-cacheuta', type: 'tour', img: 'img/exp-river.jpg',
+    slug: 'termas-de-cacheuta', type: 'tour', img: 'img/exp-cacheuta.jpg',
     name: { es: 'Termas de Cacheuta', en: 'Cacheuta hot springs', pt: 'Termas de Cacheuta' },
     place: { es: 'Cacheuta · Luján de Cuyo', en: 'Cacheuta · Luján de Cuyo', pt: 'Cacheuta · Luján de Cuyo' },
     duration: { es: 'Día completo', en: 'Full day', pt: 'Dia inteiro' },
     text: { es: 'Piletas de agua termal al pie de la montaña, junto al río Mendoza.', en: 'Thermal pools at the foot of the mountains, beside the Mendoza river.', pt: 'Piscinas de água termal ao pé da montanha, junto ao rio Mendoza.' }
   },
   {
-    slug: 'bodegas-maipu', type: 'wine', img: 'img/exp-vineglass.jpg',
+    slug: 'bodegas-maipu', type: 'wine', img: 'img/exp-maipu.jpg',
     name: { es: 'Bodegas de Maipú', en: 'Maipú wineries', pt: 'Vinícolas de Maipú' },
     place: { es: 'Maipú', en: 'Maipú', pt: 'Maipú' },
     duration: { es: 'Medio día', en: 'Half day', pt: 'Meio dia' },
@@ -129,14 +129,14 @@ window.RGM_EXPERIENCES = [
     text: { es: 'Bodegas de altura con la cordillera de fondo.', en: 'High-altitude wineries against the Andes.', pt: 'Vinícolas de altitude com a cordilheira ao fundo.' }
   },
   {
-    slug: 'alquiler-de-autos', type: 'service', img: 'img/g7.jpg',
+    slug: 'alquiler-de-autos', type: 'service', img: 'img/exp-autos.jpg',
     name: { es: 'Alquiler de autos', en: 'Car rental', pt: 'Aluguel de carros' },
     place: { es: 'Mendoza', en: 'Mendoza', pt: 'Mendoza' },
     duration: { es: 'Por día', en: 'Per day', pt: 'Por dia' },
     text: { es: 'Recorré Mendoza a tu ritmo: bodegas, montaña y rutas escénicas.', en: 'Explore Mendoza at your own pace: wineries, mountains and scenic roads.', pt: 'Conheça Mendoza no seu ritmo: vinícolas, montanha e estradas cênicas.' }
   },
   {
-    slug: 'traslado-aeropuerto', type: 'service', img: 'img/g2.jpg',
+    slug: 'traslado-aeropuerto', type: 'service', img: 'img/exp-aeropuerto.jpg',
     name: { es: 'Traslado aeropuerto – alojamiento', en: 'Airport – lodging transfer', pt: 'Traslado aeroporto – hospedagem' },
     place: { es: 'Aeropuerto El Plumerillo', en: 'El Plumerillo Airport', pt: 'Aeroporto El Plumerillo' },
     duration: { es: 'Hasta 4 pasajeros', en: 'Up to 4 passengers', pt: 'Até 4 passageiros' },

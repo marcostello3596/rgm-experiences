@@ -734,3 +734,9 @@ html.wmap-lock, html.wmap-lock body { overflow: hidden; overscroll-behavior: non
 .wcar__name { font-size: 1.5rem; color: var(--ink); }
 .wcar::after { content: ""; flex: 0 0 calc(14% - 22px); }
 @media (min-width: 640px) { .wcar::after { flex-basis: calc(53% - 22px); } }
+
+/* Encuadre de las fotos de experiencias cuando se recortan (tarjetas y galerías) */
+img[src*="exp-maipu"] { object-position: 86% 50%; }
+img[src*="exp-alta-montana"] { object-position: 50% 62%; }
+img[src*="exp-cacheuta"] { object-position: 50% 72%; }
+img[src*="exp-aeropuerto"] { object-position: 42% 50%; }

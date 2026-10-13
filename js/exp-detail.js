@@ -9,7 +9,7 @@
 
 window.RGM_EXP_DETAILS = {
   'alta-montana': {
-    gallery: ['img/exp-snow.jpg', 'img/exp-river.jpg', 'img/g7.jpg', 'img/g3.jpg', 'img/g4.jpg'],
+    gallery: ['img/exp-alta-montana.jpg', 'img/exp-snow.jpg', 'img/g7.jpg', 'img/exp-river.jpg', 'img/g4.jpg'],
     facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
     title: { es: 'Hasta el pie <em>del Aconcagua.</em>', en: 'To the foot <em>of Aconcagua.</em>', pt: 'Até o pé <em>do Aconcágua.</em>' },
     intro: { es: 'Un día por la ruta 7 hacia la frontera con Chile: el dique Potrerillos, el valle de Uspallata, Puente del Inca y el mirador del Aconcagua, la montaña más alta de América.', en: 'A day along Route 7 towards the Chilean border: Potrerillos dam, the Uspallata valley, Puente del Inca and the Aconcagua lookout — the highest mountain in the Americas.', pt: 'Um dia pela rota 7 rumo à fronteira com o Chile: a represa de Potrerillos, o vale de Uspallata, a Puente del Inca e o mirante do Aconcágua, a montanha mais alta das Américas.' },
@@ -47,7 +47,7 @@ window.RGM_EXP_DETAILS = {
     ]
   },
   'termas-de-cacheuta': {
-    gallery: ['img/exp-river.jpg', 'img/g7.jpg', 'img/g3.jpg', 'img/exp-snow.jpg', 'img/g4.jpg'],
+    gallery: ['img/exp-cacheuta.jpg', 'img/exp-river.jpg', 'img/g7.jpg', 'img/g3.jpg', 'img/g4.jpg'],
     facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
     title: { es: 'Agua termal <em>entre montañas.</em>', en: 'Thermal water <em>among the mountains.</em>', pt: 'Água termal <em>entre montanhas.</em>' },
     intro: { es: 'A unos 40 km de la ciudad, en la quebrada del río Mendoza, las termas de Cacheuta tienen piletas de agua termal al aire libre rodeadas de montañas. Un día para relajarse.', en: 'About 40 km from the city, in the Mendoza river canyon, Cacheuta has open-air thermal pools surrounded by mountains. A day to unwind.', pt: 'A cerca de 40 km da cidade, no vale do rio Mendoza, as termas de Cacheuta têm piscinas termais ao ar livre cercadas de montanhas. Um dia para relaxar.' },
@@ -64,7 +64,7 @@ window.RGM_EXP_DETAILS = {
     ]
   },
   'bodegas-maipu': {
-    gallery: ['img/exp-vineglass.jpg', 'img/g1.jpg', 'img/exp-cellar.jpg', 'img/g2.jpg', 'img/g6.jpg'],
+    gallery: ['img/exp-maipu.jpg', 'img/exp-vineglass.jpg', 'img/exp-cellar.jpg', 'img/g1.jpg', 'img/g6.jpg'],
     facts: { group: { es: 'Privado o compartido', en: 'Private or shared', pt: 'Privado ou compartilhado' }, transfer: true, langs: 'ES · EN · PT' },
     title: { es: 'Bodegas y olivares <em>cerca de la ciudad.</em>', en: 'Wineries and olive groves <em>close to the city.</em>', pt: 'Vinícolas e olivais <em>perto da cidade.</em>' },
     intro: { es: 'Maipú es una de las zonas vitivinícolas más tradicionales de Mendoza: bodegas históricas y familiares, olivares y caminos rurales a pocos minutos del centro.', en: 'Maipú is one of Mendoza’s most traditional wine areas: historic and family wineries, olive groves and country roads minutes from downtown.', pt: 'Maipú é uma das regiões vinícolas mais tradicionais de Mendoza: vinícolas históricas e familiares, olivais e estradas rurais a minutos do centro.' },
@@ -120,7 +120,7 @@ window.RGM_EXP_DETAILS = {
     ]
   },
   'alquiler-de-autos': {
-    gallery: ['img/g7.jpg', 'img/g4.jpg', 'img/exp-snow.jpg', 'img/g2.jpg', 'img/exp-andes.jpg'],
+    gallery: ['img/exp-autos.jpg', 'img/g7.jpg', 'img/g4.jpg', 'img/exp-snow.jpg', 'img/exp-andes.jpg'],
     facts: { group: { es: 'Por día', en: 'Per day', pt: 'Por dia' }, transfer: false, langs: 'ES · EN · PT' },
     title: { es: 'Mendoza <em>a tu ritmo.</em>', en: 'Mendoza <em>at your own pace.</em>', pt: 'Mendoza <em>no seu ritmo.</em>' },
     intro: { es: 'Si preferís moverte por tu cuenta, te coordinamos el alquiler de un auto por los días que necesites: bodegas, alta montaña y rutas escénicas sin horarios.', en: 'If you prefer to get around on your own, we arrange a rental car for the days you need: wineries, high mountains and scenic roads on your schedule.', pt: 'Se prefere se deslocar por conta própria, combinamos o aluguel de um carro pelos dias que precisar: vinícolas, alta montanha e estradas cênicas sem horários.' },
@@ -137,7 +137,7 @@ window.RGM_EXP_DETAILS = {
     ]
   },
   'traslado-aeropuerto': {
-    gallery: ['img/g2.jpg', 'img/g7.jpg', 'img/g4.jpg', 'img/g6.jpg', 'img/g3.jpg'],
+    gallery: ['img/exp-aeropuerto.jpg', 'img/g2.jpg', 'img/g4.jpg', 'img/g6.jpg', 'img/g3.jpg'],
     facts: { group: { es: 'Privado', en: 'Private', pt: 'Privado' }, transfer: true, langs: 'ES · EN · PT' },
     title: { es: 'De la puerta del avión <em>a tu alojamiento.</em>', en: 'From the plane <em>to your door.</em>', pt: 'Do avião <em>até a sua porta.</em>' },
     intro: { es: 'Te esperamos en el aeropuerto El Plumerillo y te llevamos directo a tu alojamiento, sin taxis ni esperas. También te buscamos para el viaje de vuelta. Precio por traslado, hasta 4 pasajeros.', en: 'We meet you at El Plumerillo airport and take you straight to your lodging, no taxis or waiting. We also pick you up for your return flight. Price per transfer, up to 4 passengers.', pt: 'Esperamos você no aeroporto El Plumerillo e levamos direto à sua hospedagem, sem táxi nem espera. Também buscamos você para a volta. Preço por traslado, até 4 passageiros.' },
