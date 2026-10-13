@@ -9,9 +9,9 @@
 <link rel="preload" href="fonts/gambarino-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/supreme-500.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/flatpickr.css?v=6dd18acf">
-<link rel="stylesheet" href="css/styles.css?v=6dd18acf">
-<link rel="stylesheet" href="css/v2.css?v=6dd18acf">
+<link rel="stylesheet" href="css/flatpickr.css?v=18b166ae">
+<link rel="stylesheet" href="css/styles.css?v=18b166ae">
+<link rel="stylesheet" href="css/v2.css?v=18b166ae">
 <script>
   /* Pre-paint: idioma inicial + ocultar titulares hasta que SplitText los prepare */
   (function () {
@@ -131,12 +131,31 @@
         </header>
         <div class="where__body">
           <div class="where__mapcol">
-            <div class="wmap" data-wmap></div>
-            <p class="wmap__note"><span class="wmap__key"><i class="wmap__dot"></i><span data-i18n="where.key">Nuestros departamentos</span></span><span class="wmap__key"><i class="wmap__line"></i><span data-i18n="where.key2">Peatonal y Arístides</span></span><span class="wmap__osm">© OpenStreetMap</span></p>
+            <div class="wmap-wrap">
+              <div class="wmap" data-wmap data-near="all" tabindex="0" role="region" data-i18n-attr="aria-label:where.mapLabel" aria-label="Mapa del centro de Mendoza">
+                <div class="wmap__chips" role="group" data-i18n-attr="aria-label:where.near">
+                  <span class="wmap__near" data-i18n="where.near">Cerca de</span>
+                  <button type="button" class="wmap__chip" data-mode="all" aria-pressed="true" data-i18n="where.all">Todo</button>
+                  <button type="button" class="wmap__chip" data-mode="plaza" aria-pressed="false" data-i18n="where.indep">Plaza Independencia</button>
+                  <button type="button" class="wmap__chip" data-mode="peat" aria-pressed="false" data-i18n="where.peat">Peatonal</button>
+                  <button type="button" class="wmap__chip" data-mode="arist" aria-pressed="false" data-i18n="where.arist">Arístides</button>
+                </div>
+                <div class="wmap__ctrl">
+                  <button type="button" class="wmap__btn wmap__btn--full" data-wmap-full data-i18n-attr="aria-label:where.expand" aria-label="Explorar el mapa"><svg class="i-open" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg><svg class="i-close" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3 3 13"/></svg></button>
+                  <button type="button" class="wmap__btn" data-wmap-zoom="1" data-i18n-attr="aria-label:where.zoomIn" aria-label="Acercar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11"/></svg></button>
+                  <button type="button" class="wmap__btn" data-wmap-zoom="-1" data-i18n-attr="aria-label:where.zoomOut" aria-label="Alejar"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11"/></svg></button>
+                </div>
+                <div class="wmap__scale" aria-hidden="true"><span class="wmap__north"><svg viewBox="0 0 12 16"><path d="M6 1 10 13 6 10.5 2 13Z"/></svg>N</span><span class="wmap__bar"><i></i><b>200 m</b></span></div>
+                <p class="wmap__toast" data-wmap-toast aria-live="polite"></p>
+                <ol class="wcar" data-wcar></ol>
+                <span class="wmap__osm">© OpenStreetMap</span>
+              </div>
+            </div>
+            <p class="wmap__note"><span class="wmap__key"><i class="wmap__dot"></i><span data-i18n="where.key">Nuestros departamentos</span></span><span class="wmap__key"><i class="wmap__line"></i><span data-i18n="where.key2">Peatonal y Arístides</span></span><span class="wmap__key"><i class="wmap__dots"></i><span data-i18n="where.key3">A pie</span></span></p>
+            <p class="wlist__hint" data-i18n="where.hint">Tocá un número o deslizá las tarjetas</p>
           </div>
           <div class="where__listcol">
             <ol class="wlist" data-wlist></ol>
-            <p class="wlist__hint" data-i18n="where.hint">Deslizá para ver cada departamento</p>
             <a href="propiedades/" class="link-cta where__all"><span data-i18n="apts.all">Ver todos los departamentos</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a>
           </div>
         </div>
@@ -341,11 +360,11 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
-<script src="js/i18n.js?v=6dd18acf"></script>
-<script src="js/data.js?v=6dd18acf"></script>
-<script src="js/map-data.js?v=6dd18acf"></script>
-<script src="js/detail.js?v=6dd18acf"></script>
-<script src="js/exp-detail.js?v=6dd18acf"></script>
-<script src="js/main.js?v=6dd18acf"></script>
+<script src="js/i18n.js?v=18b166ae"></script>
+<script src="js/data.js?v=18b166ae"></script>
+<script src="js/map-data.js?v=18b166ae"></script>
+<script src="js/detail.js?v=18b166ae"></script>
+<script src="js/exp-detail.js?v=18b166ae"></script>
+<script src="js/main.js?v=18b166ae"></script>
 </body>
 </html>

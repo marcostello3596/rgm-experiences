@@ -130,45 +130,69 @@
   function cityApts() { return APTS.map(function (a, i) { return { a: a, i: i }; }).filter(function (o) { return o.a.kind !== 'house' && o.a.coords; }); }
   // minutos caminando (distancia en línea recta × 1,3 por la cuadrícula, a 75 m/min)
   function walkMin(m) { return Math.max(1, Math.round(m * 1.3 / 75)); }
-  function distToLine(p, line) {
-    var best = Infinity;
+  // punto más cercano de una línea (en metros del mapa) → [x, y, distancia]
+  function nearestOn(p, line) {
+    var best = [0, 0, Infinity];
     for (var k = 0; k < line.length - 1; k++) {
-      var a = mapXY(line[k][0], line[k][1]), b = mapXY(line[k + 1][0], line[k + 1][1]);
-      var dx = b[0] - a[0], dy = b[1] - a[1], L = dx * dx + dy * dy || 1;
-      var u = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L));
-      var x = a[0] + u * dx - p[0], y = a[1] + u * dy - p[1];
-      best = Math.min(best, Math.sqrt(x * x + y * y));
+      var a = line[k], b = line[k + 1], dx = b[0] - a[0], dy = b[1] - a[1], q = dx * dx + dy * dy || 1;
+      var u = Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / q));
+      var x = a[0] + u * dx, y = a[1] + u * dy, d = Math.hypot(x - p[0], y - p[1]);
+      if (d < best[2]) best = [x, y, d];
     }
     return best;
   }
-  function walks(a) {
-    var p = mapXY(a.coords[0], a.coords[1]), pi = mapXY(MAPD.plazas.Independencia[0], MAPD.plazas.Independencia[1]);
+  // Referencias: hasta el borde de Plaza Independencia y hasta el punto más cercano de la Peatonal y de Arístides
+  var TARGETS = MAPD ? (function () {
+    var xy = function (pts) { return pts.map(function (p) { return mapXY(p[0], p[1]); }); };
+    var plaza = xy(MAPD.indep), peat = xy(MAPD.peatonal), arist = xy(MAPD.aristides);
     return [
-      ['where.indep', walkMin(Math.hypot(p[0] - pi[0], p[1] - pi[1]))],
-      ['where.peat', walkMin(distToLine(p, MAPD.peatonal))],
-      ['where.arist', walkMin(distToLine(p, MAPD.aristides))]
+      { k: 'plaza', key: 'where.indep', short: 'where.indepS', at: function (p) { return nearestOn(p, plaza); } },
+      { k: 'peat', key: 'where.peat', at: function (p) { return nearestOn(p, peat); } },
+      { k: 'arist', key: 'where.arist', at: function (p) { return nearestOn(p, arist); } }
     ];
+  })() : [];
+  // Por departamento: posición en el mapa y, para cada referencia, punto de llegada y minutos a pie
+  var CITY = MAPD ? cityApts().map(function (o) {
+    var p = mapXY(o.a.coords[0], o.a.coords[1]), w = {};
+    TARGETS.forEach(function (tg) { var r = tg.at(p); w[tg.k] = { x: r[0], y: r[1], min: walkMin(r[2]) }; });
+    return { a: o.a, p: p, w: w };
+  }) : [];
+  function aptFacts(a) {
+    return [
+      a.bedrooms === 0 ? t('apts.studio') : a.bedrooms != null ? a.bedrooms + ' ' + t(a.bedrooms === 1 ? 'apts.bedroom1' : 'apts.bedrooms').toLowerCase() : '',
+      a.sleeps ? t('props.upTo', { n: a.sleeps }) : ''
+    ].filter(Boolean).join(' · ');
   }
+  function walkList(c, short) {
+    return TARGETS.map(function (tg) { return '<li data-t="' + tg.k + '"><b>' + c.w[tg.k].min + ' min</b><span>' + esc(t(short && tg.short ? tg.short : tg.key)) + '</span></li>'; }).join('');
+  }
+  // Dos vistas de los mismos departamentos: lista (escritorio) y tarjetas sobre el mapa (celular y tablet)
   function renderWhere() {
-    var list = $('[data-wlist]'); if (!list || !MAPD) return;
-    var zoneName = function (z) { var f = CFG.zones.filter(function (x) { return x.es === z; })[0]; return f ? L(f) : z; };
-    list.innerHTML = cityApts().map(function (o, k) {
-      var a = o.a, facts = [
-        a.bedrooms === 0 ? t('apts.studio') : a.bedrooms != null ? a.bedrooms + ' ' + t(a.bedrooms === 1 ? 'apts.bedroom1' : 'apts.bedrooms').toLowerCase() : '',
-        a.sleeps ? t('props.upTo', { n: a.sleeps }) : ''
-      ].filter(Boolean).join(' · ');
+    var list = $('[data-wlist]'), car = $('[data-wcar]'); if (!list || !MAPD) return;
+    list.innerHTML = CITY.map(function (c, k) {
+      var a = c.a;
       return '<li class="wcard" data-k="' + k + '">' +
         '<a class="wcard__img" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true" data-cursor="cur.view"><img decoding="async" src="' + sm(a.img) + '" alt="" loading="lazy">' +
           (a.badge ? '<span class="wcard__badge">' + esc(L(a.badge)) + '</span>' : '') + '</a>' +
         '<div class="wcard__body">' +
-          '<p class="wcard__n"><span>' + pad(k + 1) + '</span>' + esc(zoneName(a.zone)) + '</p>' +
+          '<p class="wcard__n"><span>' + pad(k + 1) + '</span>' + esc(aptFacts(a)) + '</p>' +
           '<h3 class="wcard__name"><a href="' + aptURL(a) + '">' + aptPrefix(a) + ' <em>' + esc(a.name) + '</em></a></h3>' +
           '<p class="wcard__tag">' + esc(L(a.tag)) + '</p>' +
-          '<ul class="wcard__walk" aria-label="' + esc(t('where.walk')) + '">' + walks(a).map(function (w) { return '<li><b>' + w[1] + ' min</b>' + esc(t(w[0])) + '</li>'; }).join('') + '</ul>' +
-          (facts ? '<p class="wcard__facts">' + esc(facts) + '</p>' : '') +
+          '<ul class="wcard__walk" aria-label="' + esc(t('where.walk')) + '">' + walkList(c) + '</ul>' +
         '</div></li>';
     }).join('');
-    if (typeof wmap !== 'undefined' && wmap) wmap.labels();
+    if (car) car.innerHTML = CITY.map(function (c, k) {
+      var a = c.a;
+      return '<li class="wcar__item" data-k="' + k + '">' +
+        '<a class="wcar__img" href="' + aptURL(a) + '" tabindex="-1" aria-hidden="true"><img decoding="async" src="' + sm(a.img) + '" alt="" loading="lazy">' +
+          (a.badge ? '<span class="wcar__badge">' + esc(L(a.badge)) + '</span>' : '') + '</a>' +
+        '<div class="wcar__body">' +
+          '<p class="wcar__n"><span>' + pad(k + 1) + '</span>' + esc(aptFacts(a)) + '</p>' +
+          '<h3 class="wcar__name"><a href="' + aptURL(a) + '"><span class="sr-only">' + aptPrefix(a) + ' </span><em>' + esc(a.name) + '</em></a></h3>' +
+          '<ul class="wcar__walk" aria-label="' + esc(t('where.walk')) + '">' + walkList(c, true) + '</ul>' +
+        '</div></li>';
+    }).join('');
+    if (typeof wmap !== 'undefined' && wmap) wmap.sync();
   }
   function renderCasa() {
     var dl = $('[data-casa-facts]'); if (!dl) return;
@@ -1392,127 +1416,519 @@
     return { split: split };
   })();
 
-  /* ================= Mapa ilustrado del centro ================= */
+  /* ================= Mapa ilustrado del centro (interactivo) =================
+   * Cámara propia (sin librerías): el mapa base es una imagen SVG dentro de una capa que sólo se
+   * traslada/escala con transform; al quedar quieto se "fija" al tamaño nuevo para verse nítido.
+   * Calles resaltadas, recorridos a pie, pines y nombres van en capas aparte, en coordenadas de pantalla
+   * (no se agrandan con el zoom). Gestos: arrastrar, pellizcar, Ctrl/⌘ + rueda, doble clic y botones.
+   * En el celular el mapa no captura el dedo (la página tiene que poder scrollear): para moverlo
+   * libremente se abre en pantalla completa. */
   var wmap = (function () {
-    var root = $('[data-wmap]'), list = $('[data-wlist]');
-    if (!root || !list || !MAPD) return null;
+    var root = $('[data-wmap]');
+    if (!root || !MAPD || !CITY.length) return null;
     var W = MAPD.size[0], H = MAPD.size[1];
-    // Encuadre: casi cuadrado en celular (los deptos y la Peatonal), más amplio en escritorio (hasta el Parque)
-    var VB = { s: [960, 330, 1600, 1380], l: [110, 330, 2620, 1560] };
-    var vb = null, cur = -1, pins = [], items = cityApts();
-    function line(pts) { return 'M' + pts.map(function (p) { var q = mapXY(p[0], p[1]); return q[0].toFixed(0) + ' ' + q[1].toFixed(0); }).join(' L'); }
-    // base y calles resaltadas en capas separadas: el dibujo de las calles no vuelve a pintar el mapa entero
-    root.innerHTML = '<svg class="wmap__svg" preserveAspectRatio="none" aria-hidden="true">' +
-      '<image href="img/map-centro.svg" x="0" y="0" width="' + W + '" height="' + H + '"/></svg>' +
-      '<svg class="wmap__svg wmap__svg--hl" preserveAspectRatio="none" aria-hidden="true">' +
-      '<path class="wmap__hl" pathLength="1" d="' + line(MAPD.aristides) + '"/>' +
-      '<path class="wmap__hl" pathLength="1" d="' + line(MAPD.peatonal) + '"/></svg>' +
-      '<div class="wmap__layer" data-wmap-layer></div>';
-    var svgs = $$('svg', root), layer = $('[data-wmap-layer]', root);
-    function pct(x, y) { return 'left:' + ((x - vb[0]) / vb[2] * 100).toFixed(3) + '%;top:' + ((y - vb[1]) / vb[3] * 100).toFixed(3) + '%'; }
-    function inView(x, y, m) { return x > vb[0] + m && x < vb[0] + vb[2] - m && y > vb[1] + m && y < vb[1] + vb[3] - m; }
-    // nombres de plazas y calles + pines (se rehacen al cambiar idioma o encuadre)
-    function labels() {
-      if (!vb) return;
-      var h = '';
-      Object.keys(MAPD.plazas).forEach(function (k) {
-        var q = mapXY(MAPD.plazas[k][0], MAPD.plazas[k][1]);
-        if (inView(q[0], q[1], 60)) h += '<span class="wmap__lbl wmap__lbl--plaza' + (k === 'Independencia' ? ' is-main' : '') + '" style="' + pct(q[0], q[1]) + '">Plaza<br>' + k + '</span>';
-      });
-      var small = vb === VB.s;
-      var streets = [['aristides', small ? 'Arístides' : 'Arístides Villanueva', small ? .82 : .62], ['peatonal', small ? 'Peatonal' : 'Peatonal Sarmiento', .5]];
-      streets.forEach(function (s) {
-        var pts = MAPD[s[0]], a = mapXY(pts[0][0], pts[0][1]), b = mapXY(pts[pts.length - 1][0], pts[pts.length - 1][1]);
-        var ang = Math.atan2(a[1] - b[1], a[0] - b[0]) * 180 / Math.PI; if (ang > 90 || ang < -90) ang += 180;
-        var x = b[0] + (a[0] - b[0]) * s[2], y = b[1] + (a[1] - b[1]) * s[2];
-        if (!inView(x, y, 40)) { x = Math.max(x, vb[0] + vb[2] * .2); y = b[1] + (a[1] - b[1]) * ((x - b[0]) / ((a[0] - b[0]) || 1)); }
-        h += '<span class="wmap__lbl wmap__lbl--street" style="' + pct(x, y) + ';--a:' + ang.toFixed(1) + 'deg">' + s[1] + '</span>';
-      });
-      var pk = mapXY(MAPD.parque[0], MAPD.parque[1]);
-      h += inView(pk[0], pk[1], 40)
-        ? '<span class="wmap__lbl wmap__lbl--park" style="' + pct(pk[0] + 60, pk[1]) + '">' + esc(t('where.park')) + '</span>'
-        : '<span class="wmap__lbl wmap__lbl--park is-edge" style="' + pct(vb[0], vb[1] + vb[3] * .06) + '">← ' + esc(t('where.park')) + '</span>';
-      h += items.map(function (o, k) {
-        var q = mapXY(o.a.coords[0], o.a.coords[1]);
-        return '<button type="button" class="wmap__pin" data-k="' + k + '" style="' + pct(q[0], q[1]) + '" aria-label="' + esc(aptLabel(o.a)) + '">' +
-          '<span class="wmap__num">' + pad(k + 1) + '</span><span class="wmap__name">' + esc(o.a.name) + '</span></button>';
-      }).join('');
-      layer.innerHTML = h;
-      pins = $$('.wmap__pin', layer);
-      spread(); place(); mark(cur < 0 ? 0 : cur, true);
+    var sec = root.closest('.where') || root, wrap = root.parentNode;
+    var list = $('[data-wlist]'), car = $('[data-wcar]'), chipsBox = $('.wmap__chips', root), toastEl = $('[data-wmap-toast]', root);
+    var scaleEl = $('.wmap__bar', root), fullBtn = $('[data-wmap-full]', root);
+    var finePtr = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var XY = function (pts) { return pts.map(function (p) { return mapXY(p[0], p[1]); }); };
+    var PEAT = XY(MAPD.peatonal), ARIS = XY(MAPD.aristides), INDEP = XY(MAPD.indep);
+    var PLZ = Object.keys(MAPD.plazas).map(function (k) { return { k: k, p: mapXY(MAPD.plazas[k][0], MAPD.plazas[k][1]) }; });
+    var PARK = MAPD.parkLbl;
+    function wline(pts) { return 'M' + pts.map(function (q) { return q[0].toFixed(0) + ' ' + q[1].toFixed(0); }).join('L'); }
+
+    // ---------- capas ----------
+    root.insertAdjacentHTML('afterbegin',
+      // Peatonal, Arístides y la plaza van dentro del mapa (se escalan con él: no se redibujan en cada cuadro)
+      '<div class="wmap__world" aria-hidden="true"><img class="wmap__base" src="img/map-centro.svg" alt="" draggable="false" decoding="async">' +
+        '<svg class="wmap__wink" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+          '<path class="wmap__zone" d="' + wline(INDEP) + 'Z"/><path class="wmap__glow" data-z="peat" d="' + wline(PEAT) + '"/><path class="wmap__glow" data-z="arist" d="' + wline(ARIS) + '"/>' +
+          '<path class="wmap__hl" data-z="arist" pathLength="1" d="' + wline(ARIS) + '"/><path class="wmap__hl" data-z="peat" pathLength="1" d="' + wline(PEAT) + '"/></svg></div>' +
+      // recorridos a pie: en pantalla (finos y del mismo tamaño con cualquier zoom)
+      '<svg class="wmap__ink" aria-hidden="true"><g class="wmap__rays"></g></svg>' +
+      '<div class="wmap__layer"></div>');
+    var world = $('.wmap__world', root), ink = $('.wmap__ink', root), layer = $('.wmap__layer', root);
+    var raysG = $('.wmap__rays', ink);
+
+    // ---------- pines ----------
+    var pins = CITY.map(function (c, k) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'wmap__pin'; b.setAttribute('data-k', k);
+      b.setAttribute('aria-label', aptLabel(c.a));
+      b.innerHTML = '<span class="wmap__num">' + pad(k + 1) + '</span><span class="wmap__name">' + esc(c.a.name) + '</span><span class="wmap__mins"></span>';
+      layer.appendChild(b); return b;
+    });
+    // ---------- nombres: plazas, parque, Peatonal/Arístides y calles (según el zoom) ----------
+    var LBL = [];
+    function addLbl(cls, htmlStr, x, y, a, pr, txt, extra) {
+      var el = document.createElement('span');
+      el.className = 'wmap__lbl ' + cls; el.innerHTML = htmlStr; layer.appendChild(el);
+      var o = { el: el, x: x, y: y, a: a || 0, pr: pr, txt: txt || htmlStr, extra: extra || '', w: 0, h: 0, v: false, ox: 0, oy: 0 };
+      LBL.push(o); return o;
     }
-    // etiquetas: si tapan un pin u otra etiqueta, se corren un poco
-    function place() {
-      var boxes = pins.map(function (p) { var r = $('.wmap__num', p).getBoundingClientRect(); return [r.left - 3, r.top - 3, r.right + 3, r.bottom + 3]; });
-      var hit = function (r) { return boxes.some(function (b) { return r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]; }); };
-      $$('.wmap__lbl:not(.is-edge)', layer).forEach(function (l) {
-        var tries = [[0, 0], [0, 15], [0, -15], [18, 0], [-18, 0], [0, 26], [0, -26], [26, 14], [-26, 14], [0, 38], [0, -38]];
-        for (var i = 0; i < tries.length; i++) {
-          l.style.setProperty('--ox', tries[i][0] + 'px'); l.style.setProperty('--oy', tries[i][1] + 'px');
-          var r = l.getBoundingClientRect(), box = [r.left, r.top, r.right, r.bottom];
-          if (!hit(box) || i === tries.length - 1) { boxes.push(box); break; }
+    PLZ.forEach(function (z) { addLbl('wmap__lbl--plaza' + (z.k === 'Independencia' ? ' is-main' : ''), '<small>Plaza</small>' + esc(z.k), z.p[0], z.p[1], 0, z.k === 'Independencia' ? 0 : 1, 'P' + z.k); });
+    var mainLbl = LBL[PLZ.map(function (z) { return z.k; }).indexOf('Independencia')];
+    var parkLbl = addLbl('wmap__lbl--park', esc(t('where.park')), PARK[0], PARK[1], 0, 1, 'park');
+    function lineAnchors(pts, step, first) {
+      var out = [], acc = 0, next = first;
+      for (var i = 0; i < pts.length - 1; i++) {
+        var a = pts[i], b = pts[i + 1], l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        while (l > 0 && acc + l >= next) {
+          var u = (next - acc) / l, ang = Math.atan2(b[1] - a[1], b[0] - a[0]) * 180 / Math.PI;
+          if (ang > 90) ang -= 180; if (ang <= -90) ang += 180;
+          out.push([a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, ang]); next += step;
         }
+        acc += l;
+      }
+      return out;
+    }
+    lineAnchors(PEAT, 120, 60).forEach(function (q) { addLbl('wmap__lbl--hl', 'Peatonal Sarmiento', q[0], q[1], q[2], 1, 'peat', ' translateY(-13px)'); });
+    lineAnchors(ARIS, 420, 330).forEach(function (q) { addLbl('wmap__lbl--hl', 'Arístides Villanueva', q[0], q[1], q[2], 1, 'arist', ' translateY(-13px)'); });
+    MAPD.streets.forEach(function (s) { addLbl('wmap__lbl--st' + (s[1] < 3 ? ' is-av' : ''), esc(s[0]), s[2], s[3], s[4], s[1], s[0]); });
+    var ORDER = LBL.slice().sort(function (a, b) { return a.pr - b.pr; });
+    var edge = document.createElement('button');
+    edge.type = 'button'; edge.className = 'wmap__edge'; layer.appendChild(edge);
+    var bubs = TARGETS.map(function () { var b = document.createElement('span'); b.className = 'wmap__bub'; layer.appendChild(b); return b; });
+    function measureLbls() { LBL.forEach(function (o) { o.w = o.el.offsetWidth; o.h = o.el.offsetHeight; }); }
+
+    // ---------- cámara ----------
+    var cam = { x: W / 2, y: H / 2, s: .3 }, S0 = 0, vw = 1, vh = 1, it = 0, ib = 0, yc = 0;
+    var sMin = .1, sMax = 1.6, fitA = null, userMoved = false, full = false, mode = 'all', cur = -1;
+    var BOUNDS = (function () {
+      var pts = CITY.map(function (c) { return c.p; }).concat(PLZ.map(function (z) { return z.p; }), PEAT);
+      var e = ARIS[0], west = ARIS.filter(function (q) { return Math.hypot(q[0] - e[0], q[1] - e[1]) < 520; });
+      pts = pts.concat(west);
+      return box(pts, 60);
+    })();
+    function box(pts, m) {
+      var b = [Infinity, Infinity, -Infinity, -Infinity];
+      pts.forEach(function (q) { b[0] = Math.min(b[0], q[0]); b[1] = Math.min(b[1], q[1]); b[2] = Math.max(b[2], q[0]); b[3] = Math.max(b[3], q[1]); });
+      return [b[0] - m, b[1] - m, b[2] + m, b[3] + m];
+    }
+    var sx = function (x) { return (x - cam.x) * cam.s + vw / 2; };
+    var sy = function (y) { return (y - cam.y) * cam.s + yc; };
+    function clampC(c) {
+      var s = Math.max(sMin, Math.min(sMax, c.s)), hw = vw / 2 / s;
+      return { s: s, x: Math.max(hw, Math.min(W - hw, c.x)), y: Math.max(yc / s, Math.min(H - (vh - yc) / s, c.y)) };
+    }
+    function fit(b, padPx, maxS) {
+      var w = Math.max(40, vw - 2 * padPx), h = Math.max(40, vh - it - ib - 2 * padPx);
+      var s = Math.min(w / Math.max(b[2] - b[0], 1), h / Math.max(b[3] - b[1], 1));
+      if (maxS) s = Math.min(s, maxS);
+      return clampC({ x: (b[0] + b[2]) / 2, y: (b[1] + b[3]) / 2, s: s });
+    }
+    function measure() {
+      vw = root.clientWidth || 1; vh = root.clientHeight || 1;
+      it = chipsBox ? chipsBox.offsetTop + chipsBox.offsetHeight + 8 : 12;
+      var carOn = car && car.offsetParent && getComputedStyle(car).display !== 'none';
+      ib = carOn ? vh - car.offsetTop + 8 : 30;
+      if (vh - it - ib < 160) ib = Math.max(20, vh - it - 160);
+      yc = it + (vh - it - ib) / 2;
+      root.style.setProperty('--it', it + 'px'); root.style.setProperty('--ib', ib + 'px');
+      ink.setAttribute('viewBox', '0 0 ' + vw.toFixed(0) + ' ' + vh.toFixed(0));
+      sMin = Math.max(vw / W, vh / H);
+      fitA = fit(BOUNDS, 34);
+      sMax = Math.max(1.5, fitA.s * 3.2);
+    }
+
+    // ---------- dibujo de cada cuadro ----------
+    var P = [], VIS = [], rafId = 0;
+    function lblT(o, x, y) { return 'translate3d(' + (x + o.ox).toFixed(1) + 'px,' + (y + o.oy).toFixed(1) + 'px,0)' + (o.a ? ' rotate(' + o.a + 'deg)' : '') + ' translate(-50%,-50%)' + o.extra; }
+    function render() {
+      if (!S0) return;
+      var k = cam.s / S0;
+      world.style.transform = 'translate3d(' + sx(0).toFixed(2) + 'px,' + sy(0).toFixed(2) + 'px,0) scale(' + k.toFixed(5) + ')';
+      // pines (los que quedan casi encima se separan un poco)
+      P = CITY.map(function (c) { return [sx(c.p[0]), sy(c.p[1])]; });
+      for (var i = 0; i < P.length; i++) for (var j = i + 1; j < P.length; j++) {
+        var d = Math.hypot(P[i][0] - P[j][0], P[i][1] - P[j][1]);
+        if (d < 30) { var o = (30 - d) / 2 + 1; P[i][0] -= o; P[j][0] += o; }
+      }
+      pins.forEach(function (el, i) { el.style.transform = 'translate3d(' + P[i][0].toFixed(1) + 'px,' + P[i][1].toFixed(1) + 'px,0)'; });
+      rays();
+      VIS.forEach(function (o) { o.el.style.transform = lblT(o, sx(o.x), sy(o.y)); });
+      if (edge.classList.contains('is-v')) edge.style.transform = 'translate3d(0,' + Math.max(it + 16, Math.min(vh - ib - 16, sy(PARK[1]))).toFixed(1) + 'px,0) translateY(-50%)';
+      // escala gráfica
+      var Ls = [25, 50, 100, 200, 300, 500, 1000], L = 25;
+      Ls.forEach(function (m) { if (m * cam.s <= 92) L = m; });
+      scaleEl.style.setProperty('--w', (L * cam.s).toFixed(1) + 'px');
+      if (scaleEl.getAttribute('data-l') !== String(L)) { scaleEl.setAttribute('data-l', L); scaleEl.lastChild.textContent = (L >= 1000 ? L / 1000 + ' km' : L + ' m'); }
+    }
+    function schedule() { if (!rafId) rafId = requestAnimationFrame(function () { rafId = 0; render(); }); }
+    var cto = 0;
+    function commit() {
+      clearTimeout(cto);
+      S0 = cam.s;
+      var far = cam.s < .3;
+      if (far !== root.classList.contains('is-far')) { root.classList.toggle('is-far', far); measureLbls(); }
+      world.style.width = (W * S0).toFixed(1) + 'px'; world.style.height = (H * S0).toFixed(1) + 'px';
+      root.classList.remove('is-moving');
+      render(); place();
+    }
+    function commitSoon(ms) { clearTimeout(cto); cto = setTimeout(commit, ms == null ? 160 : ms); }
+    function moving() { root.classList.add('is-moving'); }
+
+    // ---------- recorridos a pie del departamento elegido ----------
+    var rayEls = TARGETS.map(function () {
+      var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.innerHTML = '<path class="wmap__ray"/><circle class="wmap__end" r="4.5"/>';
+      raysG.appendChild(g); return g;
+    });
+    function rayTargets() { return mode === 'all' ? TARGETS : TARGETS.filter(function (tg) { return tg.k === mode; }); }
+    var bubW = [0, 0, 0], BUBR = [];
+    function rays() {
+      var ts = rayTargets(), avoid = P.map(function (q) { return [q[0] - 18, q[1] - 18, q[0] + 18, q[1] + 18]; });
+      if (cur > -1 && P[cur]) avoid.push([P[cur][0] + 14, P[cur][1] - 15, P[cur][0] + 34 + nameW(cur), P[cur][1] + 15]);
+      BUBR = [];
+      rayEls.forEach(function (g, i) {
+        var tg = TARGETS[i], on = cur > -1 && ts.indexOf(tg) > -1;
+        g.style.display = on ? '' : 'none'; bubs[i].classList.toggle('is-v', on);
+        if (!on) return;
+        var c = CITY[cur], a = P[cur] || [sx(c.p[0]), sy(c.p[1])], e = c.w[tg.k], ex = sx(e.x), ey = sy(e.y);
+        g.firstChild.setAttribute('d', 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + 'L' + ex.toFixed(1) + ' ' + ey.toFixed(1));
+        g.lastChild.setAttribute('cx', ex.toFixed(1)); g.lastChild.setAttribute('cy', ey.toFixed(1));
+        // los minutos van junto al punto de llegada, en el primer lugar libre
+        var dx = ex - a[0], dy = ey - a[1], l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l, nx = -uy, ny = ux;
+        var hw = (bubW[i] || 60) / 2 + 3, hh = 12, best = null;
+        var cands = [[ux * (hw + 8), uy * 22], [nx * 26, ny * 26], [-nx * 26, -ny * 26], [ux * (hw + 8) + nx * 26, uy * 22 + ny * 26], [ux * (hw + 8) - nx * 26, uy * 22 - ny * 26], [ux * (hw + 30), uy * 46], [nx * 48, ny * 48], [-nx * 48, -ny * 48], [-ux * (hw + 10), -uy * 26]];
+        cands.some(function (o) {
+          var bx = ex + o[0], by = ey + o[1], r = [bx - hw, by - hh, bx + hw, by + hh];
+          if (hit(r, avoid)) return false;
+          best = r; return true;
+        });
+        if (!best) { var o0 = cands[0]; best = [ex + o0[0] - hw, ey + o0[1] - hh, ex + o0[0] + hw, ey + o0[1] + hh]; }
+        avoid.push(best); BUBR.push(best);
+        bubs[i].style.transform = 'translate3d(' + ((best[0] + best[2]) / 2).toFixed(1) + 'px,' + ((best[1] + best[3]) / 2).toFixed(1) + 'px,0) translate(-50%,-50%)';
       });
     }
-    // pines muy cercanos (España I y II están a media cuadra): se separan en pantalla
-    function spread() {
-      var R = root.getBoundingClientRect(); if (!R.width) return;
-      var pos = pins.map(function (p) { return [parseFloat(p.style.left) / 100 * R.width, parseFloat(p.style.top) / 100 * R.height]; });
-      pins.forEach(function (p) { p.style.removeProperty('--dx'); });
-      for (var i = 0; i < pos.length; i++) for (var j = i + 1; j < pos.length; j++) {
-        var d = Math.hypot(pos[i][0] - pos[j][0], pos[i][1] - pos[j][1]);
-        if (d < 30) { var o = (30 - d) / 2 + 2; pins[i].style.setProperty('--dx', -o + 'px'); pins[j].style.setProperty('--dx', o + 'px'); }
+    function nameW(k) { return pins[k].children[1].offsetWidth || 70; }
+    var WALK = '<svg viewBox="0 0 12 16" aria-hidden="true"><circle cx="7" cy="2" r="1.6"/><path d="M6.2 4.6 4 6.4 3.4 9M6.2 4.6l1 4.2 2.3 2M7.2 8.8 5.6 12 4.4 15M9.5 6.6 7 5.4"/></svg>';
+    function fillBubs() {
+      if (cur < 0) return;
+      TARGETS.forEach(function (tg, i) { bubs[i].innerHTML = WALK + '<b>' + CITY[cur].w[tg.k].min + ' min</b>'; bubW[i] = bubs[i].offsetWidth; });
+    }
+
+    // ---------- nombres visibles: por zoom, sin pisarse entre sí ni con pines y controles ----------
+    function setVis(o, on) { if (o.v === on) return; o.v = on; o.el.classList.toggle('is-v', on); }
+    function overlap(r, list) { var a = 0; list.forEach(function (b) { a += Math.max(0, Math.min(r[2], b[2]) - Math.max(r[0], b[0])) * Math.max(0, Math.min(r[3], b[3]) - Math.max(r[1], b[1])); }); return a; }
+    function hit(r, list) { for (var i = 0; i < list.length; i++) { var b = list[i]; if (r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]) return true; } return false; }
+    function place() {
+      var occ = [[0, 0, vw, it - 4]];
+      if (ib > 40) occ.push([0, vh - ib + 6, vw, vh]);
+      occ.push([vw - 62, it - 8, vw, it + 140]);              // botones de zoom
+      occ.push([0, vh - ib - 40, 150, vh - ib]);              // escala
+      var pinR = P.map(function (q) { return [q[0] - 18, q[1] - 18, q[0] + 18, q[1] + 18]; });
+      occ = occ.concat(pinR);
+      if (cur > -1 && P[cur]) occ.push([P[cur][0] + 14, P[cur][1] - 15, P[cur][0] + 34 + nameW(cur), P[cur][1] + 15]);
+      // minutos debajo de cada pin ("Cerca de"): el elegido y los más cerca primero; si se pisan, se ocultan
+      if (mode !== 'all') {
+        var bk = CITY.map(function (c, k) { return k; }).sort(function (a, b) { return (b === cur) - (a === cur) || CITY[a].w[mode].min - CITY[b].w[mode].min; });
+        var badges = [];
+        bk.forEach(function (k) {
+          var q = P[k], r = [q[0] - 22, q[1] + 15, q[0] + 22, q[1] + 32];
+          var off = hit(r, badges) || hit(r, pinR.filter(function (b, i) { return i !== k; }));
+          pins[k].classList.toggle('mins-off', off); if (!off) badges.push(r);
+        });
+        occ = occ.concat(badges);
+      }
+      // aviso del parque (fuera de cuadro, en el borde izquierdo)
+      var pOut = sx(PARK[0]) < 30;
+      if (pOut) { var ey = Math.max(it + 16, Math.min(vh - ib - 16, sy(PARK[1]))); occ.push([0, ey - 20, edge.offsetWidth + 8, ey + 20]); }
+      // los minutos de los recorridos se ubican antes que los nombres (los nombres se corren o se ocultan)
+      rays(); occ = occ.concat(BUBR.map(function (r) { return [r[0] - 3, r[1] - 3, r[2] + 3, r[3] + 3]; }));
+      var allow = cam.s >= .46 ? 3 : cam.s >= .27 ? 2 : 1, shown = [];
+      ORDER.forEach(function (o) {
+        var ok = o.pr <= allow, r;
+        if (ok) {
+          var x = sx(o.x), y = sy(o.y), rad = o.a * Math.PI / 180, c = Math.abs(Math.cos(rad)), s = Math.abs(Math.sin(rad));
+          var hw = (o.w * c + o.h * s) / 2 + 4, hh = (o.w * s + o.h * c) / 2 + 3;
+          if (o.extra) { y -= 13 * c; x += 13 * Math.sin(rad); }
+          // las plazas prueban correrse un poco si algo las tapa; Plaza Independencia siempre se muestra
+          var tries = o.pr < 2 && !o.a && !o.extra ? [[0, 0], [0, -hh * 1.2], [0, hh * 1.2], [-hw * .6, 0], [hw * .6, 0], [0, -hh * 2], [0, hh * 2], [-hw * .8, -hh * 1.2], [hw * .8, -hh * 1.2], [-hw * .8, hh * 1.2], [hw * .8, hh * 1.2], [0, -hh * 3], [0, hh * 3], [-hw * 1.1, 0], [hw * 1.1, 0], [0, -hh * 4], [0, hh * 4]] : [[0, 0]], pick = null;
+          var least = Infinity, leastI = 0;
+          for (var i = 0; i < tries.length && !pick; i++) {
+            var cx = x + tries[i][0], cy = y + tries[i][1], rr = [cx - hw, cy - hh, cx + hw, cy + hh];
+            if (rr[0] < 4 || rr[1] < 4 || rr[2] > vw - 4 || rr[3] > vh - 4) continue;
+            if (hit(rr, occ)) { var ov = overlap(rr, occ); if (ov < least) { least = ov; leastI = i; } continue; }
+            pick = tries[i]; r = rr;
+          }
+          // Plaza Independencia no se oculta: va donde menos tape
+          if (!pick && o === mainLbl && x > 0 && x < vw && y > it && y < vh - ib) { pick = tries[leastI]; r = [x + pick[0] - hw, y + pick[1] - hh, x + pick[0] + hw, y + pick[1] + hh]; }
+          ok = !!pick && !shown.some(function (p) { return p.txt === o.txt && Math.hypot(sx(p.x) - sx(o.x), sy(p.y) - sy(o.y)) < 300; });
+          if (ok) { o.ox = pick[0]; o.oy = pick[1]; }
+        }
+        if (ok) { occ.push(r); shown.push(o); o.el.style.transform = lblT(o, sx(o.x), sy(o.y)); }
+        setVis(o, ok);
+      });
+      VIS = shown;
+      // el parque fuera de cuadro: aviso en el borde (lleva al parque)
+      edge.classList.toggle('is-v', pOut && !parkLbl.v);
+      if (pOut) render();
+    }
+
+    // ---------- animación de cámara ----------
+    var anim = null;
+    function stopAnim() { if (anim) { cancelAnimationFrame(anim.raf); anim = null; } if (inert) { cancelAnimationFrame(inert); inert = 0; } }
+    function flyTo(to, dur) {
+      to = clampC(to); stopAnim();
+      if (reduced || dur === 0) { cam = to; commit(); return; }
+      var from = { x: cam.x, y: cam.y, s: cam.s }, t0 = performance.now();
+      var ms = Math.min(from.s, to.s), dist = Math.hypot((to.x - from.x) * ms, (to.y - from.y) * ms), zr = Math.abs(Math.log(to.s / from.s));
+      if (dist < 1 && zr < .01) { commit(); return; }
+      dur = dur || Math.min(1500, 650 + dist * .45 + zr * 420);
+      moving();
+      anim = { raf: 0 };
+      (function step(now) {
+        if (!anim) return;
+        var u = Math.min(1, (now - t0) / dur), e = u < .5 ? 8 * u * u * u * u : 1 - 8 * Math.pow(1 - u, 4);
+        cam = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, s: from.s * Math.pow(to.s / from.s, e) };
+        render();
+        if (u < 1) anim.raf = requestAnimationFrame(step); else { anim = null; commit(); }
+      })(t0);
+    }
+    function zoomAt(px, py, f, c) {
+      c = c || cam;
+      var mx = (px - vw / 2) / c.s + c.x, my = (py - yc) / c.s + c.y, s = Math.max(sMin, Math.min(sMax, c.s * f));
+      return clampC({ s: s, x: mx - (px - vw / 2) / s, y: my - (py - yc) / s });
+    }
+    function zoomBy(f, px, py) { userMoved = true; flyTo(zoomAt(px == null ? vw / 2 : px, py == null ? yc : py, f, anim ? null : cam), 520); }
+
+    // ---------- selección ----------
+    function frameFor(k) {
+      var c = CITY[k], pts = [c.p].concat(rayTargets().map(function (tg) { return [c.w[tg.k].x, c.w[tg.k].y]; }));
+      return fit(box(pts, 90), 46, Math.max(fitA.s * 2.3, .62));
+    }
+    function select(k, o) {
+      o = o || {};
+      if (k < 0 || k >= CITY.length) return;
+      if (k !== cur) {
+        cur = k;
+        pins.forEach(function (p, i) { p.classList.toggle('is-on', i === k); });
+        $$('.wcard', list).concat(car ? $$('.wcar__item', car) : []).forEach(function (c) { c.classList.toggle('is-on', +c.getAttribute('data-k') === k); });
+        fillBubs();
+        raysG.classList.remove('is-anim'); void raysG.getBoundingClientRect(); raysG.classList.add('is-anim');
+        rays(); if (!o.fly) commitSoon(80);
+      }
+      if (o.scroll) scrollCard(k);
+      if (o.fly) { userMoved = true; flyTo(frameFor(k)); }
+    }
+    function scrollCard(k, instant) {
+      var c = car && $('.wcar__item[data-k="' + k + '"]', car); if (!c || car.scrollWidth <= car.clientWidth + 4) return;
+      carLock = Date.now() + 700;
+      car.scrollTo({ left: c.offsetLeft - 12, behavior: reduced || instant ? 'auto' : 'smooth' });
+    }
+    // "Cerca de": ordena por minutos a pie y muestra los minutos en cada pin
+    function setMode(m, quiet) {
+      mode = m;
+      sec.setAttribute('data-near', m); root.setAttribute('data-near', m);
+      $$('[data-mode]', chipsBox).forEach(function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-mode') === m ? 'true' : 'false'); });
+      var order = CITY.map(function (c, k) { return k; });
+      if (m !== 'all') order.sort(function (a, b) { return CITY[a].w[m].min - CITY[b].w[m].min || a - b; });
+      reorder(list, '.wcard', order, true); if (car) { carLock = Date.now() + 600; reorder(car, '.wcar__item', order, false); car.scrollLeft = 0; }
+      pins.forEach(function (p, k) { p.lastChild.textContent = m === 'all' ? '' : CITY[k].w[m].min + ' min'; });
+      var first = order[0]; cur = -1; select(first, { fly: false });
+      if (quiet) return;
+      userMoved = m !== 'all';
+      if (m === 'all') flyTo(fitA);
+      else {
+        var pts = []; CITY.forEach(function (c) { pts.push(c.p, [c.w[m].x, c.w[m].y]); });
+        if (m === 'plaza') pts = pts.concat(INDEP);
+        flyTo(fit(box(pts, 70), 30));
       }
     }
-    function frame() {
-      var small = window.innerWidth < 640, v = small ? VB.s : VB.l;
-      if (vb && vb.join() === v.join()) { spread(); place(); return; }
-      vb = v;
-      svgs.forEach(function (s) { s.setAttribute('viewBox', v.join(' ')); });
-      root.style.aspectRatio = v[2] + ' / ' + v[3];
-      labels();
-    }
-    // departamento activo: pin + tarjeta
-    function mark(k, quiet) {
-      if (k < 0 || k >= items.length) return;
-      cur = k;
-      pins.forEach(function (p, i) { p.classList.toggle('is-on', i === k); });
-      $$('.wcard', list).forEach(function (c, i) { c.classList.toggle('is-on', i === k); });
-    }
-    function scrollCard(k) {
-      var c = $$('.wcard', list)[k]; if (!c) return;
-      if (list.scrollWidth > list.clientWidth + 4) list.scrollTo({ left: c.offsetLeft - list.offsetLeft - (list.clientWidth - c.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
-    }
-    layer.addEventListener('click', function (e) {
-      var p = e.target.closest('.wmap__pin'); if (!p) return;
-      var k = parseInt(p.getAttribute('data-k'), 10); mark(k); scrollCard(k);
-    });
-    layer.addEventListener('pointerover', function (e) { var p = e.target.closest && e.target.closest('.wmap__pin'); if (p && e.pointerType === 'mouse') mark(parseInt(p.getAttribute('data-k'), 10)); });
-    list.addEventListener('pointerover', function (e) { var c = e.target.closest && e.target.closest('.wcard'); if (c && e.pointerType === 'mouse') mark(parseInt(c.getAttribute('data-k'), 10)); });
-    list.addEventListener('focusin', function (e) { var c = e.target.closest('.wcard'); if (c) mark(parseInt(c.getAttribute('data-k'), 10)); });
-    // carrusel (celular): la tarjeta centrada marca su pin
-    var sx = 0;
-    list.addEventListener('scroll', function () {
-      if (sx) return;
-      sx = requestAnimationFrame(function () {
-        sx = 0;
-        if (list.scrollWidth <= list.clientWidth + 4) return;
-        var mid = list.scrollLeft + list.clientWidth / 2, best = 0, bd = Infinity;
-        $$('.wcard', list).forEach(function (c, i) { var d = Math.abs(c.offsetLeft - list.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = i; } });
-        if (best !== cur) mark(best);
+    function reorder(el, sel, order, flip) {
+      if (!el) return;
+      var items = $$(sel, el), before = {};
+      if (flip && !reduced) items.forEach(function (n) { before[n.getAttribute('data-k')] = n.getBoundingClientRect().top; });
+      order.forEach(function (k) { var n = $(sel + '[data-k="' + k + '"]', el); if (n) el.appendChild(n); });
+      if (flip && !reduced && items[0] && items[0].animate) items.forEach(function (n) {
+        var d = before[n.getAttribute('data-k')] - n.getBoundingClientRect().top;
+        if (Math.abs(d) > 1) n.animate([{ transform: 'translateY(' + d + 'px)' }, { transform: 'none' }], { duration: 750, easing: 'cubic-bezier(.19,1,.22,1)' });
       });
+    }
+
+    // ---------- avisos ----------
+    var tt = 0;
+    function toast(msg) { if (!toastEl) return; toastEl.textContent = msg; toastEl.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(function () { toastEl.classList.remove('is-on'); }, 2200); }
+
+    // ---------- gestos ----------
+    var ptrs = {}, drag = null, pinch = null, inert = 0, vel = [0, 0], lastMv = 0, lastTap = 0, dragged = 0, touchStart = null;
+    function rel(e) { var r = root.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    function ui(e) { return e.target.closest && e.target.closest('.wmap__chips, .wmap__ctrl, .wcar, .wmap__toast'); }
+    function pinchInfo() { var ids = Object.keys(ptrs), a = ptrs[ids[0]], b = ptrs[ids[1]]; return { d: Math.hypot(a[0] - b[0], a[1] - b[1]) || 1, m: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2] }; }
+    root.addEventListener('pointerdown', function (e) {
+      if (ui(e) || e.button > 0) return;
+      if (e.pointerType === 'touch' && !full) { touchStart = [e.clientX, e.clientY]; return; }
+      ptrs[e.pointerId] = rel(e); stopAnim();
+      var n = Object.keys(ptrs).length;
+      if (n === 1) { drag = { p: rel(e), moved: false, id: e.pointerId }; vel = [0, 0]; }
+      if (n === 2) { pinch = pinchInfo(); if (drag) drag.moved = true; try { root.setPointerCapture(e.pointerId); } catch (x) { /* nada */ } moving(); }
+    });
+    root.addEventListener('pointermove', function (e) {
+      if (touchStart && e.pointerType === 'touch' && !full) {
+        var dx = e.clientX - touchStart[0], dy = e.clientY - touchStart[1];
+        if (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) * 1.4 && !ui(e)) { touchStart = null; toast(t('where.touchHint')); }
+        return;
+      }
+      if (!ptrs[e.pointerId]) return;
+      var prev = ptrs[e.pointerId], now = rel(e); ptrs[e.pointerId] = now;
+      if (Object.keys(ptrs).length >= 2 && pinch) {
+        var q = pinchInfo(), z = zoomAt(q.m[0], q.m[1], q.d / pinch.d);
+        z.x -= (q.m[0] - pinch.m[0]) / z.s; z.y -= (q.m[1] - pinch.m[1]) / z.s;
+        cam = clampC(z); pinch = q; userMoved = true; schedule(); return;
+      }
+      if (!drag) return;
+      if (!drag.moved) {
+        if (Math.hypot(now[0] - drag.p[0], now[1] - drag.p[1]) < 6) return;
+        drag.moved = true; try { root.setPointerCapture(e.pointerId); } catch (x) { /* nada */ }
+        root.classList.add('is-drag'); moving();
+      }
+      var ddx = now[0] - prev[0], ddy = now[1] - prev[1], tm = performance.now(), dt = Math.max(8, tm - lastMv);
+      vel = [vel[0] * .3 + ddx / dt * .7, vel[1] * .3 + ddy / dt * .7]; lastMv = tm;
+      cam = clampC({ x: cam.x - ddx / cam.s, y: cam.y - ddy / cam.s, s: cam.s }); userMoved = true; schedule();
+    });
+    function up(e) {
+      touchStart = null;
+      if (!ptrs[e.pointerId]) return;
+      delete ptrs[e.pointerId];
+      var ids = Object.keys(ptrs);
+      if (ids.length === 1) { pinch = null; drag = { p: ptrs[ids[0]], moved: true, id: +ids[0] }; vel = [0, 0]; return; }
+      if (ids.length) return;
+      pinch = null; root.classList.remove('is-drag');
+      var d = drag; drag = null;
+      if (d && d.moved) {
+        dragged = Date.now();
+        if (performance.now() - lastMv < 60 && Math.hypot(vel[0], vel[1]) > .15 && !reduced) inertia(); else commitSoon(60);
+      } else if (e.pointerType === 'touch' && full && e.type === 'pointerup') {
+        // doble toque: acercar
+        var p = rel(e);
+        if (Date.now() - lastTap < 300) { zoomBy(2, p[0], p[1]); lastTap = 0; } else lastTap = Date.now();
+      }
+    }
+    root.addEventListener('pointerup', up); root.addEventListener('pointercancel', up);
+    function inertia() {
+      var last = performance.now();
+      (function step(now) {
+        var dt = Math.min(32, now - last); last = now;
+        vel = [vel[0] * Math.pow(.92, dt / 16), vel[1] * Math.pow(.92, dt / 16)];
+        cam = clampC({ x: cam.x - vel[0] * dt / cam.s, y: cam.y - vel[1] * dt / cam.s, s: cam.s }); render();
+        if (Math.hypot(vel[0], vel[1]) > .02) inert = requestAnimationFrame(step); else { inert = 0; commit(); }
+      })(last);
+    }
+    root.addEventListener('wheel', function (e) {
+      if (ui(e)) return;
+      if (e.ctrlKey || e.metaKey || full) {
+        e.preventDefault(); stopAnim(); moving();
+        var p = rel(e), dy = Math.max(-60, Math.min(60, e.deltaMode ? e.deltaY * 20 : e.deltaY));
+        cam = zoomAt(p[0], p[1], Math.exp(-dy * (e.ctrlKey ? .012 : .004))); userMoved = true; schedule(); commitSoon(180);
+      } else if (finePtr.matches && Math.abs(e.deltaY) > Math.abs(e.deltaX)) toast(t('where.ctrlHint'));
+    }, { passive: false });
+    root.addEventListener('dblclick', function (e) { if (ui(e) || e.target.closest('.wmap__pin')) return; var p = rel(e); zoomBy(e.shiftKey ? .5 : 2, p[0], p[1]); });
+    root.addEventListener('keydown', function (e) {
+      if (e.target !== root) return;
+      var step = 120 / cam.s, m = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+      if (m) { e.preventDefault(); userMoved = true; flyTo({ x: cam.x + m[0], y: cam.y + m[1], s: cam.s }, 380); }
+      else if (e.key === '+' || e.key === '=') zoomBy(1.6);
+      else if (e.key === '-') zoomBy(1 / 1.6);
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && full) setFull(false); });
+
+    // ---------- clics ----------
+    layer.addEventListener('click', function (e) {
+      if (Date.now() - dragged < 250) return;
+      var p = e.target.closest('.wmap__pin');
+      if (p) { select(+p.getAttribute('data-k'), { fly: true, scroll: true }); return; }
+      if (e.target.closest('.wmap__edge')) { userMoved = true; flyTo({ x: PARK[0] + 380, y: PARK[1], s: Math.max(fitA.s, .3) }); }
+    });
+    layer.addEventListener('pointerover', function (e) {
+      var p = e.pointerType === 'mouse' && e.target.closest && e.target.closest('.wmap__pin');
+      if (p) select(+p.getAttribute('data-k'));
+    });
+    $$('[data-wmap-zoom]', root).forEach(function (b) { b.addEventListener('click', function () { zoomBy(+b.getAttribute('data-wmap-zoom') > 0 ? 1.7 : 1 / 1.7); }); });
+    $$('[data-mode]', chipsBox).forEach(function (b) { b.addEventListener('click', function () { setMode(b.getAttribute('data-mode')); }); });
+    if (list) {
+      list.addEventListener('pointerover', function (e) { var c = e.pointerType === 'mouse' && e.target.closest && e.target.closest('.wcard'); if (c) select(+c.getAttribute('data-k')); });
+      list.addEventListener('focusin', function (e) { var c = e.target.closest('.wcard'); if (c) select(+c.getAttribute('data-k')); });
+      list.addEventListener('click', function (e) { var c = e.target.closest('.wcard'); if (c && !e.target.closest('a')) select(+c.getAttribute('data-k'), { fly: true }); });
+    }
+    // tarjetas sobre el mapa: la que queda primera elige su departamento y la cámara va hacia él
+    var carLock = 0, cst = 0;
+    if (car) car.addEventListener('click', function (e) { var c = e.target.closest('.wcar__item'); if (c && !e.target.closest('a')) { select(+c.getAttribute('data-k'), { fly: true, scroll: true }); } });
+    if (car) car.addEventListener('scroll', function () {
+      clearTimeout(cst);
+      cst = setTimeout(function () {
+        if (Date.now() < carLock) return;
+        var x0 = car.scrollLeft + 12, best = -1, bd = Infinity;
+        $$('.wcar__item', car).forEach(function (c) { var d = Math.abs(c.offsetLeft - x0); if (d < bd) { bd = d; best = +c.getAttribute('data-k'); } });
+        if (best > -1 && best !== cur) select(best, { fly: true });
+      }, 120);
     }, { passive: true });
-    frame();
-    window.addEventListener('resize', function () { clearTimeout(frame._t); frame._t = setTimeout(frame, 120); });
-    // entrada: las calles se dibujan y los pines aparecen
+
+    // ---------- pantalla completa (celular / tablet) ----------
+    function setFull(on, fromPop) {
+      if (on === full) return;
+      full = on;
+      if (on) {
+        wrap.style.height = wrap.offsetHeight + 'px';
+        root.classList.add('is-full'); html.classList.add('wmap-lock');
+        if (lenis) lenis.stop();
+        try { history.pushState({ wmap: 1 }, ''); } catch (x) { /* nada */ }
+      } else {
+        root.classList.remove('is-full'); html.classList.remove('wmap-lock'); wrap.style.height = '';
+        if (lenis) lenis.start();
+        if (!fromPop && history.state && history.state.wmap) try { history.back(); } catch (x) { /* nada */ }
+      }
+      if (fullBtn) fullBtn.setAttribute('aria-label', t(on ? 'where.close' : 'where.expand'));
+      carLock = Date.now() + 800;
+      resize(true); if (cur > -1) scrollCard(cur, true);
+      if (on) root.focus({ preventScroll: true });
+    }
+    if (fullBtn) fullBtn.addEventListener('click', function () { setFull(!full); });
+    window.addEventListener('popstate', function () { if (full) setFull(false, true); });
+
+    // ---------- tamaño ----------
+    function resize(keep) {
+      var c = cam, sFitOld = fitA ? fitA.s : 0;
+      measure();
+      if (!S0 || (!userMoved && !keep)) cam = fitA;
+      else cam = clampC({ x: c.x, y: c.y, s: keep || !sFitOld ? c.s : c.s * fitA.s / sFitOld });
+      measureLbls(); commit();
+    }
+    // el tamaño del mapa o de las tarjetas cambia (rotación, idioma, fuentes): se vuelve a encuadrar
+    var rzt = 0, lastSig = '';
+    function sig() { return root.clientWidth + 'x' + root.clientHeight + ':' + (car ? car.offsetHeight + '/' + car.offsetTop : ''); }
+    function onResize() {
+      clearTimeout(rzt);
+      rzt = setTimeout(function () { var g = sig(); if (g === lastSig) return; lastSig = g; resize(false); }, 120);
+    }
+    if (window.ResizeObserver) { var ro = new ResizeObserver(onResize); ro.observe(root); if (car) ro.observe(car); } else window.addEventListener('resize', onResize);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { measureLbls(); place(); });
+
+    // ---------- arranque ----------
+    measure(); cam = fitA; lastSig = sig(); measureLbls();
+    select(0);
+    if (gsap && ST && !reduced) cam = clampC({ x: fitA.x, y: fitA.y, s: fitA.s * .86 });
+    else root.classList.add('is-in');
+    commit();
     function intro() {
-      if (!gsap || !ST || reduced) return;
-      ST.create({ trigger: root, start: 'top 75%', once: true, onEnter: function () {
+      if (!gsap || !ST || reduced) { root.classList.add('is-in'); return; }
+      ST.create({ trigger: root, start: 'top 78%', once: true, onEnter: function () {
         root.classList.add('is-in');
-        gsap.fromTo(pins, { scale: 0 }, { scale: 1, duration: .7, ease: 'back.out(2)', stagger: .07, delay: .35, clearProps: 'transform' });
+        if (!userMoved) flyTo(fitA, 1700);
+        gsap.fromTo($$('.wmap__num', layer), { scale: 0 }, { scale: 1, duration: .7, ease: 'back.out(2)', stagger: .06, delay: .45, clearProps: 'transform' });
       } });
     }
-    return { labels: labels, intro: intro };
+    return {
+      intro: intro,
+      // después de volver a dibujar las tarjetas (cambio de idioma): mantener orden, selección y textos
+      sync: function () {
+        parkLbl.el.textContent = t('where.park'); edge.textContent = '← ' + t('where.park');
+        if (fullBtn) fullBtn.setAttribute('aria-label', t(full ? 'where.close' : 'where.expand'));
+        var k = cur; setMode(mode, true); if (k > -1) { cur = -1; select(k); }
+        var g = sig(); if (g !== lastSig) { lastSig = g; var c0 = cam, f0 = fitA; measure(); cam = userMoved ? clampC(c0) : (c0 === f0 || !S0 ? fitA : clampC({ x: fitA.x, y: fitA.y, s: fitA.s * c0.s / f0.s })); }
+        measureLbls(); commit();
+      }
+    };
   })();
 
   /* ================= Scroll: hero, galería, reveals, contadores ================= */
