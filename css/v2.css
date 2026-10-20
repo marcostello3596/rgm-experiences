@@ -748,3 +748,12 @@ img[src*="exp-aeropuerto"] { object-position: 42% 50%; }
 @media (max-width: 767px) {
   .apt-gal { grid-template-rows: 250px 150px; }
 }
+
+/* Visor de fotos: toques rápidos sin zoom del navegador, sin seleccionar texto, y aviso mientras carga */
+.lightbox { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.lightbox button { touch-action: manipulation; }
+.lightbox__fig { position: relative; touch-action: pan-y pinch-zoom; }
+.lightbox__fig img { -webkit-user-drag: none; }
+.lightbox__fig::after { content: ""; position: absolute; left: 50%; top: 40%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 1.5px solid rgba(244, 238, 229, .25); border-top-color: var(--cream); border-radius: 50%; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.lightbox.is-loading .lightbox__fig::after { opacity: 1; animation: lbspin .8s linear infinite; }
+@keyframes lbspin { to { transform: rotate(360deg); } }

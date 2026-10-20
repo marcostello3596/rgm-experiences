@@ -775,6 +775,67 @@
     (function wait() { if (window.L) idle(init, { timeout: 2500 }); else if (tries++ < 50) setTimeout(wait, 200); })();
   })();
 
+  /* ================= Visor de fotos (fichas de departamento y de experiencia) =================
+   * Cada foto se precarga en un Image() aparte y recién se muestra cuando terminó de cargar:
+   * si se aprieta "siguiente" muchas veces seguidas, el número cambia al instante y la foto que
+   * queda es siempre la última pedida (las cargas viejas se ignoran, no se cancelan a medias). */
+  function lightbox(gallery) {
+    var lb = $('[data-lightbox]'); if (!lb || !gallery.length) return null;
+    var img = $('[data-lightbox-img]', lb), count = $('[data-lightbox-count]', lb), fig = $('.lightbox__fig', lb);
+    var n = gallery.length, cur = 0, ticket = 0, lastSwap = 0, slow = 0, cache = {};
+    function load(i) {
+      var src = gallery[(i + n) % n];
+      if (!cache[src]) cache[src] = new Promise(function (res) {
+        var im = new Image();
+        im.onload = function () { (im.decode ? im.decode() : Promise.resolve()).catch(function () {}).then(function () { res(true); }); };
+        im.onerror = function () { delete cache[src]; res(false); };
+        im.src = src;
+      });
+      return cache[src];
+    }
+    function show(i, dir) {
+      cur = (i + n) % n;
+      var mine = ++ticket, src = gallery[cur];
+      count.textContent = pad(cur + 1) + ' / ' + pad(n);
+      clearTimeout(slow); slow = setTimeout(function () { if (mine === ticket) lb.classList.add('is-loading'); }, 160);
+      load(cur).then(function () {
+        if (mine !== ticket) return;             // ya se pidió otra foto
+        clearTimeout(slow); lb.classList.remove('is-loading');
+        var now = Date.now(), quick = now - lastSwap < 280; lastSwap = now;
+        if (gsap) gsap.killTweensOf(img);
+        img.src = src;
+        if (gsap && !reduced && !quick) gsap.fromTo(img, { opacity: .25, x: (dir || 0) * 22 }, { opacity: 1, x: 0, duration: .45, ease: 'power2.out', overwrite: true });
+        else if (gsap) gsap.set(img, { opacity: 1, x: 0 });
+        load(cur + 1); load(cur - 1); load(cur + 2);   // vecinas listas para el próximo toque
+      });
+    }
+    document.addEventListener('click', function (e) {
+      var o = e.target.closest && e.target.closest('[data-lightbox-open]'); if (!o) return;
+      show(parseInt(o.getAttribute('data-lightbox-open'), 10) || 0, 0);
+      if (!lb.open) lb.showModal();
+      if (lenis) lenis.stop();
+    });
+    $('[data-lightbox-prev]', lb).addEventListener('click', function () { show(cur - 1, -1); });
+    $('[data-lightbox-next]', lb).addEventListener('click', function () { show(cur + 1, 1); });
+    $('[data-lightbox-close]', lb).addEventListener('click', function () { lb.close(); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+    lb.addEventListener('close', function () { if (lenis) lenis.start(); });
+    lb.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1, 1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1, -1); }
+    });
+    // deslizar el dedo sobre la foto
+    var sx = null, sy = 0;
+    fig.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') { sx = e.clientX; sy = e.clientY; } });
+    fig.addEventListener('pointerup', function (e) {
+      if (sx === null) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) show(cur + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    });
+    fig.addEventListener('pointercancel', function () { sx = null; });
+    return { show: show };
+  }
+
   /* ================= Ficha de departamento (/propiedades/<slug>/) ================= */
   var aptPage = (function () {
     if (PAGE !== 'apt' || !CUR_APT) return null;
@@ -875,25 +936,7 @@
       if (booking) booking.open({ apt: APTS.indexOf(a), dates: afp && afp.selectedDates.length === 2 ? afp.selectedDates.slice() : null, guests: ag });
     });
 
-    // Lightbox
-    var lb = $('[data-lightbox]'), li = 0;
-    function show(i) {
-      li = (i + gallery.length) % gallery.length;
-      $('[data-lightbox-img]', lb).src = gallery[li];
-      $('[data-lightbox-count]', lb).textContent = pad(li + 1) + ' / ' + pad(gallery.length);
-      if (gsap && !reduced) gsap.fromTo($('[data-lightbox-img]', lb), { opacity: 0, scale: 1.03 }, { opacity: 1, scale: 1, duration: .5, ease: 'power2.out' });
-    }
-    document.addEventListener('click', function (e) {
-      var o = e.target.closest && e.target.closest('[data-lightbox-open]'); if (!o) return;
-      show(parseInt(o.getAttribute('data-lightbox-open'), 10) || 0);
-      lb.showModal(); if (lenis) lenis.stop();
-    });
-    $('[data-lightbox-prev]', lb).addEventListener('click', function () { show(li - 1); });
-    $('[data-lightbox-next]', lb).addEventListener('click', function () { show(li + 1); });
-    $('[data-lightbox-close]', lb).addEventListener('click', function () { lb.close(); });
-    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
-    lb.addEventListener('close', function () { if (lenis) lenis.start(); });
-    lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') show(li + 1); if (e.key === 'ArrowLeft') show(li - 1); });
+    lightbox(gallery);
 
     render();
     if (gsap && !reduced && ST) {
@@ -956,15 +999,7 @@
       var d = xfp && xfp.selectedDates.length ? [xfp.selectedDates[0], xfp.selectedDates[0]] : null;
       if (booking) booking.open({ apt: -1, exp: EXPS.indexOf(x), dates: d, guests: people });
     });
-    var lb = $('[data-lightbox]'), cur = 0;
-    function show(i) { cur = (i + gallery.length) % gallery.length; $('[data-lightbox-img]', lb).src = gallery[cur]; $('[data-lightbox-count]', lb).textContent = pad(cur + 1) + ' / ' + pad(gallery.length); }
-    document.addEventListener('click', function (e) { var o = e.target.closest && e.target.closest('[data-lightbox-open]'); if (!o) return; show(parseInt(o.getAttribute('data-lightbox-open'), 10) || 0); lb.showModal(); if (lenis) lenis.stop(); });
-    $('[data-lightbox-prev]', lb).addEventListener('click', function () { show(cur - 1); });
-    $('[data-lightbox-next]', lb).addEventListener('click', function () { show(cur + 1); });
-    $('[data-lightbox-close]', lb).addEventListener('click', function () { lb.close(); });
-    lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
-    lb.addEventListener('close', function () { if (lenis) lenis.start(); });
-    lb.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') show(cur + 1); if (e.key === 'ArrowLeft') show(cur - 1); });
+    lightbox(gallery);
     render();
     if (gsap && !reduced && ST) {
       gsap.from('.apt-gal__tile', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: .07, delay: .4 });
