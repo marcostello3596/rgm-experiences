@@ -740,3 +740,11 @@ img[src*="exp-maipu"] { object-position: 86% 50%; }
 img[src*="exp-alta-montana"] { object-position: 50% 62%; }
 img[src*="exp-cacheuta"] { object-position: 50% 72%; }
 img[src*="exp-aeropuerto"] { object-position: 42% 50%; }
+
+/* Fichas (departamento y experiencia): sin el doble espacio entre la galería y "El departamento" */
+.apt-head.band { padding-bottom: clamp(24px, 3vw, 44px); }
+.apt-book.band { padding-top: clamp(36px, 4.5vw, 72px); }
+/* Galería de la ficha en celular: se ven 3 fotos (sin una fila vacía debajo) */
+@media (max-width: 767px) {
+  .apt-gal { grid-template-rows: 250px 150px; }
+}

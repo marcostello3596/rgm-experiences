@@ -743,8 +743,11 @@
       var esri = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_';
       warmTiles(esri + 'Base/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16, attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap' }).addTo(map);
       window.L.tileLayer(esri + 'Reference/MapServer/tile/{z}/{y}/{x}', { maxZoom: 16 }).addTo(map);
+      var same = {};
       pts.forEach(function (a, i) {
-        var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? HOUSE : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18] });
+        // dos departamentos en el mismo edificio (misma dirección): el segundo pin se corre al costado
+        var key = a.coords.join(','), d = same[key] = (same[key] || 0) + 1, dx = (d - 1) * 30;
+        var icon = window.L.divIcon({ className: '', html: '<span class="pmap__pin">' + (a.kind === 'house' ? HOUSE : (APTS.indexOf(a) + 1)) + '</span>', iconSize: [34, 34], iconAnchor: [17 - dx, 17], popupAnchor: [dx, -18] });
         var m = window.L.marker(a.coords, { icon: icon, title: aptLabel(a), alt: aptLabel(a) }).addTo(map);
         m._apt = a; markers.push(m);
       });
@@ -787,7 +790,7 @@
       if (a.kind === 'house') $$('[data-i18n="apt.eyebrow"]').forEach(function (el) { el.textContent = t('apt.eyebrowHouse'); });
       $('[data-apt-zone]').textContent = zoneName(a.zone);
       $('[data-apt-stats]').innerHTML = [
-        ['apt.guests', fmtNum(a.sleeps)], ['apt.bedrooms', fmtRooms(a.bedrooms)], ['apt.baths', fmtNum(a.baths)], ['apt.beds', fmtNum(D.beds != null ? D.beds : a.bedrooms)]
+        ['apt.guests', fmtNum(a.sleeps)], ['apt.bedrooms', fmtRooms(a.bedrooms)], ['apt.baths', fmtNum(a.baths)], ['apt.beds', D.beds && typeof D.beds === 'object' ? L(D.beds) : fmtNum(D.beds != null ? D.beds : a.bedrooms)]
       ].map(function (x) { return '<div><dt class="eyebrow">' + t(x[0]) + '</dt><dd>' + x[1] + '</dd></div>'; }).join('');
       $('[data-apt-gallery]').innerHTML = gallery.slice(0, 5).map(function (src, i) {
         return '<button type="button" class="apt-gal__tile" data-lightbox-open="' + i + '" aria-label="' + t('apt.viewAll') + ' ' + (i + 1) + '/' + gallery.length + '">' +

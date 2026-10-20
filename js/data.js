@@ -13,8 +13,9 @@ window.RGM_CONFIG = {
   whatsapp: '5492614671604',
   email: 'hola@rgmexperiences.com',
   phoneLabel: '+54 9 261 467-1604',
-  instagram: 'https://instagram.com/',
-  facebook: 'https://facebook.com/',
+  // Redes: todavía no hay cuentas. Cuando estén, cargá los links acá y volvé a poner los íconos en el pie (src/content.html).
+  instagram: '',
+  facebook: '',
   zones: [
     { es: 'Ciudad de Mendoza', en: 'Mendoza City', pt: 'Cidade de Mendoza' },
     { es: 'Potrerillos', en: 'Potrerillos', pt: 'Potrerillos' }
@@ -25,8 +26,8 @@ window.RGM_APARTMENTS = [
   {
     slug: 'mitre-i', name: 'Mitre I', zone: 'Ciudad de Mendoza', img: 'img/apts/mitre-i/01.jpg', img2: 'img/apts/mitre-i/08.jpg',
     coords: [-32.89352, -68.84533],
-    tag: { es: 'Amplio · Living-comedor para seis · A pocas cuadras de Plaza Independencia', en: 'Spacious · Living and dining for six · A few blocks from Plaza Independencia', pt: 'Amplo · Sala de estar e jantar para seis · A poucas quadras da Plaza Independencia' },
-    bedrooms: 3, baths: 2, sleeps: 6, parking: false
+    tag: { es: 'Amplio · Dos dormitorios · A pocas cuadras de Plaza Independencia', en: 'Spacious · Two bedrooms · A few blocks from Plaza Independencia', pt: 'Amplo · Dois quartos · A poucas quadras da Plaza Independencia' },
+    bedrooms: 2, baths: 1, sleeps: 4, parking: false
   },
   {
     slug: 'casa-potrerillos', name: 'Potrerillos', zone: 'Potrerillos', kind: 'house', img: 'img/apts/casa-potrerillos/01.jpg', img2: 'img/apts/casa-potrerillos/02.jpg',
@@ -44,8 +45,8 @@ window.RGM_APARTMENTS = [
   {
     slug: 'espana-i', name: 'España I', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-i/01.jpg', img2: 'img/apts/espana-i/03.jpg',
     coords: [-32.89047, -68.84191],
-    tag: { es: 'Balcón entre árboles · Junto a la peatonal · Dos dormitorios', en: 'Leafy balcony · Next to the pedestrian street · Two bedrooms', pt: 'Varanda entre árvores · Junto ao calçadão · Dois quartos' },
-    bedrooms: 2, baths: 1, sleeps: 4, parking: false
+    tag: { es: 'Balcón entre árboles · Junto a la peatonal · Tres dormitorios', en: 'Leafy balcony · Next to the pedestrian street · Three bedrooms', pt: 'Varanda entre árvores · Junto ao calçadão · Três quartos' },
+    bedrooms: 3, baths: 2, sleeps: 6, parking: false
   },
   {
     slug: 'espana-ii', name: 'España II', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-ii/01.jpg', img2: 'img/apts/espana-ii/03.jpg',
@@ -55,10 +56,16 @@ window.RGM_APARTMENTS = [
     bedrooms: 2, baths: 1.5, sleeps: 3, parking: false
   },
   {
-    slug: 'belgrano', name: 'Belgrano', zone: 'Ciudad de Mendoza', img: 'img/apts/belgrano/01.jpg', img2: 'img/apts/belgrano/05.jpg',
+    slug: 'belgrano-i', name: 'Belgrano I', zone: 'Ciudad de Mendoza', img: 'img/apts/belgrano-i/01.jpg', img2: 'img/apts/belgrano-i/05.jpg',
     coords: [-32.89527, -68.85119],
-    tag: { es: 'Luminoso · Cocina completa · Cerca de Arístides y del Parque', en: 'Bright · Full kitchen · Close to Arístides and the Park', pt: 'Iluminado · Cozinha completa · Perto da Arístides e do Parque' },
-    bedrooms: 1, baths: 1, sleeps: 4, parking: false
+    tag: { es: 'Para dos · Cama matrimonial · Cerca de Arístides y del Parque', en: 'For two · Double bed · Close to Arístides and the Park', pt: 'Para dois · Cama de casal · Perto da Arístides e do Parque' },
+    bedrooms: 1, baths: 1, sleeps: 2, parking: false
+  },
+  {
+    slug: 'belgrano-ii', name: 'Belgrano II', zone: 'Ciudad de Mendoza', img: 'img/apts/belgrano-ii/01.jpg', img2: 'img/apts/belgrano-ii/03.jpg',
+    coords: [-32.89527, -68.85119],
+    tag: { es: 'Ventanales entre árboles · Hasta tres huéspedes · Cerca de Arístides', en: 'Big windows onto the trees · Up to three guests · Close to Arístides', pt: 'Janelões entre árvores · Até três hóspedes · Perto da Arístides' },
+    bedrooms: 1, baths: 1, sleeps: 3, parking: false
   },
   {
     slug: 'mitre-ii', name: 'Mitre II', zone: 'Ciudad de Mendoza', img: 'img/apts/mitre-ii/01.jpg', img2: 'img/apts/mitre-ii/02.jpg',
@@ -70,7 +77,7 @@ window.RGM_APARTMENTS = [
     slug: 'espana-iii', name: 'España III', zone: 'Ciudad de Mendoza', img: 'img/apts/espana-iii/01.jpg', img2: 'img/apts/espana-iii/03.jpg',
     coords: [-32.88620, -68.84082],
     tag: { es: 'Luminoso · Piso de parquet · Sobre Av. España arbolada', en: 'Bright · Parquet floors · On leafy Av. España', pt: 'Iluminado · Piso de parquet · Na arborizada Av. España' },
-    bedrooms: 1, baths: 1, sleeps: 4, parking: false
+    bedrooms: 1, baths: 1, sleeps: 3, parking: false
   }
 ];
 

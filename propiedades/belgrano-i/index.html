@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../../">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%233d1a22%22/%3E%3Cpath d=%22M4 22 L12 12 L16 16 L21 9 L28 22%22 fill=%22none%22 stroke=%22%23d9b98a%22 stroke-width=%222%22/%3E%3C/svg%3E">
+<title>Depto Belgrano I en Ciudad de Mendoza · RGM Experiences</title>
+<meta name="description" content="Departamentos de alquiler temporario en Mendoza y experiencias a medida: bodegas, alta montaña, termas, cabalgatas, traslados y alquiler de autos.">
+<link rel="preload" href="fonts/gambarino-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/supreme-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/supreme-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/flatpickr.css?v=7a47ee19">
+<link rel="stylesheet" href="css/styles.css?v=7a47ee19">
+<link rel="stylesheet" href="css/v2.css?v=7a47ee19">
+<script>
+  /* Pre-paint: idioma inicial + ocultar titulares hasta que SplitText los prepare */
+  (function () {
+    var d = document.documentElement, l = 'en';
+    try { l = localStorage.getItem('rgm-lang') || ''; } catch (e) { l = ''; }
+    if (!l) {
+      var langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en']);
+      l = 'en';
+      for (var i = 0; i < langs.length; i++) {
+        var c = String(langs[i]).slice(0, 2).toLowerCase();
+        if (c === 'es' || c === 'pt' || c === 'en') { l = c; break; }
+      }
+    }
+    d.lang = l; d.classList.add('js');
+  })();
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+</head>
+<body>
+<div class="rgm-page" data-page="apt" data-slug="belgrano-i">
+
+  <!-- ============ NAV ============ -->
+  <svg class="sr-only" aria-hidden="true" focusable="false"><defs><symbol id="rgm-word" viewBox="80.6 73.3 284.8 86.1"><path transform="translate(85.55 158.23)" d="M76.6 -66.7Q76.6 -60.5 72.1 -55.1Q67.6 -49.8 59.8 -46.9Q53.6 -44.6 41.4 -44.2L45.2 -43.1Q52.9 -40.9 55.3 -37.6Q57.7 -34.3 57.7 -25.9Q57.7 -24 57.6 -22.4L56.8 -11.9Q56.4 -7.3 56.4 -5Q56.4 -0.5 59.3 -0.5Q60.2 -0.5 61.1 -1.2Q61.3 -1.4 61.3 -2.8Q61.3 -4.1 62.3 -5.2Q63.2 -6.2 64.6 -6.2Q66.2 -6.2 66.2 -4.4Q66.2 -2 63.6 -0.3Q61 1.4 57.2 1.4Q45.2 1.4 45.2 -10.8Q45.2 -13.9 45.7 -18L46.8 -27.2Q47.3 -31.3 47.3 -34Q47.3 -40 42.1 -41.9Q40.3 -42.5 32.8 -43L17.8 -5Q17.4 -4.2 17.4 -4Q17.4 -2.2 21.6 -1.7Q23.4 -1.4 23.8 -1.4L26.5 -1.6Q27.2 -1.6 27.2 -1Q27.2 0.2 24.6 0.2Q20.4 0.2 10.4 0Q5.4 -0.1 4.9 -0.1Q3.5 -0.1 0.6 0.1Q-2.3 0.2 -3.7 0.2Q-5.3 0.2 -5.3 -0.7Q-5.3 -1.4 -1.9 -1.6Q2.8 -1.7 4.4 -2.8Q5.9 -3.5 8.3 -9.5L34.8 -77.2Q35.3 -78.1 35.3 -78.8Q35.3 -81.1 28 -81.1Q26.8 -81.4 26.8 -82Q26.8 -82.8 27.8 -82.9Q28.9 -83 35 -83Q35 -83 36.8 -82.9Q38.6 -82.8 40.6 -82.8L46.4 -82.7Q58.8 -82.4 61 -82.2Q64.4 -82 67.7 -80.4Q76.6 -76.2 76.6 -66.7ZM65 -66.7Q65 -77.2 58.8 -79.9Q56.6 -80.9 50.2 -80.9Q48.2 -80.9 47.4 -79.4Q46.2 -77.4 45.5 -75.6L33.7 -45.2Q35.2 -45.1 37.1 -45.1Q49.3 -45.1 57.2 -51.2Q65 -57.2 65 -66.7Z M169 -80Q169 -79.7 167.5 -76.9Q166.8 -75.5 165.4 -72L163.3 -67Q160.7 -60.4 160.2 -59.4Q159.7 -58.4 159 -58.4Q158 -58.4 158 -59.3Q158 -59.8 158.6 -62.2Q160 -67.4 160 -70.6Q160 -75.5 156 -78.9Q152 -82.3 146.2 -82.3Q138.1 -82.3 129.4 -76.5Q120.6 -70.7 113.9 -60.7Q106.8 -50.3 102.5 -37Q99.5 -27.6 99.5 -19.1Q99.5 -10.1 103.9 -5.2Q108.4 -0.2 116.4 -0.2Q128.8 -0.2 133.7 -10.6Q137 -17.5 137 -22Q137 -24.2 133.2 -24.2H131.6Q130.4 -24.2 128.8 -24.1Q126.7 -24.1 126.7 -25.2Q126.7 -26.4 128.2 -26.4Q129.2 -26.4 130 -26.3L143.3 -26L158.8 -26.3Q160.8 -26.3 160.8 -25.1Q160.8 -23.9 157 -23.9H153Q150.2 -23.9 149.3 -23.2Q148.4 -22.4 147.6 -19.4L145.7 -12.8Q144.7 -9.7 138.1 -5.3Q127.8 1.6 114.2 1.6Q101 1.6 94.2 -4.2Q86.5 -10.6 86.5 -21.7Q86.5 -33 92.4 -45.1Q98.3 -57.2 108.5 -67.2Q126.6 -84.7 145.8 -84.7Q154 -84.7 159.1 -80.3Q162.2 -77.6 163.8 -77.6Q166 -77.6 167.5 -80.4Q167.8 -80.6 168.4 -80.6Q169 -80.6 169 -80Z M280.1 -82.3Q280.1 -80.6 278.6 -80.6Q278.2 -80.8 277.1 -81Q276.6 -81.1 275.9 -81.1Q275.2 -81.1 274.7 -81H272.2Q271.7 -81.1 270.8 -81.1Q269.4 -81.1 268.6 -79.4Q266.3 -74.8 264.1 -69.1L241.7 -10.7Q241.4 -9.8 240.7 -8Q240.7 -7.8 240.4 -6.9Q240.1 -6 239.4 -4.2Q238.9 -3.7 238.9 -3.4Q238.9 -1.9 242 -1.9H243.7L246.6 -1.8L249 -1.9Q249.4 -1.8 249.4 -1.3Q249.4 0.2 247.6 0.1L244.2 -0.1L218.5 0.1Q217.3 0.1 217.3 -0.6Q217.3 -1.9 220.6 -1.9Q223.9 -1.9 226 -2.5Q226.9 -2.9 228 -5.3Q231 -12.8 234 -20.4L257.5 -79.8Q257.4 -79.7 245.6 -62.3L205.9 -3.8Q203.6 -0.7 202.9 -0.7Q202 -0.7 202 -2.6L202.1 -4L202.2 -7.7L205.4 -68.6Q205.7 -73.2 205.7 -74.5Q205.7 -77.3 205.2 -77.3Q205 -77 204.6 -76.1Q203.9 -73.7 202.6 -70.2L178.6 -4.8Q178.3 -4.1 178.3 -3.7Q178.3 -2.3 179.5 -1.9Q180.7 -1.6 185.4 -1.8L187.6 -1.9Q188.4 -1.9 188.4 -1.2Q188.4 0.1 186.8 0.1Q185.5 0.1 184.7 0L177 -0.1Q168.5 -0.2 164.4 0Q163.7 0.1 162.7 0.1Q161.5 0.1 161.5 -0.7Q161.5 -2 163.3 -2Q163.9 -2 164.6 -1.9Q165.4 -1.8 168.5 -1.8Q172.6 -1.8 173.6 -2.9Q174.6 -4.1 177.2 -11L201.5 -75.8Q201.8 -77 202.4 -78.6Q202.8 -79.1 203 -79.6Q203 -80 201.7 -80.6Q200.3 -81.1 199 -81.1Q197 -81 192.1 -80.9H191.6Q190.8 -80.9 190.8 -82.2Q190.8 -83.4 192.1 -83.4Q193 -83.4 193.7 -83.3Q195.2 -83 205.8 -83Q215 -83 215.6 -83.2H216.2Q217 -83.2 217 -82.1Q217 -80.3 216.7 -75.5L214 -21Q214.4 -21.8 216.7 -25L219.6 -28.9L255.8 -83H264.8L278.6 -83.2Q280.1 -83.2 280.1 -82.3Z"/></symbol></defs></svg>
+  <header class="nav" data-nav>
+    <div class="nav__inner gutter">
+      <nav class="nav__links" aria-label="Principal">
+        <a href="propiedades/" data-i18n="nav.apartments">Departamentos</a>
+        <a href="experiencias/" data-i18n="nav.experiences">Experiencias</a>
+      </nav>
+      <button class="nav__burger" type="button" data-drawer-open aria-controls="drawer" aria-expanded="false" data-i18n-attr="aria-label:nav.menu"><span></span><span></span></button>
+
+      <a href="./" class="logo" aria-label="RGM Experiences">
+        <svg class="logo__peaks" viewBox="0 0 64 14" aria-hidden="true"><path d="M1 13 L14 3 L21 8 L31 1 L41 9 L47 5 L63 13" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        <svg class="logo__rgm" viewBox="0 0 285 86" fill="currentColor" aria-hidden="true"><use href="#rgm-word"/></svg>
+        <span class="logo__sub">Experiences</span>
+      </a>
+
+      <div class="nav__right">
+        <div class="lang" role="group" data-i18n-attr="aria-label:lang.label">
+          <button type="button" class="lang__btn" data-lang="es">ES</button>
+          <button type="button" class="lang__btn" data-lang="en">EN</button>
+          <button type="button" class="lang__btn" data-lang="pt">PT</button>
+        </div>
+        <a href="#" data-book-open class="btn btn--light nav__book" data-i18n="nav.book">Reservar</a>
+      </div>
+    </div>
+  </header>
+
+  <dialog class="drawer" id="drawer" data-drawer>
+    <button class="drawer__close" type="button" data-drawer-close data-i18n-attr="aria-label:nav.close"><span></span><span></span></button>
+    <div class="drawer__inner">
+      <a href="propiedades/" class="drawer__link" data-i18n="nav.apartments">Departamentos</a>
+      <a href="experiencias/" class="drawer__link" data-i18n="nav.experiences">Experiencias</a>
+      <a href="#" data-book-open class="drawer__link" data-i18n="nav.contact">Contacto</a>
+      <div class="lang lang--drawer" role="group" data-i18n-attr="aria-label:lang.label">
+        <button type="button" class="lang__btn" data-lang="es">ES</button>
+        <button type="button" class="lang__btn" data-lang="en">EN</button>
+        <button type="button" class="lang__btn" data-lang="pt">PT</button>
+      </div>
+      <a href="#" data-book-open class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a>
+    </div>
+  </dialog>
+
+  <main id="top">
+    <!-- Cabecera del departamento -->
+    <section class="apt-head band band--sand">
+      <div class="gutter wrap">
+        <nav class="crumbs eyebrow" aria-label="Breadcrumb">
+          <a href="./" data-i18n="apt.home">Inicio</a><span aria-hidden="true">/</span>
+          <a href="propiedades/" data-i18n="apt.all">Departamentos</a><span aria-hidden="true">/</span>
+          <span aria-current="page" data-apt-crumb></span>
+        </nav>
+        <div class="apt-head__row">
+          <div>
+            <h1 class="apt-head__title" data-split="lines" data-apt-title></h1>
+            <p class="apt-head__loc"><span data-apt-zone></span><span class="dot" aria-hidden="true"></span><span data-i18n="apt.country">Mendoza, Argentina</span></p>
+          </div>
+          <dl class="apt-head__stats" data-apt-stats></dl>
+        </div>
+        <div class="apt-head__rule"></div>
+        <div class="apt-gal" data-apt-gallery></div>
+        <div class="apt-gal__all"><button type="button" class="link-cta" data-lightbox-open="0"><span data-i18n="apt.viewAll">Ver todas las fotos</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></button></div>
+      </div>
+    </section>
+
+    <!-- Descripción + reserva -->
+    <section class="apt-book band band--sand">
+      <div class="gutter wrap">
+        <div class="apt-book__layout">
+          <div class="apt-book__left">
+            <p class="eyebrow" data-i18n="apt.eyebrow">El departamento</p>
+            <h2 class="h2" data-split="lines" data-apt-h2></h2>
+            <p class="apt-book__intro" data-apt-intro></p>
+
+            <div class="tabs" data-tabs>
+              <div class="tabs__list" role="tablist">
+                <button type="button" role="tab" id="tab-ov" aria-controls="pane-ov" aria-selected="true" data-i18n="apt.tabOverview">Descripción</button>
+                <button type="button" role="tab" id="tab-am" aria-controls="pane-am" aria-selected="false" tabindex="-1" data-i18n="apt.tabAmen">Comodidades</button>
+                <button type="button" role="tab" id="tab-lo" aria-controls="pane-lo" aria-selected="false" tabindex="-1" data-i18n="apt.tabLoc">Ubicación</button>
+                <button type="button" role="tab" id="tab-re" aria-controls="pane-re" aria-selected="false" tabindex="-1" data-i18n="apt.tabRev">Reseñas</button>
+              </div>
+              <div class="tabs__pane" role="tabpanel" id="pane-ov" aria-labelledby="tab-ov" data-apt-overview></div>
+              <div class="tabs__pane" role="tabpanel" id="pane-am" aria-labelledby="tab-am" hidden data-apt-amenities></div>
+              <div class="tabs__pane" role="tabpanel" id="pane-lo" aria-labelledby="tab-lo" hidden>
+                <p class="eyebrow" data-i18n="apt.where">Dónde vas a estar</p>
+                <p class="apt-loc__text" data-apt-loc-text></p>
+                <ul class="apt-loc__times" data-apt-times></ul>
+                <div class="apt-loc__map" data-apt-map></div>
+                <a class="link-cta" target="_blank" rel="noopener" data-apt-maplink><span data-i18n="apt.openMap">Abrir en Google Maps</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a>
+              </div>
+              <div class="tabs__pane" role="tabpanel" id="pane-re" aria-labelledby="tab-re" hidden data-apt-reviews></div>
+            </div>
+          </div>
+
+          <aside class="apt-card" aria-labelledby="apt-card-title">
+            <h2 class="apt-card__title" id="apt-card-title" data-i18n-html="apt.bookTitle">Consultá <em>disponibilidad</em></h2>
+            <div class="apt-card__field">
+              <label class="eyebrow" for="a-dates" data-i18n="book.dates">Fechas</label>
+              <input id="a-dates" class="book__input" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+            </div>
+            <div class="apt-card__field">
+              <span class="eyebrow" id="a-guests-l" data-i18n="book.guests">Huéspedes</span>
+              <div class="stepper stepper--book" role="group" aria-labelledby="a-guests-l">
+                <button type="button" data-apt-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+                <output data-apt-guests>2</output>
+                <button type="button" data-apt-step="1" data-i18n-attr="aria-label:search.more">+</button>
+              </div>
+              <small class="book__hint" data-apt-max></small>
+            </div>
+            <button type="button" class="btn apt-card__cta" data-apt-book data-i18n="apt.bookCta">Armar mi consulta</button>
+            <p class="apt-card__note" data-i18n="apt.bookNote"></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Imagen a todo el ancho -->
+    <section class="apt-img" aria-hidden="true"><img data-apt-wide alt="" loading="lazy"></section>
+
+    <!-- Otros departamentos -->
+    <section class="apt-more band band--sand">
+      <div class="gutter wrap">
+        <header class="apts__head">
+          <h2 class="h2" data-split="lines" data-i18n-html="apt.others">Otros <em>departamentos</em></h2>
+          <a class="link-cta" href="propiedades/"><span data-i18n="apts.all">Ver todos</span> <svg class="arr" viewBox="0 0 18 10" aria-hidden="true"><path d="M0 5h16.5M12.5 1l4 4-4 4"/></svg></a>
+        </header>
+        <div class="props__grid" data-apt-more></div>
+      </div>
+    </section>
+
+  <!-- Galería a pantalla completa -->
+  <dialog class="lightbox" data-lightbox data-lenis-prevent>
+    <button type="button" class="lightbox__close" data-lightbox-close data-i18n-attr="aria-label:lb.close"><span></span><span></span></button>
+    <button type="button" class="lightbox__nav lightbox__nav--prev arrow arrow--light" data-lightbox-prev data-i18n-attr="aria-label:lb.prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <figure class="lightbox__fig"><img data-lightbox-img alt=""><figcaption class="lightbox__count" data-lightbox-count></figcaption></figure>
+    <button type="button" class="lightbox__nav lightbox__nav--next arrow arrow--light" data-lightbox-next data-i18n-attr="aria-label:lb.next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  </dialog>
+
+    <!-- ============ FAQ ============ -->
+    <section class="faq band band--sand" id="faq">
+      <div class="gutter wrap wrap--narrow">
+        <header class="section-head section-head--center">
+          <h2 class="h2" data-split="lines" data-i18n-html="faq.title">Preguntas <em>frecuentes.</em></h2>
+          <p class="muted" data-i18n="faq.sub"></p>
+        </header>
+        <div class="faq__list" data-faq></div>
+        <div class="faq__cta">
+          <p class="h4" data-i18n="faq.ctaT">¿Te quedó alguna duda?</p>
+          <p class="muted" data-i18n="faq.ctaP"></p>
+          <a class="btn" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="faq.ctaB">Escribinos</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer band band--ink">
+    <div class="gutter wrap">
+      <div class="footer__cta">
+        <p class="footer__cta-t" data-i18n-html="ft.ctaT">¿Planeamos <em>tu viaje?</em></p>
+        <a class="btn btn--gold btn--go" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n="ft.ctaB">Escribinos por WhatsApp</a>
+      </div>
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <p class="footer__tag" data-i18n-html="ft.tag">Descansá bien. <em>Viví Mendoza.</em></p>
+        </div>
+        <ul class="footer__list">
+          <li class="eyebrow eyebrow--gold" data-i18n="ft.explore">Explorar</li>
+          <li><a href="propiedades/" data-i18n="nav.apartments"></a></li>
+          <li><a href="experiencias/" data-i18n="nav.experiences"></a></li>
+          <li><a href="./#faq" data-i18n="nav.faq"></a></li>
+          <li><a href="#" data-book-open data-i18n="nav.bookStay"></a></li>
+        </ul>
+        <ul class="footer__list">
+          <li class="eyebrow eyebrow--gold" data-i18n="ft.contact">Contacto</li>
+          <li><a href="#" data-cfg="email"></a></li>
+          <li><a href="#" data-wa="hello" target="_blank" rel="noopener" data-cfg="phone"></a></li>
+        </ul>
+      </div>
+      <a href="./" class="footer__mark" aria-label="RGM Experiences"><svg viewBox="0 0 285 86" fill="currentColor" aria-hidden="true"><use href="#rgm-word"/></svg></a>
+      <div class="footer__legal">
+        <span>© <span data-year>2026</span> RGM Experiences · <span data-i18n="ft.rights">Todos los derechos reservados</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Panel de consulta (se envía por WhatsApp al administrador) -->
+  <dialog class="book" id="book" data-book-dialog data-lenis-prevent aria-labelledby="book-title">
+    <form class="book__form" data-book-form data-lenis-prevent novalidate>
+      <header class="book__head">
+        <h2 class="h2 book__title" id="book-title" data-i18n-html="book.title">Armá tu <em>consulta</em></h2>
+        <button type="button" class="book__close" data-book-close data-i18n-attr="aria-label:book.close"><span></span><span></span></button>
+      </header>
+      <p class="muted book__lead" data-i18n="book.lead"></p>
+
+      <div class="book__group">
+        <label class="eyebrow" for="b-apt" data-i18n="book.apt">Departamento</label>
+        <select id="b-apt" class="book__select" data-book-apt></select>
+      </div>
+
+      <div class="book__stay" data-book-stay>
+        <div class="book__group">
+          <label class="eyebrow" for="b-dates" data-i18n="book.dates">Fechas</label>
+          <input id="b-dates" class="book__input book__dates" type="text" readonly data-i18n-attr="placeholder:book.datesPh">
+          <div class="book__cal" data-book-cal></div>
+        </div>
+        <div class="book__group book__guests">
+          <span class="eyebrow" id="b-guests-l" data-i18n="book.guests">Huéspedes</span>
+          <div class="stepper stepper--book" role="group" aria-labelledby="b-guests-l">
+            <button type="button" data-book-step="-1" data-i18n-attr="aria-label:search.less">−</button>
+            <output data-book-guests>2</output>
+            <button type="button" data-book-step="1" data-i18n-attr="aria-label:search.more">+</button>
+          </div>
+          <small class="book__hint" data-book-max></small>
+        </div>
+      </div>
+      <p class="book__warn" data-book-busy hidden data-i18n="book.busy"></p>
+
+      <fieldset class="book__group" data-book-extras-wrap>
+        <legend class="eyebrow" data-i18n="book.extras">Extras para tu estadía</legend>
+        <div class="book__checks" data-book-extras></div>
+      </fieldset>
+
+      <fieldset class="book__group">
+        <legend class="eyebrow" data-i18n="book.exps">Sumá experiencias</legend>
+        <div class="book__exps" data-book-exps></div>
+      </fieldset>
+
+      <div class="book__row">
+        <div class="book__group">
+          <label class="eyebrow" for="b-name" data-i18n="book.name">Tu nombre</label>
+          <input id="b-name" class="book__input" name="name" autocomplete="name" required>
+        </div>
+        <div class="book__group">
+          <label class="eyebrow" for="b-phone" data-i18n="book.phone">Teléfono</label>
+          <input id="b-phone" class="book__input" name="phone" type="tel" autocomplete="tel">
+        </div>
+      </div>
+      <div class="book__group">
+        <label class="eyebrow" for="b-notes" data-i18n="book.notes">Comentarios</label>
+        <textarea id="b-notes" class="book__input" name="notes" rows="2" data-i18n-attr="placeholder:book.notesPh"></textarea>
+      </div>
+
+      <div class="book__foot">
+        <p class="book__msg" role="status" data-book-msg></p>
+        <button type="submit" class="btn btn--wa">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm5.8 15.7c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
+          <span data-i18n="book.send">Enviar consulta por WhatsApp</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Flotantes -->
+  <a class="wa-float" href="#" data-wa="hello" target="_blank" rel="noopener" data-i18n-attr="aria-label:wa.aria" data-wa-float>
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a13 13 0 00-11.2 19.6L3 29l6.6-1.7A13 13 0 1016 3zm0 23.6a10.6 10.6 0 01-5.4-1.5l-.4-.2-3.9 1 1-3.8-.2-.4A10.6 10.6 0 1116 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 01-4.3-3.7c-.3-.6.3-.5.9-1.7a.6.6 0 000-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 00-.9.4 3.6 3.6 0 00-1.1 2.7 6.3 6.3 0 001.3 3.3 14.4 14.4 0 005.5 4.9c2 .9 2.8.9 3.8.8a3.3 3.3 0 002.2-1.5 2.7 2.7 0 00.2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg>
+  </a>
+  <div class="mobile-cta"><a href="#" data-book-open class="btn" data-i18n="nav.bookStay">Reservá tu estadía</a></div>
+
+  <div class="grain" aria-hidden="true"></div>
+  <!-- Transición de página -->
+  <div class="curtain" aria-hidden="true" data-curtain></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/es.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/pt.js"></script>
+<script src="js/i18n.js?v=7a47ee19"></script>
+<script src="js/data.js?v=7a47ee19"></script>
+<script src="js/map-data.js?v=7a47ee19"></script>
+<script src="js/detail.js?v=7a47ee19"></script>
+<script src="js/exp-detail.js?v=7a47ee19"></script>
+<script src="js/main.js?v=7a47ee19"></script>
+</body>
+</html>

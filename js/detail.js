@@ -1,7 +1,7 @@
 /* RGM Experiences — ficha de cada departamento (/propiedades/<slug>/).
  * Una entrada por `slug` de js/data.js. Textos en { es, en, pt }.
  * - gallery: fotos de la grilla (la primera es la grande; la última se usa como foto ancha).
- * - beds: camas.
+ * - beds: camas (número, o { es, en, pt } para algo como "1 + sillón").
  * - title/intro: titular y bajada de la sección "El departamento".
  * - overview: bloques de la pestaña Descripción.
  * - amenities: ids de RGM_AMENITIES (abajo), agrupados.
@@ -71,13 +71,13 @@ function rgmGal(slug, n) { var a = []; for (var i = 1; i <= n; i++) a.push('img/
 
 window.RGM_DETAILS = {
   'mitre-i': {
-    beds: 5,
+    beds: 3,
     gallery: rgmGal('mitre-i', 15),
     title: { es: 'Espacio para todos, <em>a pasos de la plaza.</em>', en: 'Room for everyone, <em>steps from the plaza.</em>', pt: 'Espaço para todos, <em>a passos da praça.</em>' },
-    intro: { es: 'Un departamento grande en un edificio con hall de entrada cuidado, a pocas cuadras de Plaza Independencia. Living con sillones, comedor para seis, tres dormitorios y dos baños: ideal para familias o grupos que quieren recorrer el centro a pie.', en: 'A large apartment in a building with a smart entrance hall, a few blocks from Plaza Independencia. Lounge with armchairs, dining for six, three bedrooms and two bathrooms: ideal for families or groups who want to explore downtown on foot.', pt: 'Um apartamento grande num prédio com hall de entrada caprichado, a poucas quadras da Plaza Independencia. Sala com poltronas, jantar para seis, três quartos e dois banheiros: ideal para famílias ou grupos que querem conhecer o centro a pé.' },
+    intro: { es: 'Un departamento grande en un edificio con hall de entrada cuidado, a pocas cuadras de Plaza Independencia. Living con sillones, comedor para seis, dos dormitorios y un baño: ideal para familias o grupos chicos que quieren recorrer el centro a pie.', en: 'A large apartment in a building with a smart entrance hall, a few blocks from Plaza Independencia. Lounge with armchairs, dining for six, two bedrooms and one bathroom: ideal for families or small groups who want to explore downtown on foot.', pt: 'Um apartamento grande num prédio com hall de entrada caprichado, a poucas quadras da Plaza Independencia. Sala com poltronas, jantar para seis, dois quartos e um banheiro: ideal para famílias ou grupos pequenos que querem conhecer o centro a pé.' },
     overview: [
       { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Piso de madera, sillones, TV y una mesa de vidrio para seis junto a los ventanales. Aire acondicionado y calefacción por radiadores.', en: 'Wooden floors, armchairs, a TV and a glass table for six by the windows. Air conditioning and radiator heating.', pt: 'Piso de madeira, poltronas, TV e uma mesa de vidro para seis junto às janelas. Ar-condicionado e aquecimento por radiadores.' } },
-      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Tres dormitorios con placares: uno con cama matrimonial y dos con camas individuales, con ropa de cama y toallas incluidas.', en: 'Three bedrooms with wardrobes: one with a double bed and two with single beds, bed linen and towels included.', pt: 'Três quartos com armários: um com cama de casal e dois com camas de solteiro, roupa de cama e toalhas incluídas.' } },
+      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Dos dormitorios con placares: uno con cama matrimonial y otro con dos camas individuales, con ropa de cama y toallas incluidas.', en: 'Two bedrooms with wardrobes: one with a double bed and one with two single beds, bed linen and towels included.', pt: 'Dois quartos com armários: um com cama de casal e outro com duas camas de solteiro, roupa de cama e toalhas incluídas.' } },
       { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina separada con horno, anafe, microondas y mesada de granito, con todo lo necesario para cocinar durante la estadía.', en: 'Separate kitchen with oven, cooktop, microwave and granite counters, with everything you need to cook during your stay.', pt: 'Cozinha separada com forno, cooktop, micro-ondas e bancada de granito, com tudo para cozinhar durante a estadia.' } }
     ],
     amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'tv', 'linens'], outdoor: ['elevator'], extras: ['concierge', 'transfer', 'tours'] },
@@ -110,13 +110,13 @@ window.RGM_DETAILS = {
     location: { text: { es: 'En el microcentro, a metros de Av. San Martín: cafés con mesas en la vereda, comercios y la peatonal Sarmiento a pocas cuadras.', en: 'In the city centre, steps from Av. San Martín: sidewalk cafés, shops and Sarmiento pedestrian street a few blocks away.', pt: 'No centro, a metros da Av. San Martín: cafés com mesas na calçada, lojas e o calçadão Sarmiento a poucas quadras.' }, times: [['sanmartin', 1], ['peatonal', 5], ['plaza', 8], ['aristides', 20], ['airport', 20], ['lujan', 30]] }
   },
   'espana-i': {
-    beds: 3,
+    beds: 4,
     gallery: rgmGal('espana-i', 10),
     title: { es: 'Un balcón entre árboles, <em>junto a la peatonal.</em>', en: 'A leafy balcony, <em>next to the pedestrian street.</em>', pt: 'Uma varanda entre árvores, <em>junto ao calçadão.</em>' },
-    intro: { es: 'Sobre calle España, a metros de la peatonal Sarmiento. Living-comedor con salida a un balcón entre los árboles, dos dormitorios y cocina completa: el centro de Mendoza a la puerta.', en: 'On España street, steps from Sarmiento pedestrian street. A living-dining room opening onto a balcony among the trees, two bedrooms and a full kitchen: downtown Mendoza on your doorstep.', pt: 'Na rua España, a metros do calçadão Sarmiento. Sala de estar e jantar com saída para uma varanda entre as árvores, dois quartos e cozinha completa: o centro de Mendoza na porta.' },
+    intro: { es: 'Sobre calle España, a metros de la peatonal Sarmiento. Living-comedor con salida a un balcón entre los árboles, tres dormitorios, dos baños y cocina completa: el centro de Mendoza a la puerta.', en: 'On España street, steps from Sarmiento pedestrian street. A living-dining room opening onto a balcony among the trees, three bedrooms, two bathrooms and a full kitchen: downtown Mendoza on your doorstep.', pt: 'Na rua España, a metros do calçadão Sarmiento. Sala de estar e jantar com saída para uma varanda entre as árvores, três quartos, dois banheiros e cozinha completa: o centro de Mendoza na porta.' },
     overview: [
       { t: { es: 'El living y el balcón', en: 'Living room and balcony', pt: 'Sala e varanda' }, p: { es: 'Mesa para seis, sillón, TV y rincón de trabajo. El ventanal se abre a un balcón con mesa y sillas bajo los árboles de la calle.', en: 'A table for six, a sofa, a TV and a work corner. The glass door opens onto a balcony with a table and chairs under the street trees.', pt: 'Mesa para seis, sofá, TV e canto de trabalho. A porta de vidro abre para uma varanda com mesa e cadeiras sob as árvores da rua.' } },
-      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Un dormitorio con cama matrimonial y otro con cama individual y cama carrito, ambos con ventilador de techo.', en: 'One bedroom with a double bed and another with a single bed and a trundle bed, both with ceiling fans.', pt: 'Um quarto com cama de casal e outro com cama de solteiro e bicama, ambos com ventilador de teto.' } },
+      { t: { es: 'Los dormitorios', en: 'The bedrooms', pt: 'Os quartos' }, p: { es: 'Tres dormitorios con cuatro camas en total, entre ellas una cama carrito, y ventilador de techo. Hasta seis huéspedes, con ropa de cama y toallas incluidas.', en: 'Three bedrooms with four beds in total, including a trundle bed, and ceiling fans. Up to six guests, bed linen and towels included.', pt: 'Três quartos com quatro camas no total, entre elas uma bicama, e ventilador de teto. Até seis hóspedes, roupa de cama e toalhas incluídas.' } },
       { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina completa con horno, anafe, heladera, microondas y pava eléctrica.', en: 'Full kitchen with oven, cooktop, fridge, microwave and electric kettle.', pt: 'Cozinha completa com forno, cooktop, geladeira, micro-ondas e chaleira elétrica.' } }
     ],
     amenities: { indoor: ['wifi', 'ac', 'fan', 'kitchen', 'tv', 'desk', 'linens'], outdoor: ['balcony'], extras: ['concierge', 'transfer', 'tours'] },
@@ -135,15 +135,29 @@ window.RGM_DETAILS = {
     amenities: { indoor: ['wifi', 'ac', 'heating', 'kitchen', 'tv', 'desk', 'linens'], outdoor: ['balcony'], extras: ['concierge', 'transfer', 'tours'] },
     location: { text: { es: 'Sobre calle España, en pleno centro: la peatonal Sarmiento a metros y Plaza Independencia a pocas cuadras, con cafés, restaurantes y comercios a pie.', en: 'On España street, right downtown: Sarmiento pedestrian street steps away and Plaza Independencia a few blocks off, with cafés, restaurants and shops on foot.', pt: 'Na rua España, no centro: o calçadão Sarmiento a metros e a Plaza Independencia a poucas quadras, com cafés, restaurantes e lojas a pé.' }, times: [['peatonal', 1], ['plaza', 5], ['park', 10], ['aristides', 15], ['airport', 20], ['lujan', 30]] }
   },
-  'belgrano': {
-    beds: 2,
-    gallery: rgmGal('belgrano', 14),
-    title: { es: 'Luz de mañana <em>y el Parque cerca.</em>', en: 'Morning light <em>and the Park nearby.</em>', pt: 'Luz da manhã <em>e o Parque perto.</em>' },
-    intro: { es: 'Un departamento luminoso sobre calle Belgrano, con ventanales, cocina completa y comedor. Cerca de la Calle Arístides Villanueva y del Parque General San Martín.', en: 'A bright apartment on Belgrano street, with large windows, a full kitchen and a dining area. Close to Arístides Villanueva and General San Martín Park.', pt: 'Um apartamento iluminado na rua Belgrano, com janelas amplas, cozinha completa e sala de jantar. Perto da Arístides Villanueva e do Parque General San Martín.' },
+  // Belgrano 487: dos departamentos enfrentados en el mismo edificio (depto 6 = Belgrano I, depto 5 = Belgrano II)
+  'belgrano-i': {
+    beds: 1,
+    gallery: rgmGal('belgrano-i', 5),
+    title: { es: 'Para dos, <em>cerca del Parque.</em>', en: 'For two, <em>close to the Park.</em>', pt: 'Para dois, <em>perto do Parque.</em>' },
+    intro: { es: 'Un departamento de un dormitorio sobre calle Belgrano, con cama matrimonial, comedor con mesa de vidrio y cocina completa. La Calle Arístides Villanueva y el Parque General San Martín quedan a pocas cuadras.', en: 'A one-bedroom apartment on Belgrano street, with a double bed, a dining area with a glass table and a full kitchen. Arístides Villanueva and General San Martín Park are a few blocks away.', pt: 'Um apartamento de um quarto na rua Belgrano, com cama de casal, mesa de jantar de vidro e cozinha completa. A Arístides Villanueva e o Parque General San Martín ficam a poucas quadras.' },
     overview: [
-      { t: { es: 'El espacio', en: 'The space', pt: 'O espaço' }, p: { es: 'Ambientes claros con ventanales, comedor para cuatro, TV y aire acondicionado.', en: 'Light-filled rooms with big windows, dining for four, a TV and air conditioning.', pt: 'Ambientes claros com janelas amplas, mesa para quatro, TV e ar-condicionado.' } },
-      { t: { es: 'Para dormir', en: 'Sleeping', pt: 'Para dormir' }, p: { es: 'Camas matrimoniales con ropa de cama y toallas incluidas; hasta cuatro huéspedes.', en: 'Double beds with linen and towels included; up to four guests.', pt: 'Camas de casal com roupa de cama e toalhas incluídas; até quatro hóspedes.' } },
+      { t: { es: 'El espacio', en: 'The space', pt: 'O espaço' }, p: { es: 'Comedor con mesa de vidrio para cuatro y una biblioteca que lo separa del dormitorio.', en: 'A dining area with a glass table for four and a bookcase that separates it from the bedroom.', pt: 'Mesa de jantar de vidro para quatro e uma estante que separa o quarto.' } },
+      { t: { es: 'Para dormir', en: 'Sleeping', pt: 'Para dormir' }, p: { es: 'Dormitorio con cama matrimonial, TV y aire acondicionado. Hasta dos huéspedes, con ropa de cama y toallas incluidas.', en: 'A bedroom with a double bed, a TV and air conditioning. Up to two guests, bed linen and towels included.', pt: 'Quarto com cama de casal, TV e ar-condicionado. Até dois hóspedes, roupa de cama e toalhas incluídas.' } },
       { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina completa con horno, anafe, heladera y microondas.', en: 'Full kitchen with oven, cooktop, fridge and microwave.', pt: 'Cozinha completa com forno, cooktop, geladeira e micro-ondas.' } }
+    ],
+    amenities: { indoor: ['wifi', 'ac', 'kitchen', 'tv', 'linens'], outdoor: [], extras: ['concierge', 'transfer', 'tours'] },
+    location: { text: { es: 'Sobre calle Belgrano, entre el centro y el Parque: la Calle Arístides Villanueva, con sus bares y restaurantes, queda a unas cuadras.', en: 'On Belgrano street, between downtown and the Park: Arístides Villanueva, with its bars and restaurants, is a few blocks away.', pt: 'Na rua Belgrano, entre o centro e o Parque: a Arístides Villanueva, com seus bares e restaurantes, fica a poucas quadras.' }, times: [['aristides', 10], ['park', 6], ['plaza', 12], ['airport', 20], ['lujan', 30]] }
+  },
+  'belgrano-ii': {
+    beds: 2,
+    gallery: rgmGal('belgrano-ii', 9),
+    title: { es: 'Ventanales entre árboles, <em>a pasos de Arístides.</em>', en: 'Big windows onto the trees, <em>steps from Arístides.</em>', pt: 'Janelões entre árvores, <em>a passos da Arístides.</em>' },
+    intro: { es: 'Un departamento de un dormitorio sobre calle Belgrano, con grandes ventanales a los árboles de la calle, comedor con mesa de madera para cuatro y cocina completa. Hasta tres huéspedes.', en: 'A one-bedroom apartment on Belgrano street, with big windows onto the street trees, a wooden dining table for four and a full kitchen. Up to three guests.', pt: 'Um apartamento de um quarto na rua Belgrano, com janelões para as árvores da rua, mesa de jantar de madeira para quatro e cozinha completa. Até três hóspedes.' },
+    overview: [
+      { t: { es: 'El espacio', en: 'The space', pt: 'O espaço' }, p: { es: 'Comedor con mesa de madera para cuatro, TV, aire acondicionado y una biblioteca que separa los ambientes.', en: 'A wooden dining table for four, a TV, air conditioning and a bookcase dividing the space.', pt: 'Mesa de jantar de madeira para quatro, TV, ar-condicionado e uma estante que divide os ambientes.' } },
+      { t: { es: 'Para dormir', en: 'Sleeping', pt: 'Para dormir' }, p: { es: 'Dormitorio con una cama matrimonial y una individual, frente a un gran ventanal. Ropa de cama y toallas incluidas.', en: 'A bedroom with a double bed and a single bed, facing a large window. Bed linen and towels included.', pt: 'Quarto com uma cama de casal e uma de solteiro, de frente para um janelão. Roupa de cama e toalhas incluídas.' } },
+      { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina completa con horno, anafe, heladera, microondas y mesada de granito.', en: 'Full kitchen with oven, cooktop, fridge, microwave and granite counters.', pt: 'Cozinha completa com forno, cooktop, geladeira, micro-ondas e bancada de granito.' } }
     ],
     amenities: { indoor: ['wifi', 'ac', 'kitchen', 'tv', 'linens'], outdoor: [], extras: ['concierge', 'transfer', 'tours'] },
     location: { text: { es: 'Sobre calle Belgrano, entre el centro y el Parque: la Calle Arístides Villanueva, con sus bares y restaurantes, queda a unas cuadras.', en: 'On Belgrano street, between downtown and the Park: Arístides Villanueva, with its bars and restaurants, is a few blocks away.', pt: 'Na rua Belgrano, entre o centro e o Parque: a Arístides Villanueva, com seus bares e restaurantes, fica a poucas quadras.' }, times: [['aristides', 10], ['park', 6], ['plaza', 12], ['airport', 20], ['lujan', 30]] }
@@ -161,12 +175,12 @@ window.RGM_DETAILS = {
     location: { text: { es: 'Sobre Av. Mitre, en el centro: Plaza Independencia a pocas cuadras y la Calle Arístides Villanueva a un paseo.', en: 'On Av. Mitre, downtown: Plaza Independencia a few blocks away and Arístides Villanueva within a short walk.', pt: 'Na Av. Mitre, no centro: a Plaza Independencia a poucas quadras e a Arístides Villanueva a uma caminhada.' }, times: [['plaza', 7], ['peatonal', 8], ['aristides', 15], ['park', 8], ['airport', 20], ['lujan', 30]] }
   },
   'espana-iii': {
-    beds: 2,
+    beds: { es: '1 + sillón', en: '1 + sofa', pt: '1 + sofá' },
     gallery: rgmGal('espana-iii', 7),
     title: { es: 'Luz, parquet <em>y la ciudad a pie.</em>', en: 'Light, parquet <em>and the city on foot.</em>', pt: 'Luz, parquet <em>e a cidade a pé.</em>' },
     intro: { es: 'Un departamento luminoso sobre Av. España, con piso de parquet, living-comedor amplio, un dormitorio y cocina completa. Afuera, una avenida arbolada con cafés y comercios.', en: 'A bright apartment on Av. España, with parquet floors, a roomy living-dining area, one bedroom and a full kitchen. Outside, a tree-lined avenue with cafés and shops.', pt: 'Um apartamento iluminado na Av. España, com piso de parquet, sala de estar e jantar ampla, um quarto e cozinha completa. Lá fora, uma avenida arborizada com cafés e lojas.' },
     overview: [
-      { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Ambiente amplio con ventanal, mesa para cuatro, TV y aire acondicionado. Suma una cama matrimonial para dos huéspedes más.', en: 'A spacious room with a large window, a table for four, a TV and air conditioning. It also has a double bed for two more guests.', pt: 'Ambiente amplo com janelão, mesa para quatro, TV e ar-condicionado. Tem também uma cama de casal para mais dois hóspedes.' } },
+      { t: { es: 'El living', en: 'The living room', pt: 'A sala' }, p: { es: 'Ambiente amplio con ventanal, mesa para cuatro, TV y aire acondicionado. Tiene un sillón para un tercer huésped.', en: 'A spacious room with a large window, a table for four, a TV and air conditioning. A sofa sleeps a third guest.', pt: 'Ambiente amplo com janelão, mesa para quatro, TV e ar-condicionado. Tem um sofá para um terceiro hóspede.' } },
       { t: { es: 'El dormitorio', en: 'The bedroom', pt: 'O quarto' }, p: { es: 'Cama matrimonial, placard amplio y ventana a la calle. Ropa de cama y toallas incluidas.', en: 'A double bed, a large wardrobe and a street-facing window. Bed linen and towels included.', pt: 'Cama de casal, armário amplo e janela para a rua. Roupa de cama e toalhas incluídas.' } },
       { t: { es: 'La cocina', en: 'The kitchen', pt: 'A cozinha' }, p: { es: 'Cocina separada con horno, anafe, heladera y microondas.', en: 'Separate kitchen with oven, cooktop, fridge and microwave.', pt: 'Cozinha separada com forno, cooktop, geladeira e micro-ondas.' } }
     ],
