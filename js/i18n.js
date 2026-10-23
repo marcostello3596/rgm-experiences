@@ -241,7 +241,7 @@ window.RGM_I18N = {
     'ft.tag': 'Descansá bien. <em>Viví Mendoza.</em>',
     'ft.explore': 'Explorar',
     'ft.contact': 'Contacto',
-    'ft.rights': 'Todos los derechos reservados',
+    'ft.rights': 'Todos los derechos reservados', 'ft.dev': 'Desarrollado por',
     'ft.photos': 'Imágenes de experiencias ilustrativas',
 
     'wa.aria': 'Escribinos por WhatsApp',
@@ -491,7 +491,7 @@ window.RGM_I18N = {
     'ft.tag': 'Rest well. <em>Live Mendoza.</em>',
     'ft.explore': 'Explore',
     'ft.contact': 'Contact',
-    'ft.rights': 'All rights reserved',
+    'ft.rights': 'All rights reserved', 'ft.dev': 'Developed by',
     'ft.photos': 'Experience images are illustrative',
 
     'wa.aria': 'Message us on WhatsApp',
@@ -741,7 +741,7 @@ window.RGM_I18N = {
     'ft.tag': 'Descanse bem. <em>Viva Mendoza.</em>',
     'ft.explore': 'Explorar',
     'ft.contact': 'Contato',
-    'ft.rights': 'Todos os direitos reservados',
+    'ft.rights': 'Todos os direitos reservados', 'ft.dev': 'Desenvolvido por',
     'ft.photos': 'Imagens das experiências ilustrativas',
 
     'wa.aria': 'Fale conosco pelo WhatsApp',

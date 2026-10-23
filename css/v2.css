@@ -757,3 +757,13 @@ img[src*="exp-aeropuerto"] { object-position: 42% 50%; }
 .lightbox__fig::after { content: ""; position: absolute; left: 50%; top: 40%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border: 1.5px solid rgba(244, 238, 229, .25); border-top-color: var(--cream); border-radius: 50%; opacity: 0; pointer-events: none; transition: opacity .2s; }
 .lightbox.is-loading .lightbox__fig::after { opacity: 1; animation: lbspin .8s linear infinite; }
 @keyframes lbspin { to { transform: rotate(360deg); } }
+
+/* Pie: "Desarrollado por Marte Studio". Queda a la izquierda del botón de WhatsApp y,
+   en celular, por encima de la barra fija "Reservá tu estadía" */
+.footer__legal { opacity: 1; color: rgba(244, 238, 229, .5); align-items: center; padding-right: 92px; }
+.footer__credit a { color: inherit; text-decoration: underline; text-decoration-color: rgba(244, 238, 229, .3); text-underline-offset: 3px; transition: color .3s var(--ease), text-decoration-color .3s var(--ease); }
+.footer__credit a:hover, .footer__credit a:focus-visible { color: var(--cream); text-decoration-color: currentColor; }
+@media (max-width: 900px) {
+  .footer { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
+  .footer__legal { flex-direction: column; align-items: flex-start; gap: 8px; padding-right: 84px; }
+}
