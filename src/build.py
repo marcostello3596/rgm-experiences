@@ -58,7 +58,7 @@ for d in os.listdir(os.path.join(OUT, 'propiedades')):
     if os.path.isdir(os.path.join(OUT, 'propiedades', d)) and d not in [x[0] for x in apts]:
         shutil.rmtree(os.path.join(OUT, 'propiedades', d))   # fichas de deptos que ya no existen
 for slug, name, zone, house in apts:
-    h = head.replace('<title>RGM Experiences</title>', '<title>%s %s en %s · RGM Experiences</title>' % ('Casa' if house else 'Depto', name, zone))
+    h = head.replace('<title>RGM Experiences</title>', '<title>%s %s en %s · RGM Experiences</title>' % ('Casa' if house else 'Apartamento', name, zone))
     page = h + '<div class="rgm-page" data-page="apt" data-slug="%s">\n\n' % slug + subnav + rd('apt-main.html') + '\n' + faq_only + subtail
     write('propiedades/%s/index.html' % slug, full(page, '../../'))
 

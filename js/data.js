@@ -24,9 +24,10 @@ window.RGM_CONFIG = {
 
 window.RGM_APARTMENTS = [
   {
-    slug: 'mitre-i', name: 'Mitre I', zone: 'Ciudad de Mendoza', img: 'img/apts/mitre-i/01.jpg', img2: 'img/apts/mitre-i/08.jpg',
+    slug: 'mitre-i', name: 'Mitre I', zone: 'Ciudad de Mendoza', img: 'img/apts/mitre-i/pileta-1.jpg', img2: 'img/apts/mitre-i/01.jpg',
     coords: [-32.89352, -68.84533],
-    tag: { es: 'Amplio · Dos dormitorios · A pocas cuadras de Plaza Independencia', en: 'Spacious · Two bedrooms · A few blocks from Plaza Independencia', pt: 'Amplo · Dois quartos · A poucas quadras da Plaza Independencia' },
+    badge: { es: 'Con pileta', en: 'With pool', pt: 'Com piscina' },
+    tag: { es: 'Pileta en el edificio · Dos dormitorios · A pocas cuadras de Plaza Independencia', en: 'Pool in the building · Two bedrooms · A few blocks from Plaza Independencia', pt: 'Piscina no prédio · Dois quartos · A poucas quadras da Plaza Independencia' },
     bedrooms: 2, baths: 1, sleeps: 4, parking: false
   },
   {
