@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+/* Tipografía de titulares del sitio público (sólo para la marca del panel). */
+@font-face {
+  font-family: "Gambarino";
+  src: url("/fonts/gambarino-400.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Gambarino", "Times New Roman", serif;
+
+  /* Paleta: neutros cálidos + vino del sitio como acento */
+  --color-bg: #f6f5f3;
+  --color-surface: #ffffff;
+  --color-subtle: #faf9f7;
+  --color-line: #e9e6e2;
+  --color-line-strong: #d9d5cf;
+  --color-ink: #1c1819;
+  --color-body: #3f3a3a;
+  --color-muted: #736b68;
+  --color-soft: #a39a95;
+  --color-accent: #3d1a22;
+  --color-accent-hover: #55262f;
+  --color-accent-soft: #f4ecec;
+  --color-gold: #8d6b41;
+  --color-sand: #efe7dc;
+
+  --color-ok: #1b7a50;
+  --color-ok-soft: #e3f4eb;
+  --color-warn: #a16207;
+  --color-warn-soft: #fdf3d7;
+  --color-bad: #b42335;
+  --color-bad-soft: #fde9ec;
+  --color-info: #1c4a99;
+  --color-info-soft: #e4eefc;
+  --color-violet: #5236a8;
+  --color-violet-soft: #ece7fb;
+
+  --shadow-card: 0 1px 2px rgb(28 24 25 / 0.04), 0 1px 1px rgb(28 24 25 / 0.03);
+  --shadow-pop: 0 12px 32px -8px rgb(28 24 25 / 0.18), 0 2px 6px rgb(28 24 25 / 0.06);
+
+  --animate-fade: fade 0.16s ease-out;
+  --animate-pop: pop 0.18s cubic-bezier(0.2, 0.9, 0.3, 1);
+  --animate-slide: slide 0.24s cubic-bezier(0.2, 0.9, 0.3, 1);
+  --animate-up: up 0.24s cubic-bezier(0.2, 0.9, 0.3, 1);
+
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(6px) scale(0.98); } to { opacity: 1; transform: none; } }
+  @keyframes slide { from { transform: translateX(100%); } to { transform: none; } }
+  @keyframes up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+}
+
+@layer base {
+  html { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+  body { background: var(--color-bg); color: var(--color-body); font-size: 14px; line-height: 1.45; }
+  h1, h2, h3, h4 { color: var(--color-ink); }
+  button { cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 6px; }
+  input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: pointer; }
+  ::selection { background: #e9d9dc; }
+}
+
+@layer components {
+  .tnum { font-variant-numeric: tabular-nums; }
+  .scroll-thin { scrollbar-width: thin; scrollbar-color: #d5d0ca transparent; }
+  .scroll-thin::-webkit-scrollbar { width: 10px; height: 10px; }
+  .scroll-thin::-webkit-scrollbar-thumb { background: #d5d0ca; border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+  .scroll-thin::-webkit-scrollbar-thumb:hover { background-color: #b9b2ab; }
+
+  /* Tooltip liviano: <span data-tip="Texto"> */
+  [data-tip] { position: relative; }
+  [data-tip]::after {
+    content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%) translateY(2px);
+    background: var(--color-ink); color: #fff; font-size: 11.5px; font-weight: 500; line-height: 1.2; padding: 5px 8px; border-radius: 6px;
+    white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.12s, transform 0.12s; z-index: 80;
+  }
+  [data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; transform: translateX(-50%); transition-delay: 0.25s; }
+  [data-tip][data-tip-pos="right"]::after { left: calc(100% + 8px); bottom: auto; top: 50%; transform: translateY(-50%); }
+  [data-tip][data-tip-pos="right"]:hover::after { transform: translateY(-50%); }
+  [data-tip][data-tip-pos="bottom"]::after { bottom: auto; top: calc(100% + 6px); }
+  [data-tip][data-tip-pos="left"]::after { left: auto; right: 0; transform: translateY(2px); }
+  [data-tip][data-tip-pos="left"]:hover::after { transform: none; }
+
+  .skeleton { background: linear-gradient(90deg, #eeebe7 25%, #f6f4f1 37%, #eeebe7 63%); background-size: 400% 100%; animation: shimmer 1.4s ease infinite; border-radius: 8px; }
+  @keyframes shimmer { from { background-position: 100% 50%; } to { background-position: 0 50%; } }
+
+  .recharts-wrapper, .recharts-surface { outline: none; }
+  .recharts-cartesian-axis-tick-value { font-size: 11px; fill: var(--color-muted); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
