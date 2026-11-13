@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Lock } from 'lucide-react';
 import type { PaymentMethod, Reservation } from '@/types';
 import { useStore } from '@/store/useStore';
 import { useLookup, useToday } from '@/store/hooks';
@@ -13,6 +13,18 @@ import { cn } from '@/lib/cn';
 import { Button, Field, Input, Notice, NumberInput, Select } from '@/ui/primitives';
 import { confirm, Modal } from '@/ui/overlays';
 import { useUI } from './ui-store';
+
+/** Reservas que se modifican en su canal (Airbnb, Booking.com) y no desde el panel. */
+export const isLocked = (r: Reservation): boolean => services.policy.lockedChannels.includes(r.channel);
+
+export function LockedNotice({ reservation: r, className }: { reservation: Reservation; className?: string }) {
+  if (!isLocked(r)) return null;
+  return (
+    <Notice tone="blue" icon={Lock} className={className}>
+      Reserva de {CHANNEL[r.channel].label}: fechas, estado e importe se cambian en {CHANNEL[r.channel].label} y Beds24 los actualiza solo. Desde acá podés registrar pagos y agregar notas.
+    </Notice>
+  );
+}
 
 /** Desglose del importe de una reserva. */
 export function PriceBreakdown({ reservation: r, className }: { reservation: Reservation; className?: string }) {
@@ -125,7 +137,7 @@ function PaymentForm({ reservationId }: { reservationId: string }) {
         </Field>
         <Field label="Nota" optional><Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Ej.: seña 30 %" maxLength={80} /></Field>
         {error && <Notice tone="red" icon={AlertCircle}>{error}</Notice>}
-        <p className="text-xs text-muted">Es un registro interno: no cobra ni genera comprobantes fiscales.</p>
+        <p className="text-xs text-muted">{services.mode === 'live' ? 'Se registra en la reserva de Beds24. No cobra al huésped ni genera comprobantes fiscales.' : 'Es un registro interno: no cobra ni genera comprobantes fiscales.'}</p>
       </form>
     </Modal>
   );

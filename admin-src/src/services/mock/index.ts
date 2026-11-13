@@ -2,10 +2,11 @@ import type { CalendarBlock, Dataset, Expense, Guest, HistoryEntry, ID, MessageT
 import type { NewReservation, RateChange, ReservationPatch, Services } from '../contracts';
 import { eachDay, fmtDate, isValidDate, today, weekday } from '@/lib/dates';
 import { uid } from '@/lib/cn';
-import { DomainError, findConflict, isActive, paidOf, totalOf } from '@/domain/reservations';
+import { DomainError, isActive, paidOf, totalOf } from '@/domain/reservations';
+import { validateBlock, validateStay } from '@/domain/validation';
 import { money } from '@/lib/format';
 import { delay, loadDb, resetDb, saveDb } from './db';
-import { syncCleaningTasks } from './tasks';
+import { syncCleaningTasks } from '@/domain/tasks';
 
 /**
  * IMPLEMENTACIÓN SIMULADA de los servicios. Todo vive en el navegador (localStorage).
@@ -32,34 +33,6 @@ async function read<T>(fn: (ds: Dataset) => T): Promise<T> {
   return clone(fn(db()));
 }
 
-function validateStay(ds: Dataset, r: Pick<Reservation, 'propertyId' | 'checkIn' | 'checkOut' | 'status' | 'adults' | 'children' | 'guestId' | 'breakdown'>, ignoreId?: ID): void {
-  const property = ds.properties.find((p) => p.id === r.propertyId);
-  if (!property) throw new DomainError('Elegí un departamento.');
-  if (!ds.guests.some((g) => g.id === r.guestId)) throw new DomainError('Elegí o cargá un huésped.');
-  if (!isValidDate(r.checkIn) || !isValidDate(r.checkOut)) throw new DomainError('Las fechas no son válidas.');
-  if (r.checkOut <= r.checkIn) throw new DomainError('El check-out tiene que ser posterior al check-in.');
-  if (r.adults < 1) throw new DomainError('Tiene que haber al menos un adulto.');
-  if (r.adults + r.children > property.capacity) throw new DomainError(`${property.internalName} admite hasta ${property.capacity} huéspedes.`);
-  const b = r.breakdown;
-  if ([b.accommodation, b.cleaning, b.discount, b.taxes, b.channelFee].some((n) => !Number.isFinite(n) || n < 0)) throw new DomainError('Los importes no pueden ser negativos.');
-  if (r.status === 'cancelled') return;
-  const conflict = findConflict({ propertyId: r.propertyId, start: r.checkIn, end: r.checkOut, ignoreReservationId: ignoreId }, ds.reservations, ds.blocks);
-  if (conflict?.kind === 'reservation') {
-    const c = conflict.reservation;
-    throw new DomainError(`Se superpone con la reserva ${c.code} (${fmtDate(c.checkIn)} al ${fmtDate(c.checkOut)}).`);
-  }
-  if (conflict?.kind === 'block') throw new DomainError(`Esas fechas están bloqueadas: ${conflict.block.reason || 'bloqueo'} (${fmtDate(conflict.block.start)} al ${fmtDate(conflict.block.end)}).`);
-}
-
-function validateBlock(ds: Dataset, b: Omit<CalendarBlock, 'id'>, ignoreId?: ID): void {
-  if (!ds.properties.some((p) => p.id === b.propertyId)) throw new DomainError('Elegí un departamento.');
-  if (!isValidDate(b.start) || !isValidDate(b.end)) throw new DomainError('Las fechas no son válidas.');
-  if (b.end <= b.start) throw new DomainError('La fecha de fin tiene que ser posterior a la de inicio.');
-  const conflict = findConflict({ propertyId: b.propertyId, start: b.start, end: b.end, ignoreBlockId: ignoreId }, ds.reservations, ds.blocks);
-  if (conflict?.kind === 'reservation') throw new DomainError(`Hay una reserva activa en esas fechas: ${conflict.reservation.code}.`);
-  if (conflict?.kind === 'block') throw new DomainError('Ya hay otro bloqueo en esas fechas.');
-}
-
 const need = <T,>(v: T | undefined, what: string): T => {
   if (v === undefined) throw new DomainError(`No se encontró ${what}.`);
   return v;
@@ -71,6 +44,15 @@ function nextCode(ds: Dataset): number {
 
 export const mockServices: Services = {
   mode: 'demo',
+  policy: {
+    lockedChannels: [],
+    creatableChannels: ['manual', 'web', 'airbnb', 'booking'],
+    messagesAreReal: false,
+    seasonalPricing: true,
+    localPropertyFields: [],
+    localModules: [],
+    sourceName: 'Demostración',
+  },
 
   reservations: {
     list: () => read((ds) => ds.reservations),

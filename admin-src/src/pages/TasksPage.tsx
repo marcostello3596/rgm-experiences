@@ -72,7 +72,7 @@ export default function TasksPage() {
     <>
       <PageHeader
         title="Limpieza y tareas"
-        description={overdue > 0 ? <span className="text-bad">{plural(overdue, 'tarea atrasada', 'tareas atrasadas')}</span> : 'Las limpiezas se crean solas con cada check-out.'}
+        description={overdue > 0 ? <span className="text-bad">{plural(overdue, 'tarea atrasada', 'tareas atrasadas')}</span> : services.mode === 'live' ? 'Las limpiezas se crean solas con cada check-out de Beds24. Responsables, estados y comentarios se guardan en este navegador.' : 'Las limpiezas se crean solas con cada check-out.'}
         actions={<>
           <Select aria-label="Responsable" value={assignee} onChange={(e) => setAssignee(e.target.value)} className="w-52"><option value="all">Todos los responsables</option>{settings.staff.map((s) => <option key={s}>{s}</option>)}<option value="none">Sin responsable</option></Select>
           <Segmented value={scope} onChange={setScope} options={[{ value: 'today', label: 'Hoy' }, { value: 'week', label: '7 días' }, { value: 'all', label: 'Todas' }]} />

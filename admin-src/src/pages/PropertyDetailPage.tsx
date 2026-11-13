@@ -85,8 +85,9 @@ export default function PropertyDetailPage() {
                 ['Nombre público', p.publicName], ['Capacidad', plural(p.capacity, 'huésped', 'huéspedes')],
                 ['Dormitorios', p.bedrooms === 0 ? 'Monoambiente' : String(p.bedrooms)], ['Camas / baños', `${p.beds} / ${p.bathrooms}`],
                 ['Check-in / check-out', `${p.checkInTime} h / ${p.checkOutTime} h`], ['Estadía', `${p.minStay} a ${p.maxStay} noches`],
-                ['Precio base', money(p.basePrice, p.currency)], ['Fin de semana', money(p.weekendPrice ?? p.basePrice, p.currency)],
-                ['Limpieza', money(p.cleaningFee, p.currency)], ['Descuentos', `${p.weeklyDiscount} % semanal · ${p.monthlyDiscount} % mensual`],
+                ...(services.policy.seasonalPricing
+                  ? ([['Precio base', money(p.basePrice, p.currency)], ['Fin de semana', money(p.weekendPrice ?? p.basePrice, p.currency)], ['Limpieza', money(p.cleaningFee, p.currency)], ['Descuentos', `${p.weeklyDiscount} % semanal · ${p.monthlyDiscount} % mensual`]] as [string, string][])
+                  : ([['Precio de referencia', money(p.basePrice, p.currency)], ['Limpieza', money(p.cleaningFee, p.currency)]] as [string, string][])),
               ]} />
               {p.amenities.length > 0 && <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line pt-4">{p.amenities.map((a) => <Badge key={a}>{a}</Badge>)}</div>}
             </Card>
@@ -124,6 +125,9 @@ function PropertyForm({ property }: { property: Property }) {
 
   return (
     <form onSubmit={submit} className="space-y-4 pb-16">
+      {services.policy.localPropertyFields.length > 0 && (
+        <Notice tone="blue" icon={Info}>Nombre, dirección, horarios, capacidad, estadía y limpieza se guardan en {services.policy.sourceName}. Nombre público, descripción, fotos, comodidades, dormitorios, baños, precio de referencia y el estado activo se guardan sólo en este navegador.</Notice>
+      )}
       <Card>
         <CardHeader title="Identificación" />
         <div className="grid gap-4 sm:grid-cols-2">
@@ -151,16 +155,16 @@ function PropertyForm({ property }: { property: Property }) {
       </Card>
 
       <Card>
-        <CardHeader title="Precios" hint="Las tarifas por fecha y las temporadas se cargan en Tarifas y disponibilidad." />
+        <CardHeader title="Precios" hint={services.policy.seasonalPricing ? 'Las tarifas por fecha y las temporadas se cargan en Tarifas y disponibilidad.' : 'Los precios por noche se cargan por fecha en Tarifas y disponibilidad (se guardan en Beds24). El precio de referencia sólo sugiere importes.'} />
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Field label="Moneda"><Select value={f.currency} onChange={(e) => set('currency', e.target.value as Property['currency'])}>{CURRENCIES.map((c) => <option key={c}>{c}</option>)}</Select></Field>
-          <Field label="Precio base">{numField('basePrice', { min: 1, prefix: sym })}</Field>
-          <Field label="Fin de semana" hint="Viernes y sábado"><NumberInput value={f.weekendPrice ?? ''} onChange={(v) => set('weekendPrice', v === '' ? undefined : v)} min={0} prefix={sym} placeholder={String(f.basePrice)} /></Field>
+          <Field label={services.policy.seasonalPricing ? 'Precio base' : 'Precio de referencia'}>{numField('basePrice', { min: 1, prefix: sym })}</Field>
+          {services.policy.seasonalPricing && <Field label="Fin de semana" hint="Viernes y sábado"><NumberInput value={f.weekendPrice ?? ''} onChange={(v) => set('weekendPrice', v === '' ? undefined : v)} min={0} prefix={sym} placeholder={String(f.basePrice)} /></Field>}
           <Field label="Tarifa de limpieza">{numField('cleaningFee', { prefix: sym })}</Field>
           <Field label="Estadía mínima">{numField('minStay', { min: 1 })}</Field>
           <Field label="Estadía máxima">{numField('maxStay', { min: 1 })}</Field>
-          <Field label="Descuento semanal (%)" hint="7 noches o más">{numField('weeklyDiscount', { max: 90 })}</Field>
-          <Field label="Descuento mensual (%)" hint="28 noches o más">{numField('monthlyDiscount', { max: 90 })}</Field>
+          {services.policy.seasonalPricing && <Field label="Descuento semanal (%)" hint="7 noches o más">{numField('weeklyDiscount', { max: 90 })}</Field>}
+          {services.policy.seasonalPricing && <Field label="Descuento mensual (%)" hint="28 noches o más">{numField('monthlyDiscount', { max: 90 })}</Field>}
         </div>
       </Card>
 
@@ -232,6 +236,21 @@ function IntegrationForm({ property }: { property: Property }) {
     await run(() => services.properties.update(property.id, { external: clean }), { success: 'Identificadores guardados.' });
     setSaving(false);
   };
+  if (services.mode === 'live') {
+    return (
+      <div className="max-w-3xl space-y-4">
+        <Notice tone="blue" icon={Info}>Este departamento es una habitación de Beds24. La conexión con Airbnb y Booking.com (y sus identificadores) se configura dentro de Beds24, en Canales.</Notice>
+        <Card>
+          <CardHeader title="Identificadores" />
+          <DL items={[
+            ['ID de propiedad en Beds24', <code className="rounded bg-black/5 px-1.5 py-0.5 text-xs">{property.external.beds24PropertyId}</code>],
+            ['ID de habitación en Beds24', <code className="rounded bg-black/5 px-1.5 py-0.5 text-xs">{property.external.beds24RoomId}</code>],
+            ['ID interno del panel', <code className="rounded bg-black/5 px-1.5 py-0.5 text-xs">{property.id}</code>],
+          ]} />
+        </Card>
+      </div>
+    );
+  }
   return (
     <form onSubmit={submit} className="max-w-3xl space-y-4">
       <Notice tone="blue" icon={Info}>Estos identificadores todavía no se usan: no hay ninguna conexión con Beds24, Airbnb ni Booking.com. Se pueden ir cargando para que el mapeo esté listo cuando se haga la integración. Ninguno es obligatorio.</Notice>

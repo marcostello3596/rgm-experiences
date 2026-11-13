@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, FileText, FlaskConical, Inbox, MailOpen, Mail, Pencil, Plus, Search, Send, Trash2 } from 'lucide-react';
+import { ArrowLeft, FileText, FlaskConical, Inbox, MailOpen, Mail, Pencil, Plus, Search, Send, Trash2, TriangleAlert } from 'lucide-react';
 import type { ChannelId, Conversation, MessageTemplate } from '@/types';
 import { CHANNEL_IDS } from '@/types';
 import { useStore } from '@/store/useStore';
@@ -26,6 +26,7 @@ export default function MessagesPage() {
   const [draft, setDraft] = useState('');
   const [manage, setManage] = useState(false);
   const thread = useRef<HTMLDivElement>(null);
+  const real = services.policy.messagesAreReal;
   const tz = settings.timezone;
 
   const list = useMemo(() => conversations.filter((c) => {
@@ -49,7 +50,8 @@ export default function MessagesPage() {
   const send = async (e: FormEvent) => {
     e.preventDefault();
     if (!current || !draft.trim()) return;
-    if (await run(() => services.messaging.send(current.id, draft))) setDraft('');
+    if (real && !(await confirm({ title: 'Enviar mensaje', danger: false, confirmLabel: 'Enviar', message: <>Le va a llegar a <strong>{look.guestName(current.guestId)}</strong> por {CHANNEL[current.channel].label === 'Manual' ? 'email (si la reserva tiene email cargado)' : CHANNEL[current.channel].label}. No se puede deshacer.</> }))) return;
+    if (await run(() => services.messaging.send(current.id, draft), { success: real ? 'Mensaje enviado.' : undefined })) setDraft('');
   };
   const fill = (t: MessageTemplate) => {
     const property = look.property(current?.propertyId);
@@ -64,8 +66,12 @@ export default function MessagesPage() {
 
   return (
     <>
-      <PageHeader title="Mensajes" description={`${unreadCount} sin leer · ${conversations.length} conversaciones de prueba`} actions={<Button icon={FileText} onClick={() => setManage(true)}>Plantillas</Button>} />
-      <Notice tone="violet" icon={FlaskConical} className="mb-4">Simulación local: las respuestas que escribas se guardan sólo en este navegador. <strong>No se envían</strong> a Airbnb, a Booking.com ni al huésped. La mensajería real llegará con la integración de Beds24.</Notice>
+      <PageHeader title="Mensajes" description={`${unreadCount} sin leer · ${conversations.length} conversaciones${real ? ' (últimos 12 meses)' : ' de prueba'}`} actions={<Button icon={FileText} onClick={() => setManage(true)}>Plantillas</Button>} />
+      {real ? (
+        <Notice tone="amber" icon={TriangleAlert} className="mb-4">Los mensajes son reales: lo que envíes desde acá le llega al huésped a través de Beds24 (por Airbnb, Booking.com o por email en las reservas manuales). Las plantillas se guardan en este navegador.</Notice>
+      ) : (
+        <Notice tone="violet" icon={FlaskConical} className="mb-4">Simulación local: las respuestas que escribas se guardan sólo en este navegador. <strong>No se envían</strong> a Airbnb, a Booking.com ni al huésped. La mensajería real llegará con la integración de Beds24.</Notice>
+      )}
 
       <Card padded={false} className="grid overflow-hidden md:grid-cols-[340px_1fr]" >
         {/* Lista */}
@@ -126,7 +132,7 @@ export default function MessagesPage() {
                 ))}
               </div>
               <form onSubmit={send} className="border-t border-line p-3">
-                <Textarea value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void send(e); }} placeholder="Escribí una respuesta de prueba…" aria-label="Respuesta" rows={2} className="min-h-[60px] resize-none" />
+                <Textarea value={draft} onChange={(e) => setDraft(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void send(e); }} placeholder={real ? 'Escribí tu respuesta…' : 'Escribí una respuesta de prueba…'} aria-label="Respuesta" rows={2} className="min-h-[60px] resize-none" />
                 <div className="mt-2 flex items-center justify-between gap-2">
                   <Popover align="left" side="top" className="w-80 p-1.5" trigger={({ toggle }) => <Button size="sm" icon={FileText} onClick={toggle}>Plantillas</Button>}>
                     {(close) => (
@@ -137,8 +143,8 @@ export default function MessagesPage() {
                       </>
                     )}
                   </Popover>
-                  <span className="hidden text-[11px] text-muted sm:block">Ctrl + Enter para guardar</span>
-                  <Button variant="primary" type="submit" icon={Send} disabled={!draft.trim()}>Guardar respuesta (simulada)</Button>
+                  <span className="hidden text-[11px] text-muted sm:block">{real ? 'Ctrl + Enter para enviar' : 'Ctrl + Enter para guardar'}</span>
+                  <Button variant="primary" type="submit" icon={Send} disabled={!draft.trim()}>{real ? 'Enviar al huésped' : 'Guardar respuesta (simulada)'}</Button>
                 </div>
               </form>
             </>

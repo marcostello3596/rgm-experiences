@@ -76,7 +76,7 @@ export default function FinancePage() {
 
       <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-3 2xl:grid-cols-6">
         <Kpi label="Ingresos brutos" value={fmt(m.gross)} icon={CircleDollarSign} hint="Reservas confirmadas y finalizadas" />
-        <Kpi label="Comisiones de canales" value={fmt(m.fees)} icon={HandCoins} hint="Valores ficticios de la demo" />
+        <Kpi label="Comisiones de canales" value={fmt(m.fees)} icon={HandCoins} hint={services.mode === 'live' ? 'Según cada reserva en Beds24' : 'Valores ficticios de la demo'} />
         <Kpi label="Netos antes de gastos" value={fmt(m.net)} icon={Wallet} hint="Brutos − comisiones" />
         <Kpi label="Gastos operativos" value={fmt(ex.total)} icon={TrendingDown} hint={ex.unpaid > 0 ? `${fmt(ex.unpaid)} sin pagar` : 'Todos pagados'} />
         <Kpi label="Resultado operativo" value={fmt(result)} icon={result >= 0 ? TrendingUp : TrendingDown} tone={result >= 0 ? 'green' : 'red'} hint="Netos − gastos" />
@@ -117,7 +117,7 @@ export default function FinancePage() {
       </Card>
 
       <Card padded={false}>
-        <CardHeader className="mb-0 flex-wrap px-5 pt-5 pb-4" title="Registro de gastos" hint={`${plural(rows.length, 'gasto', 'gastos')} en el período · no genera comprobantes fiscales`}
+        <CardHeader className="mb-0 flex-wrap px-5 pt-5 pb-4" title="Registro de gastos" hint={`${plural(rows.length, 'gasto', 'gastos')} en el período · ${services.mode === 'live' ? 'se guardan en este navegador · ' : ''}no genera comprobantes fiscales`}
           action={<>
             <Select aria-label="Categoría" value={cat} onChange={(e) => setCat(e.target.value as typeof cat)} className="h-8 w-44 text-[13px]"><option value="all">Todas las categorías</option>{EXPENSE_CATEGORIES.map((c) => <option key={c} value={c}>{EXPENSE_CAT[c].label}</option>)}</Select>
             <Select aria-label="Estado" value={paid} onChange={(e) => setPaid(e.target.value as typeof paid)} className="h-8 w-32 text-[13px]"><option value="all">Todos</option><option value="paid">Pagados</option><option value="unpaid">Pendientes</option></Select>

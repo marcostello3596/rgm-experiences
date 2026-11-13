@@ -1,0 +1,7 @@
+{
+  "name": "rgm-experiences",
+  "private": true,
+  "type": "module",
+  "description": "Sitio estático de RGM Experiences + funciones de servidor de /admin (api/). El panel está en admin-src/.",
+  "engines": { "node": ">=20" }
+}

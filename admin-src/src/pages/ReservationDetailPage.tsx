@@ -11,7 +11,7 @@ import { PAY_METHOD } from '@/lib/labels';
 import { Avatar, Button, Card, CardHeader, DL, EmptyState, IconButton, PageHeader, Tabs, Textarea } from '@/ui/primitives';
 import { confirm } from '@/ui/overlays';
 import { ChannelBadge, PayBadge, PropertyPhoto, StatusBadge } from '@/ui/domain';
-import { PriceBreakdown, useReservationActions } from '@/features/reservation-parts';
+import { isLocked, LockedNotice, PriceBreakdown, useReservationActions } from '@/features/reservation-parts';
 import { useUI } from '@/features/ui-store';
 
 type Tab = 'resumen' | 'huesped' | 'pagos' | 'historial' | 'notas';
@@ -33,7 +33,8 @@ export default function ReservationDetailPage() {
   const property = look.property(r.propertyId);
   const mine = payments.filter((p) => p.reservationId === r.id).sort((a, b) => b.date.localeCompare(a.date));
   const balance = balanceOf(r, payments);
-  const editable = r.status !== 'cancelled';
+  const editable = r.status !== 'cancelled' && !isLocked(r);
+  const payable = r.status !== 'cancelled';
   const tz = settings.timezone;
   const conversation = conversations.find((c) => c.reservationId === r.id);
   const others = reservations.filter((x) => x.guestId === r.guestId && x.id !== r.id);
@@ -56,14 +57,15 @@ export default function ReservationDetailPage() {
         description={<span className="flex flex-wrap items-center gap-2">{r.code} · {look.propertyName(r.propertyId)} · {fmtDate(r.checkIn)} al {fmtDate(r.checkOut)} <ChannelBadge channel={r.channel} /></span>}
         actions={
           <>
-            <Button variant="ghost" icon={Trash2} className="text-bad" onClick={() => void actions.remove(r, '/reservas')}>Eliminar</Button>
+            {!isLocked(r) && <Button variant="ghost" icon={Trash2} className="text-bad" onClick={() => void actions.remove(r, '/reservas')}>Eliminar</Button>}
             {editable && <Button icon={Ban} onClick={() => void actions.cancel(r)}>Cancelar</Button>}
             {editable && <Button icon={Pencil} onClick={() => editReservation(r.id)}>Editar</Button>}
-            {editable && <Button variant="primary" icon={CreditCard} onClick={() => openPayment(r.id)} disabled={balance <= 0.005}>Registrar pago</Button>}
+            {payable && <Button variant="primary" icon={CreditCard} onClick={() => openPayment(r.id)} disabled={balance <= 0.005}>Registrar pago</Button>}
           </>
         }
       />
 
+      <LockedNotice reservation={r} className="mb-4" />
       <Tabs
         className="mb-5"
         value={tab}
@@ -142,7 +144,7 @@ export default function ReservationDetailPage() {
       {tab === 'pagos' && (
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           <Card padded={false}>
-            <CardHeader title="Pagos registrados" hint="Registro interno: no cobra ni emite comprobantes." className="mb-0 px-5 pt-5" action={editable && <Button size="sm" icon={CreditCard} onClick={() => openPayment(r.id)} disabled={balance <= 0.005}>Registrar pago</Button>} />
+            <CardHeader title="Pagos registrados" hint="Registro interno: no cobra ni emite comprobantes." className="mb-0 px-5 pt-5" action={payable && <Button size="sm" icon={CreditCard} onClick={() => openPayment(r.id)} disabled={balance <= 0.005}>Registrar pago</Button>} />
             {mine.length === 0 ? <EmptyState icon={CreditCard} title="Sin pagos registrados" description={`El saldo pendiente es ${money(balance, r.currency)}.`} /> : (
               <ul className="mt-3 divide-y divide-line border-t border-line">
                 {mine.map((p) => (

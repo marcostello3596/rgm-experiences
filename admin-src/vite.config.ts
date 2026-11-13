@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'node:path';
 import fs from 'node:fs';
+// @ts-expect-error módulo JS propio, sin tipos
+import { apiMiddleware, loadEnv } from './scripts/api-host.mjs';
 
 /** En desarrollo sirve las fotos y tipografías del sitio público (../img, ../fonts) para que /img/... funcione igual que en producción. */
 function siteImages(): Plugin {
@@ -22,11 +24,22 @@ function siteImages(): Plugin {
   };
 }
 
+/** En `npm run dev:live` atiende /api con las mismas funciones que publica Vercel (lee ../.env.local). */
+function localApi(): Plugin {
+  return {
+    name: 'rgm-local-api',
+    configureServer(server) {
+      loadEnv();
+      server.middlewares.use((req, res, next) => void apiMiddleware(req, res, next));
+    },
+  };
+}
+
 // El PMS se compila como sitio estático dentro de /admin del sitio público.
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: '/admin/',
-  plugins: [react(), tailwindcss(), siteImages()],
+  plugins: [react(), tailwindcss(), siteImages(), ...(mode === 'live' ? [localApi()] : [])],
   resolve: { alias: { '@': path.resolve(import.meta.dirname, 'src') } },
   build: { outDir: '../admin', emptyOutDir: true, chunkSizeWarningLimit: 900 },
   test: { environment: 'node' },
-});
+}));

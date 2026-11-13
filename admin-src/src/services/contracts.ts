@@ -1,5 +1,5 @@
 import type {
-  CalendarBlock, Channel, Conversation, Dataset, Expense, Guest, ID, ISODate, Message, MessageTemplate, Note, Payment, Property,
+  CalendarBlock, ChannelId, Channel, Conversation, Dataset, Expense, Guest, ID, ISODate, Message, MessageTemplate, Note, Payment, Property,
   Rate, Reservation, Season, Settings, SyncStatus, Task,
 } from '@/types';
 
@@ -107,9 +107,32 @@ export interface SettingsProvider {
   update(patch: Partial<Settings>): Promise<Settings>;
 }
 
+/** Qué permite la fuente de datos. La interfaz se adapta a esto en lugar de preguntar por el modo. */
+export interface ServicePolicy {
+  /** Reservas de estos canales se modifican en el canal (Airbnb, Booking.com), no en el panel. */
+  lockedChannels: ChannelId[];
+  /** Canales que se pueden elegir al cargar una reserva a mano. */
+  creatableChannels: ChannelId[];
+  /** true: un mensaje escrito en el panel le llega de verdad al huésped. */
+  messagesAreReal: boolean;
+  /** false: los precios por fecha se cargan directamente (no hay temporadas ni precio de fin de semana automáticos). */
+  seasonalPricing: boolean;
+  /** Campos de la ficha del departamento que se guardan sólo en este navegador. */
+  localPropertyFields: (keyof Property)[];
+  /** Módulos cuyos datos se guardan sólo en este navegador (texto para avisar en pantalla). */
+  localModules: string[];
+  /** Nombre de la fuente de datos para mostrar ("Beds24", "Demostración"). */
+  sourceName: string;
+}
+
 export interface Services {
   /** 'demo' mientras los datos sean ficticios. La interfaz muestra el cartel de demostración según este valor. */
   mode: 'demo' | 'live';
+  policy: ServicePolicy;
+  /** Vuelve a leer todo desde la fuente (por ejemplo, para traer reservas nuevas de los canales). */
+  refresh?: () => Promise<void>;
+  /** Borra datos guardados temporalmente (al cerrar sesión). */
+  clearCache?: () => void;
   reservations: ReservationProvider;
   payments: PaymentProvider;
   properties: PropertyProvider;

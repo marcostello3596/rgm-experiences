@@ -215,7 +215,7 @@ export interface Task {
   reservationId?: ID;
 }
 
-export type ChannelStatus = 'pending_integration' | 'pending_config' | 'demo' | 'connected' | 'error';
+export type ChannelStatus = 'pending_integration' | 'pending_config' | 'demo' | 'active' | 'connected' | 'error';
 
 export interface Channel {
   id: ChannelId | 'beds24';

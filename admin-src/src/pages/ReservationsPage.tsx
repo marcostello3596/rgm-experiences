@@ -14,7 +14,7 @@ import { Button, Card, EmptyState, IconButton, Input, PageHeader, Select } from 
 import { DataTable, type Column } from '@/ui/DataTable';
 import { MenuItem, Popover } from '@/ui/overlays';
 import { ChannelBadge, PayBadge, StatusBadge } from '@/ui/domain';
-import { useReservationActions } from '@/features/reservation-parts';
+import { isLocked, useReservationActions } from '@/features/reservation-parts';
 import { useUI } from '@/features/ui-store';
 
 type PayFilter = 'all' | 'paid' | 'pending';
@@ -79,9 +79,9 @@ export default function ReservationsPage() {
             {(close) => (
               <>
                 <MenuItem icon={Eye} onClick={() => { close(); navigate(`/reservas/${r.id}`); }}>Ver detalles</MenuItem>
-                <MenuItem icon={Pencil} disabled={r.status === 'cancelled'} onClick={() => { close(); editReservation(r.id); }}>Editar</MenuItem>
+                <MenuItem icon={Pencil} disabled={r.status === 'cancelled' || isLocked(r)} onClick={() => { close(); editReservation(r.id); }}>Editar</MenuItem>
                 <MenuItem icon={CreditCard} disabled={r.status === 'cancelled' || balanceOf(r, payments) <= 0.005} onClick={() => { close(); openPayment(r.id); }}>Registrar pago</MenuItem>
-                <MenuItem icon={Ban} danger disabled={r.status === 'cancelled'} onClick={() => { close(); void actions.cancel(r); }}>Cancelar reserva</MenuItem>
+                <MenuItem icon={Ban} danger disabled={r.status === 'cancelled' || isLocked(r)} onClick={() => { close(); void actions.cancel(r); }}>Cancelar reserva</MenuItem>
               </>
             )}
           </Popover>

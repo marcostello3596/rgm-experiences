@@ -3,17 +3,18 @@
 Aplicación aparte del sitio público. Se escribe acá (`admin-src/`) y se compila como archivos estáticos
 en `../admin/`, que es lo que publica Vercel junto con el resto del sitio. El sitio público no se toca.
 
-**Estado: demo de desarrollo.** Todos los datos son ficticios y se guardan en el navegador (localStorage).
-No hay conexión con Beds24, Airbnb ni Booking.com, y **no hay inicio de sesión** (ver "Antes de publicar").
+**Producción: conectado a Beds24** con contraseña (ver `src/services/beds24/README.md`).
+`npm run dev` sigue abriendo la demostración con datos ficticios.
 
 ## Uso
 
 ```bash
 cd admin-src
 npm install
-npm run dev        # desarrollo: http://localhost:5173/admin/
+npm run dev        # demostración con datos ficticios: http://localhost:5173/admin/
+npm run dev:live   # con Beds24 real (lee ../.env.local): http://localhost:5173/admin/
 npm run build      # typecheck + compila a ../admin  (hay que commitear ../admin)
-npm run preview    # sirve el sitio completo como Vercel: http://localhost:4173/admin
+npm run preview    # sitio completo como Vercel, con las funciones de /api: http://localhost:4173/admin
 npm run typecheck && npm run lint && npm test
 ```
 
@@ -43,15 +44,8 @@ src/
   pages/                   Una por ruta
 ```
 
-## Conectar Beds24 (más adelante)
+## Servidor
 
-1. Backend propio con las credenciales (nunca en el navegador).
-2. Escribir una implementación de `Services` que llame a ese backend.
-3. Devolverla en `services/index.ts` con `mode: 'live'`. Las pantallas no cambian.
-
-Detalle en `src/services/beds24/README.md`.
-
-## Antes de publicar con datos reales
-
-- Proteger `/admin` del lado del servidor (contraseña de Vercel o sesión con un proveedor de identidad) e implementar `AuthProvider`.
-- Validar sesión, rol y reglas de negocio en el backend.
+- `../api/admin/session.js` y `../api/admin/beds24.js`: funciones de Vercel (formato Web: `export function GET/POST(request)`).
+- `../server/`: código compartido de esas funciones (sesión, cliente de Beds24).
+- Variables de entorno: `BEDS24_REFRESH_TOKEN`, `ADMIN_PASSWORD` (ver el README de Beds24).

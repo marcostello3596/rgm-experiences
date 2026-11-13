@@ -25,10 +25,10 @@ export default function RatesPage() {
     <>
       <PageHeader
         title="Tarifas y disponibilidad"
-        description="Precio por noche de cada departamento. Los cambios se guardan sólo en la demo; con Beds24 se enviarán al inventario central."
+        description={services.mode === 'live' ? 'Precio por noche y estadía mínima de cada departamento, guardados en Beds24 (es lo que ven los canales conectados).' : 'Precio por noche de cada departamento. Los cambios se guardan sólo en la demo; con Beds24 se enviarán al inventario central.'}
         actions={<Button variant="primary" icon={SlidersHorizontal} onClick={() => setBulk({ propertyIds: [], start: today, end: addDays(today, 7) })}>Edición masiva</Button>}
       />
-      <Tabs className="mb-5" value={tab} onChange={setTab} tabs={[{ value: 'calendario', label: 'Calendario de tarifas' }, { value: 'reglas', label: 'Reglas por departamento' }, { value: 'temporadas', label: 'Temporadas' }]} />
+      <Tabs className="mb-5" value={tab} onChange={setTab} tabs={[{ value: 'calendario', label: 'Calendario de tarifas' }, { value: 'reglas', label: 'Reglas por departamento' }, ...(services.policy.seasonalPricing ? [{ value: 'temporadas' as const, label: 'Temporadas' }] : [])]} />
       {tab === 'calendario' && <RateCalendar onBulk={setBulk} />}
       {tab === 'reglas' && <RulesTable />}
       {tab === 'temporadas' && <Seasons />}
@@ -40,6 +40,7 @@ export default function RatesPage() {
 /* ---------- Calendario de tarifas ---------- */
 
 function RateCalendar({ onBulk }: { onBulk: (b: { propertyIds: ID[]; start: ISODate; end: ISODate }) => void }) {
+  const seasonal = services.policy.seasonalPricing;
   const { properties, rates, seasons, reservations, blocks, propertyFilter } = useStore();
   const today = useToday();
   const [month, setMonth] = useState(() => startOfMonth(today));
@@ -88,9 +89,10 @@ function RateCalendar({ onBulk }: { onBulk: (b: { propertyIds: ID[]; start: ISOD
         </div>
         <h2 className="text-[15px] font-semibold text-ink first-letter:uppercase">{fmtMonthYear(month)}</h2>
         <ul className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
-          <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-accent" />Tarifa cargada a mano</li>
-          <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-warn-soft ring-1 ring-warn/30" />Temporada alta</li>
-          <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-info-soft ring-1 ring-info/30" />Temporada baja</li>
+          <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-accent" />{seasonal ? 'Tarifa cargada a mano' : 'Distinto del precio de referencia'}</li>
+          {seasonal && <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-warn-soft ring-1 ring-warn/30" />Temporada alta</li>}
+          {seasonal && <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-info-soft ring-1 ring-info/30" />Temporada baja</li>}
+          {!seasonal && <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm border border-dashed border-soft" />Sin precio en Beds24</li>}
           <li className="flex items-center gap-1.5"><span className="size-2.5 rounded-sm bg-black/10" />Ocupado o bloqueado</li>
         </ul>
       </div>
@@ -131,8 +133,8 @@ function RateCalendar({ onBulk }: { onBulk: (b: { propertyIds: ID[]; start: ISOD
                       )}
                       style={{ width: DAY_W, height: 46 }}
                     >
-                      {np.source === 'override' && <span className="absolute top-1 right-1 size-1.5 rounded-full bg-accent" />}
-                      <span className={cn('font-medium', np.source === 'override' && !state && 'text-accent')}>{state === 'block' ? <Ban className="size-3.5" /> : np.price}</span>
+                      {np.source === 'override' && (seasonal || np.price !== p.basePrice) && <span className="absolute top-1 right-1 size-1.5 rounded-full bg-accent" />}
+                      <span className={cn('font-medium', np.source === 'override' && (seasonal || np.price !== p.basePrice) && !state && 'text-accent', !seasonal && np.source !== 'override' && 'text-soft')}>{state === 'block' ? <Ban className="size-3.5" /> : !seasonal && np.source !== 'override' ? '—' : np.price}</span>
                       {np.minStay !== p.minStay && <span className="mt-0.5 text-[9px] leading-none text-muted">mín. {np.minStay}</span>}
                     </div>
                   );
@@ -261,6 +263,8 @@ const RULES: { key: RuleKey; label: string; money?: boolean; pct?: boolean }[] =
 
 function RulesTable() {
   const { properties, propertyFilter, run } = useStore();
+  const seasonal = services.policy.seasonalPricing;
+  const rules = RULES.filter((r) => seasonal || !['weekendPrice', 'weeklyDiscount', 'monthlyDiscount'].includes(r.key)).map((r) => (r.key === 'basePrice' && !seasonal ? { ...r, label: 'Precio de referencia' } : r));
   const [draft, setDraft] = useState<Record<ID, Partial<Record<RuleKey, number | ''>>>>({});
   const [saving, setSaving] = useState(false);
   const rows = properties.filter((p) => propertyFilter === 'all' || p.id === propertyFilter);
@@ -290,16 +294,16 @@ function RulesTable() {
 
   return (
     <Card padded={false}>
-      <CardHeader className="mb-0 px-5 pt-5 pb-4" title="Reglas por departamento" hint="Precio base, fin de semana (viernes y sábado), límites de estadía y descuentos por estadías de 7 y 28 noches o más."
+      <CardHeader className="mb-0 px-5 pt-5 pb-4" title="Reglas por departamento" hint={seasonal ? "Precio base, fin de semana (viernes y sábado), límites de estadía y descuentos por estadías de 7 y 28 noches o más." : "Estadía mínima, máxima y limpieza se guardan en Beds24. El precio de referencia sólo se usa para sugerir importes y vive en este navegador; los precios por noche se cambian en el calendario de tarifas."}
         action={<><Button size="sm" onClick={() => setDraft({})} disabled={dirtyIds.length === 0}>Descartar</Button><Button size="sm" variant="primary" icon={Save} onClick={save} loading={saving} disabled={dirtyIds.length === 0}>Guardar{dirtyIds.length > 0 ? ` (${dirtyIds.length})` : ''}</Button></>} />
       <div className="scroll-thin overflow-x-auto border-t border-line">
         <table className="w-full min-w-[920px] border-collapse text-sm">
-          <thead><tr className="border-b border-line text-xs text-muted"><th className="px-5 py-2.5 text-left font-medium">Departamento</th>{RULES.map((r) => <th key={r.key} className="px-2 py-2.5 text-left font-medium">{r.label}</th>)}</tr></thead>
+          <thead><tr className="border-b border-line text-xs text-muted"><th className="px-5 py-2.5 text-left font-medium">Departamento</th>{rules.map((r) => <th key={r.key} className="px-2 py-2.5 text-left font-medium">{r.label}</th>)}</tr></thead>
           <tbody>
             {rows.map((p) => (
               <tr key={p.id} className="border-b border-line/70 last:border-0">
                 <td className="px-5 py-2"><span className="font-medium text-ink">{p.internalName}</span><span className="ml-2 text-xs text-muted">{p.currency}</span>{!p.active && <Badge className="ml-2">Inactivo</Badge>}</td>
-                {RULES.map((r) => {
+                {rules.map((r) => {
                   const changed = draft[p.id]?.[r.key] !== undefined;
                   return <td key={r.key} className="px-2 py-2"><NumberInput aria-label={`${r.label} de ${p.internalName}`} value={value(p, r.key)} onChange={(v) => change(p, r.key, v)} min={0} max={r.pct ? 90 : undefined} prefix={r.money ? SYMBOL[p.currency] : r.pct ? '%' : undefined} placeholder={r.key === 'weekendPrice' ? String(p.basePrice) : undefined} className={cn('h-8 w-28', changed && 'border-accent bg-accent-soft/40')} /></td>;
                 })}

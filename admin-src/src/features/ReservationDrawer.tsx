@@ -9,7 +9,7 @@ import { PAY_METHOD } from '@/lib/labels';
 import { Avatar, Button, DL } from '@/ui/primitives';
 import { Drawer } from '@/ui/overlays';
 import { ChannelBadge, PayBadge, PropertyPhoto, StatusBadge } from '@/ui/domain';
-import { PriceBreakdown, useReservationActions } from './reservation-parts';
+import { isLocked, LockedNotice, PriceBreakdown, useReservationActions } from './reservation-parts';
 import { useUI } from './ui-store';
 
 /** Panel lateral con el resumen de una reserva (se abre desde el calendario y el dashboard). */
@@ -26,7 +26,7 @@ export function ReservationDrawer() {
   const property = look.property(r.propertyId);
   const balance = balanceOf(r, payments);
   const mine = payments.filter((p) => p.reservationId === r.id).sort((a, b) => a.date.localeCompare(b.date));
-  const editable = r.status !== 'cancelled';
+  const editable = r.status !== 'cancelled' && !isLocked(r);
   const day = (d: string) => <span className="capitalize">{weekdayShort(d)} {fmtDate(d)}</span>;
 
   return (
@@ -39,11 +39,12 @@ export function ReservationDrawer() {
         <>
           {editable && <Button variant="ghost" icon={Ban} className="mr-auto text-bad" onClick={async () => { if (await actions.cancel(r)) closeDrawer(); }}>Cancelar</Button>}
           {editable && <Button icon={Pencil} onClick={() => editReservation(r.id)}>Editar</Button>}
-          {editable && balance > 0.005 && <Button icon={CreditCard} onClick={() => openPayment(r.id)}>Registrar pago</Button>}
+          {r.status !== 'cancelled' && balance > 0.005 && <Button icon={CreditCard} onClick={() => openPayment(r.id)}>Registrar pago</Button>}
         </>
       }
     >
       <div className="space-y-5">
+        <LockedNotice reservation={r} />
         <div className="flex items-center gap-3">
           <Avatar name={look.guestName(r.guestId)} size={44} />
           <div className="min-w-0">

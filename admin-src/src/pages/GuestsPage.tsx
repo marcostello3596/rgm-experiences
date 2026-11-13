@@ -5,6 +5,7 @@ import type { Guest } from '@/types';
 import { useStore } from '@/store/useStore';
 import { guestName, useToday } from '@/store/hooks';
 import { guestStats } from '@/domain/guests';
+import { services } from '@/services';
 import { fmtDate } from '@/lib/dates';
 import { matches, money, plural } from '@/lib/format';
 import { downloadCSV } from '@/lib/csv';
@@ -49,7 +50,7 @@ export default function GuestsPage() {
 
   return (
     <>
-      <PageHeader title="Huéspedes" description={`${plural(rows.length, 'huésped', 'huéspedes')}${rows.length !== guests.length ? ` de ${guests.length}` : ''} · datos ficticios`} actions={<><Button icon={Download} onClick={exportCSV} disabled={rows.length === 0}>Exportar CSV</Button><Button variant="primary" icon={Plus} onClick={() => setCreating(true)}>Nuevo huésped</Button></>} />
+      <PageHeader title="Huéspedes" description={`${plural(rows.length, 'huésped', 'huéspedes')}${rows.length !== guests.length ? ` de ${guests.length}` : ''} ${services.mode === 'demo' ? ' · datos ficticios' : ' · tomados de las reservas de Beds24'}`} actions={<><Button icon={Download} onClick={exportCSV} disabled={rows.length === 0}>Exportar CSV</Button><Button variant="primary" icon={Plus} onClick={() => setCreating(true)}>Nuevo huésped</Button></>} />
       <Card padded={false}>
         <div className="grid gap-2 border-b border-line p-3 sm:grid-cols-[minmax(200px,1fr)_200px_220px] sm:p-4">
           <div className="relative">

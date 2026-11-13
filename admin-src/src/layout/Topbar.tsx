@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Bell, BedDouble, Building2, CalendarCheck, ClipboardList, ExternalLink, FlaskConical, Menu, MessageSquare, RotateCcw, Search, ShieldAlert, SprayCan, User, Wallet, type LucideIcon } from 'lucide-react';
+import { Bell, BedDouble, Building2, CalendarCheck, ClipboardList, ExternalLink, FlaskConical, LogOut, Menu, MessageSquare, RefreshCw, RotateCcw, Search, ShieldAlert, SprayCan, User, Wallet, type LucideIcon } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { guestName, useLookup, useToday } from '@/store/hooks';
 import { services } from '@/services';
 import { balanceOf, isActive } from '@/domain/reservations';
 import { matches } from '@/lib/format';
-import { fmtShort } from '@/lib/dates';
+import { fmtDateTime, fmtShort } from '@/lib/dates';
 import { ROLE } from '@/lib/labels';
 import { cn } from '@/lib/cn';
 import { Avatar, IconButton, Select } from '@/ui/primitives';
@@ -14,7 +14,27 @@ import { confirm, MenuItem, Popover } from '@/ui/overlays';
 import { sectionFor } from './nav';
 
 export function DemoBadge({ className }: { className?: string }) {
-  if (services.mode !== 'demo') return null;
+  const syncing = useStore((s) => s.syncing);
+  const syncNow = useStore((s) => s.syncNow);
+  const last = useStore((s) => s.sync.find((x) => x.channelId === 'beds24'));
+  const tz = useStore((s) => s.settings.timezone);
+  if (services.mode === 'live') {
+    const error = last?.state === 'error';
+    return (
+      <button
+        type="button"
+        onClick={() => void syncNow()}
+        disabled={syncing}
+        data-tip={syncing ? 'Sincronizando…' : last?.lastSyncAt ? `Última lectura: ${fmtDateTime(last.lastSyncAt, tz)} · clic para actualizar` : 'Actualizar desde Beds24'}
+        data-tip-pos="bottom"
+        className={cn('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap transition hover:brightness-95', error ? 'border-bad/20 bg-bad-soft text-bad' : 'border-ok/20 bg-ok-soft text-ok', className)}
+      >
+        <RefreshCw className={cn('size-3.5', syncing && 'animate-spin')} />
+        <span className="hidden xl:inline">{error ? 'Beds24 · error al sincronizar' : 'Conectado a Beds24'}</span>
+        <span className="xl:hidden">Beds24</span>
+      </button>
+    );
+  }
   return (
     <span data-tip="Nada de lo que ves es real ni se envía a ningún canal" data-tip-pos="bottom" className={cn('inline-flex items-center gap-1.5 rounded-full border border-violet/20 bg-violet-soft px-2.5 py-1 text-xs font-medium whitespace-nowrap text-violet', className)}>
       <FlaskConical className="size-3.5" />
@@ -144,6 +164,8 @@ function Notifications() {
 function Profile() {
   const session = useStore((s) => s.session);
   const resetDemo = useStore((s) => s.resetDemo);
+  const syncNow = useStore((s) => s.syncNow);
+  const signOut = useStore((s) => s.signOut);
   const navigate = useNavigate();
   if (!session) return null;
   return (
@@ -183,7 +205,9 @@ function Profile() {
                 Restablecer datos demo
               </MenuItem>
             )}
+            {services.refresh && <MenuItem icon={RefreshCw} onClick={() => { close(); void syncNow(); }}>Sincronizar con Beds24</MenuItem>}
             <a href="/" className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium text-body hover:bg-black/5"><ExternalLink className="size-4" />Ver el sitio público</a>
+            {services.mode === 'live' && <MenuItem icon={LogOut} onClick={() => { close(); void signOut(); }}>Cerrar sesión</MenuItem>}
           </div>
         </>
       )}

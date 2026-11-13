@@ -1,39 +1,57 @@
-# Integración con Beds24 (pendiente)
+# Integración con Beds24 (activa)
 
-Esta carpeta está vacía a propósito. Todavía **no hay ninguna llamada a Beds24, Airbnb ni Booking.com**, y no se
-inventaron endpoints ni formatos de respuesta: la implementación se escribe cuando se revise la documentación
-oficial de Beds24 API V2.
+El panel en producción usa Beds24 API V2 como fuente de verdad. Implementación en `src/services/live/`.
 
-## Criterios ya decididos
+## Cómo está armado
 
-- **Beds24 será la fuente de verdad** de reservas y disponibilidad. El panel no debe mantener un inventario
-  vendible paralelo: cuando la integración esté activa, crear/editar/cancelar una reserva o un bloqueo es una
-  operación contra Beds24, y el panel muestra lo que Beds24 devuelve.
-- **Las credenciales nunca van al navegador.** El panel llama a un backend propio (por ejemplo funciones
-  serverless en Vercel) y ese backend habla con Beds24 guardando las claves como variables de entorno.
-- **Los `id` internos no cambian.** Los identificadores de Beds24, Airbnb y Booking.com se guardan en el campo
-  `external` de `Property`, `Unit`, `Reservation` y `Guest` (ver `src/types.ts`), y se editan desde
-  Departamentos → Integraciones y Canales → Beds24.
+```
+navegador (admin/)  ──►  /api/admin/session   contraseña → cookie HttpOnly firmada
+                    ──►  /api/admin/beds24    puente con lista de operaciones permitidas
+                                │
+                                ▼
+                       server/beds24.js  ──►  https://beds24.com/api/v2
+                       (BEDS24_REFRESH_TOKEN → token de 24 h en memoria)
+```
 
-## Qué hay que escribir
+- Las credenciales sólo existen en el servidor (variables de entorno). El navegador nunca las ve.
+- Sin sesión, `/api/admin/beds24` responde 401: el código del panel es público, los datos no.
+- Operaciones permitidas: leer/escribir alojamientos, reservas, mensajes y calendario; borrar reservas.
 
-Una implementación de `Services` (`src/services/contracts.ts`) y cambiar una línea en `src/services/index.ts`.
-Las pantallas no se tocan.
+## Qué vive dónde
 
-| Proveedor | Hoy (demo) | Con Beds24 |
-|---|---|---|
-| `ReservationProvider` | localStorage | Reservas de Beds24 (todos los canales) |
-| `AvailabilityProvider` | localStorage | Bloqueos / disponibilidad en Beds24 |
-| `PricingProvider` | localStorage | Precios y estadías mínimas en Beds24 |
-| `PropertyProvider` | localStorage | Ficha propia + mapeo con propiedades/unidades de Beds24 |
-| `GuestProvider` | localStorage | Derivado de las reservas + datos propios |
-| `MessagingProvider` | localStorage | Mensajería de Beds24, si la API lo permite |
-| `PaymentProvider`, `ExpenseProvider`, `TaskProvider`, `SettingsProvider` | localStorage | Base de datos propia (no dependen de Beds24) |
-| `ChannelProvider` | estados fijos "pendiente" | Estado real de la conexión y registro de sincronizaciones |
+| Dato | Dónde |
+|---|---|
+| Departamentos (nombre, dirección, capacidad, horarios, estadía, limpieza) | Beds24: una habitación = un departamento del panel |
+| Reservas, huéspedes de cada reserva, observaciones | Beds24 (`/bookings`) |
+| Bloqueos | Beds24: reserva con estado `black`, más fechas cerradas (`override: blackout`) del calendario |
+| Precio por noche y estadía mínima por fecha | Beds24 (`/inventory/rooms/calendar`, `price1`, `minStay`) |
+| Cargos (alojamiento, limpieza, descuento, impuestos) y cobros | Beds24: ítems de factura `charge` y `payment` |
+| Notas internas | Beds24: info items con código `NOTA` |
+| Mensajes | Beds24 (`/bookings/messages`): **se envían de verdad** |
+| Gastos, tareas, configuración, plantillas, notas/preferencias de huéspedes, fotos y comodidades | Este navegador (localStorage) — pendiente pasar a una base de datos |
 
-Poner `mode: 'live'` en esa implementación oculta el cartel de "Modo demostración".
+## Reglas que se respetan
 
-## Antes de publicar
+- Las reservas de Airbnb y Booking.com no se editan, cancelan ni borran desde el panel (se cambian en el canal).
+- Al crear o mover una reserva se pide `checkAvailability`: si un canal ocupó las fechas, Beds24 la rechaza.
+- Beds24 no borra reservas activas: el panel cancela y después borra.
+- Fechas: `departure` es el día de salida (exclusivo). En el calendario, `from` y `to` son inclusivos. Verificado contra la cuenta.
+- Límite de Beds24: unos 100 pedidos cada 5 minutos (cada pedido cuesta ~1). El panel lee 4 cosas al entrar, guarda la lectura 2 minutos en la pestaña, actualiza cada 5 minutos y después de cada cambio vuelve a leer sólo lo que cambió.
 
-- Autenticación real en `/admin` (ver `src/auth/session.ts`).
-- Mover las validaciones de `services/mock/index.ts` (fechas, superposición) al backend.
+## Variables de entorno (Vercel → Settings → Environment Variables)
+
+| Variable | Qué es |
+|---|---|
+| `BEDS24_REFRESH_TOKEN` | Refresh token de Beds24 (Settings → Account → API) |
+| `ADMIN_PASSWORD` | Contraseña del panel, 10 caracteres o más |
+| `SESSION_SECRET` | Opcional. Cambiarla cierra todas las sesiones |
+| `BEDS24_DEBUG` | Opcional. `1` registra cada pedido y su costo en los logs |
+
+En local van en `../.env.local` (ignorado por git).
+
+## Pendiente
+
+- Base de datos propia para lo que hoy queda en el navegador.
+- Usuarios individuales con roles (hoy: una contraseña compartida = administrador).
+- Webhook de Beds24 para enterarse de reservas nuevas al instante (hoy: lectura cada 5 minutos).
+- Motor de reservas en el sitio (canal "Página web").

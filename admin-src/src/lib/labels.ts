@@ -46,6 +46,7 @@ export const CHANNEL_STATUS: Record<ChannelStatus, { label: string; tone: Tone }
   pending_integration: { label: 'Pendiente de integración', tone: 'amber' },
   pending_config: { label: 'Pendiente de configuración', tone: 'amber' },
   demo: { label: 'Modo demo', tone: 'violet' },
+  active: { label: 'Activo', tone: 'green' },
   connected: { label: 'Conectado', tone: 'green' },
   error: { label: 'Con errores', tone: 'red' },
 };

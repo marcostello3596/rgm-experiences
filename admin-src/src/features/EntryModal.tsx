@@ -42,7 +42,9 @@ function EntryForm() {
   const [checkOut, setCheckOut] = useState(editingRes?.checkOut ?? editingBlock?.end ?? d.checkOut ?? addDays(d.checkIn ?? today, 2));
 
   // Reserva
-  const [channel, setChannel] = useState<ChannelId>(editingRes?.channel ?? 'manual');
+  const [channel, setChannel] = useState<ChannelId>(editingRes?.channel ?? services.policy.creatableChannels[0] ?? 'manual');
+  const channelOptions = editingRes ? [editingRes.channel] : services.policy.creatableChannels;
+  const lockedEdit = Boolean(editingRes && services.policy.lockedChannels.includes(editingRes.channel));
   const [status, setStatus] = useState<ReservationStatus>(editingRes?.status ?? 'confirmed');
   const [guestId, setGuestId] = useState<string>(editingRes?.guestId ?? d.guestId ?? 'new');
   const [guest, setGuest] = useState({ firstName: '', lastName: '', email: '', phone: '', country: 'Argentina' });
@@ -100,7 +102,7 @@ function EntryForm() {
     : conflict?.kind === 'block' ? `Fechas bloqueadas: ${conflict.block.reason || BLOCK_TYPE[conflict.block.type]} (${fmtDate(conflict.block.start)} al ${fmtDate(conflict.block.end)}).` : null;
   const capacityError = kind === 'reservation' && property && n(adults) + n(children) > property.capacity ? `${property.internalName} admite hasta ${property.capacity} huéspedes.` : null;
   const minStayWarn = kind === 'reservation' && quote && nights > 0 && nights < quote.minStay ? `La estadía mínima para esas fechas es de ${plural(quote.minStay, 'noche', 'noches')}. Podés guardar igual.` : null;
-  const blocked = Boolean(dateError || conflictText || capacityError);
+  const blocked = Boolean(dateError || conflictText || capacityError || lockedEdit);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -143,7 +145,7 @@ function EntryForm() {
       onClose={close}
       size={kind === 'block' ? 'md' : 'lg'}
       title={title}
-      description={services.mode === 'demo' ? 'Se guarda sólo en este navegador (modo demostración).' : undefined}
+      description={services.mode === 'demo' ? 'Se guarda sólo en este navegador (modo demostración).' : `Se guarda en ${services.policy.sourceName}.`}
       footer={
         <>
           {editingBlock && <Button variant="ghost" icon={Trash2} onClick={removeBlock} className="mr-auto text-bad">Eliminar</Button>}
@@ -171,6 +173,7 @@ function EntryForm() {
           </Field>
         </div>
 
+        {lockedEdit && <Notice tone="blue" icon={AlertCircle}>Esta reserva llegó desde {CHANNEL[editingRes!.channel].label}: se modifica en ese canal y Beds24 la actualiza sola.</Notice>}
         {conflictText && <Notice tone="red" icon={AlertCircle}>{conflictText} El día de salida de una reserva sí puede coincidir con la entrada de otra.</Notice>}
 
         {kind === 'block' ? (
@@ -188,8 +191,8 @@ function EntryForm() {
           <>
             <div className="grid gap-4 sm:grid-cols-3">
               <Field label="Canal">
-                <Select value={channel} onChange={(e) => setChannel(e.target.value as ChannelId)}>
-                  {CHANNEL_IDS.map((c) => <option key={c} value={c}>{CHANNEL[c].label}</option>)}
+                <Select value={channel} onChange={(e) => setChannel(e.target.value as ChannelId)} disabled={channelOptions.length < 2}>
+                  {CHANNEL_IDS.filter((c) => channelOptions.includes(c)).map((c) => <option key={c} value={c}>{CHANNEL[c].label}</option>)}
                 </Select>
               </Field>
               <Field label="Estado">
@@ -247,7 +250,7 @@ function EntryForm() {
                 <span className="text-xs text-muted">
                   {quote?.discountLabel && auto ? `${quote.discountLabel}. ` : ''}
                   {conv !== 1 && auto ? `Tarifa convertida con el tipo de cambio ficticio (1 USD = ${settings.currency.demoRate.toLocaleString('es-AR')} ARS). ` : ''}
-                  La comisión es un valor ficticio ({settings.demoChannelFees[channel]} % para {CHANNEL[channel].label}); no se le suma al huésped.
+                  {services.mode === 'demo' ? `La comisión es un valor ficticio (${settings.demoChannelFees[channel]} % para ${CHANNEL[channel].label}); no se le suma al huésped.` : 'La comisión del canal no se le suma al huésped.'}
                 </span>
                 <span className="ml-auto text-muted">Total <strong className="ml-1 text-base text-ink tnum">{money(total, currency)}</strong></span>
               </div>

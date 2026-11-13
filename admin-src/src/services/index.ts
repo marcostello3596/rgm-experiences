@@ -1,12 +1,15 @@
 import type { Dataset } from '@/types';
 import type { Services } from './contracts';
 import { mockServices } from './mock';
+import { liveServices } from './live';
 
 /**
  * ÚNICO PUNTO DE CAMBIO entre datos simulados y reales.
- * Cuando exista la integración (ver services/beds24/README.md), acá se devuelve esa implementación.
+ * - `VITE_DATA_SOURCE=beds24` (producción y `npm run dev:live`): Beds24 a través de las funciones de /api.
+ * - Sin esa variable (`npm run dev`): demostración con datos ficticios en el navegador.
  */
-export const services: Services = mockServices;
+export const DATA_SOURCE: 'beds24' | 'demo' = import.meta.env.VITE_DATA_SOURCE === 'beds24' ? 'beds24' : 'demo';
+export const services: Services = DATA_SOURCE === 'beds24' ? liveServices : mockServices;
 
 /** Lee todo el estado. Usa `snapshot` si el proveedor lo ofrece; si no, pide cada lista por separado. */
 export async function fetchAll(s: Services = services): Promise<Dataset> {

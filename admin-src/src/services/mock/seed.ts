@@ -5,7 +5,7 @@ import type {
 import { addDays, addMonths, startOfMonth, weekday } from '@/lib/dates';
 import { findConflict, totalOf } from '@/domain/reservations';
 import { indexRates, quoteStay } from '@/domain/pricing';
-import { syncCleaningTasks } from './tasks';
+import { syncCleaningTasks } from '@/domain/tasks';
 
 /**
  * DATOS FICTICIOS DE LA DEMO

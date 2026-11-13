@@ -7,22 +7,34 @@ import { Button, EmptyState, PageSkeleton } from '@/ui/primitives';
 import { ConfirmHost, ToastHost } from '@/ui/overlays';
 import { Sidebar } from './Sidebar';
 import { MobilePropertyFilter, Topbar } from './Topbar';
+import { LoginPage } from './LoginPage';
+import { services } from '@/services';
 import { sectionFor } from './nav';
 
 const COLLAPSE_KEY = 'rgm-pms-sidebar';
 
 export function AdminLayout() {
-  const { ready, loadError, load, session } = useStore();
+  const { ready, loadError, load, session, syncNow } = useStore();
   const { pathname } = useLocation();
   const [collapsed, setCollapsed] = useState(() => { try { return localStorage.getItem(COLLAPSE_KEY) === '1'; } catch { return false; } });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => { void load(); }, [load]);
+
+  // Con Beds24: trae reservas y mensajes nuevos cada 5 minutos mientras la pestaña está visible.
+  useEffect(() => {
+    if (services.mode !== 'live' || !session) return;
+    const tick = () => { if (document.visibilityState === 'visible') void syncNow({ quiet: true }); };
+    const t = window.setInterval(tick, 5 * 60 * 1000);
+    return () => window.clearInterval(t);
+  }, [session, syncNow]);
   useEffect(() => { setMobileOpen(false); }, [pathname]);
   useEffect(() => { document.title = `${sectionFor(pathname).label} · RGM PMS`; }, [pathname]);
 
   const toggle = () => setCollapsed((c) => { try { localStorage.setItem(COLLAPSE_KEY, c ? '0' : '1'); } catch { /* preferencia opcional */ } return !c; });
   const allowed = !session || canAccess(session.role, sectionFor(pathname).section);
+
+  if (services.mode === 'live' && ready && !session && !loadError) return <><LoginPage /><ToastHost /></>;
 
   return (
     <div className="flex h-dvh overflow-hidden bg-bg">

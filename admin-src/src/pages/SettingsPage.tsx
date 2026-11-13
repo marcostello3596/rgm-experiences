@@ -49,7 +49,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Configuración" description="Preferencias del panel. Se guardan en este navegador mientras el sistema esté en modo demostración." />
+      <PageHeader title="Configuración" description="Preferencias del panel. Se guardan en este navegador." />
       <Tabs className="mb-5" value={tab} onChange={(t) => setParams(t === 'negocio' ? {} : { tab: t }, { replace: true })} tabs={TABS} />
       <form onSubmit={save}>
         {tab === 'negocio' && Section({
@@ -132,6 +132,7 @@ export default function SettingsPage() {
               <ul className="divide-y divide-line rounded-lg border border-line">
                 {channels.map((c) => <li key={c.id} className="flex items-center justify-between gap-3 px-3.5 py-2.5 text-sm"><span className="font-medium text-ink">{c.name}</span><Badge tone={CHANNEL_STATUS[c.status].tone} dot>{CHANNEL_STATUS[c.status].label}</Badge></li>)}
               </ul>
+              {services.mode === 'demo' && (
               <div>
                 <h4 className="mb-1 flex items-center gap-2 text-sm font-semibold text-ink">Comisiones por canal <Badge tone="violet">Ficticias</Badge></h4>
                 <p className="mb-3 text-xs text-muted">Porcentaje sobre el alojamiento que el panel sugiere al cargar una reserva. No son las comisiones reales de ningún canal.</p>
@@ -139,6 +140,7 @@ export default function SettingsPage() {
                   {CHANNEL_IDS.map((c: ChannelId) => <Field key={c} label={CHANNEL[c].label}><NumberInput value={d.demoChannelFees[c]} onChange={(v) => patch('demoChannelFees', { [c]: v === '' ? 0 : v })} min={0} max={50} prefix="%" /></Field>)}
                 </div>
               </div>
+              )}
             </div>
           ),
         })}
@@ -148,15 +150,21 @@ export default function SettingsPage() {
 
       {tab === 'seguridad' && (
         <div className="max-w-3xl space-y-4">
-          <Notice tone="amber" icon={ShieldAlert}>
-            <strong>El panel todavía no tiene inicio de sesión.</strong> Cualquiera que abra la dirección /admin puede verlo. Como los datos son ficticios y se guardan en el navegador de cada persona, no se expone información real, pero no hay que cargar datos de huéspedes hasta protegerlo.
-          </Notice>
+          {services.mode === 'live' ? (
+            <Notice tone="green" icon={ShieldAlert}>
+              <strong>El panel está protegido con contraseña.</strong> La contraseña se verifica en el servidor y la sesión dura 12 horas (cookie que el navegador no puede leer). Para cambiar la contraseña o cerrar todas las sesiones, cambiá la variable ADMIN_PASSWORD en Vercel y volvé a publicar.
+            </Notice>
+          ) : (
+            <Notice tone="amber" icon={ShieldAlert}>
+              <strong>Modo demostración sin inicio de sesión.</strong> Los datos son ficticios y se guardan en este navegador.
+            </Notice>
+          )}
           <Card>
             <CardHeader title="Estado del acceso" />
             <DL items={[['Sesión actual', session ? `${session.name} · ${ROLE[session.role].label}` : '—'], ['Inicio de sesión', session?.secured ? 'Activo' : 'No implementado'], ['Datos', services.mode === 'demo' ? 'Ficticios, en este navegador' : 'Reales'], ['Buscadores', 'La página pide no ser indexada (noindex)']]} />
-            <h4 className="mt-5 mb-2 text-xs font-semibold tracking-wide text-muted uppercase">Antes de usarlo con datos reales</h4>
+            <h4 className="mt-5 mb-2 text-xs font-semibold tracking-wide text-muted uppercase">{services.mode === 'live' ? 'Protección' : 'Antes de usarlo con datos reales'}</h4>
             <ul className="space-y-2">
-              {[[false, 'Proteger /admin en el servidor: contraseña de Vercel o sesión con un proveedor de identidad'], [false, 'Usuarios reales con contraseña o acceso con Google, validados en el servidor'], [false, 'Permisos por rol aplicados también en el backend'], [true, 'Sin contraseñas ni claves de API en el código del navegador'], [true, 'Roles y secciones por rol ya definidos en la interfaz']].map(([ok, label]) => (
+              {(services.mode === 'live' ? ([[true, 'Contraseña verificada en el servidor (variable ADMIN_PASSWORD)'], [true, 'Sesión con cookie HttpOnly firmada; cada pedido de datos la valida'], [true, 'Credencial de Beds24 sólo en el servidor (BEDS24_REFRESH_TOKEN)'], [true, 'Límite de intentos de contraseña'], [false, 'Usuarios individuales con roles (hoy hay una sola contraseña compartida)']] as [boolean, string][]) : ([[false, 'Proteger /admin en el servidor: contraseña de Vercel o sesión con un proveedor de identidad'], [false, 'Usuarios reales con contraseña o acceso con Google, validados en el servidor'], [false, 'Permisos por rol aplicados también en el backend'], [true, 'Sin contraseñas ni claves de API en el código del navegador'], [true, 'Roles y secciones por rol ya definidos en la interfaz']] as [boolean, string][])).map(([ok, label]) => (
                 <li key={String(label)} className="flex items-start gap-2.5 text-sm text-body">{ok ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-ok" /> : <CircleDashed className="mt-0.5 size-4 shrink-0 text-soft" />}{label}</li>
               ))}
             </ul>
